@@ -5,7 +5,8 @@ Bundle-SymbolicName: RefReview
 Bundle-Version: 1.0.0
 Bundle-Activator: refreview.Activator
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.jdt.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,

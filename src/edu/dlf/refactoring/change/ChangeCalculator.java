@@ -13,6 +13,8 @@ public class ChangeCalculator {
 	public void listen(Object o)
 	{
 		
+		
 	}
 	
+
 }

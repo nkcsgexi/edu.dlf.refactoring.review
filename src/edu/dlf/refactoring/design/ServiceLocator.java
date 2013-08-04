@@ -22,6 +22,8 @@ import edu.dlf.refactoring.processors.RenameTypeProcessor;
 
 public class ServiceLocator extends AbstractModule
 {
+	private static AbstractModule _instance = new ServiceLocator();
+	
 	@Override
 	protected void configure() {
 		bind(IRefactoringDetector.class).annotatedWith(RenameMethod.class).to(RenameMethodDetector.class);
@@ -40,9 +42,11 @@ public class ServiceLocator extends AbstractModule
 		bind(EventBus.class).to(RefactoringEventBus.class).in(Singleton.class);
 	}
 	
+	
+	
 	public static <T> T ResolveType (Class T)
 	{		
-		Injector injector = Guice.createInjector(new ServiceLocator());
+		Injector injector = Guice.createInjector(_instance);
 		return (T) injector.getInstance(T);
 	}
 
