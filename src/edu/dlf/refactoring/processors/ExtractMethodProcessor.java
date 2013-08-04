@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.design.IRefactoringChecker;
 import edu.dlf.refactoring.design.IRefactoringDetector;
+import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.RefactoringAnnotations.ExtractMethod;
 import edu.dlf.refactoring.design.RefactoringProcessor;
 
@@ -16,8 +17,7 @@ public class ExtractMethodProcessor extends RefactoringProcessor{
 	}
 
 	@Override
-	protected void processRefactoring(Object refactoring) {
-		// TODO Auto-generated method stub
+	public void processRefactoring(ISourceChange change) {
 		
 	}
 
