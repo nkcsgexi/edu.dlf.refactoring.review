@@ -16,4 +16,9 @@ public class RenameMethodProcessor extends RefactoringProcessor{
 	
 	}
 
+	@Override
+	protected void processRefactoring(Object refactoring) {
+		
+	}
+
 }

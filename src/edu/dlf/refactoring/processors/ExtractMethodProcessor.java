@@ -15,4 +15,10 @@ public class ExtractMethodProcessor extends RefactoringProcessor{
 		super(_refactoringDetector, _refactoringChecker);
 	}
 
+	@Override
+	protected void processRefactoring(Object refactoring) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

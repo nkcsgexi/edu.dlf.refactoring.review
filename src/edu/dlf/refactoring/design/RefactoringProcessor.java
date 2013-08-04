@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.design;
 
+import com.google.common.eventbus.Subscribe;
+
 public abstract class RefactoringProcessor {
 	
 	protected final IRefactoringDetector _refactoringDetector;
@@ -11,5 +13,8 @@ public abstract class RefactoringProcessor {
 		this._refactoringDetector = _refactoringDetector;
 		this._refactoringChecker = _refactoringChecker;
 	}
+	
+	@Subscribe
+	abstract protected void processRefactoring(Object refactoring);
 
 }
