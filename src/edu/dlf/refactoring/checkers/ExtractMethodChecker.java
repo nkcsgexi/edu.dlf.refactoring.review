@@ -1,4 +1,4 @@
-package edu.dlf.refactorign.checkers;
+package edu.dlf.refactoring.checkers;
 
 import edu.dlf.refactoring.design.IRefactoringChecker;
 
