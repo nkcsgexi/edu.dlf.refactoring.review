@@ -1,0 +1,14 @@
+2013-08-04 19:18:37,802 INFO  [root] information
+2013-08-04 19:18:37,803 DEBUG [root] debug
+2013-08-04 19:19:00,921 INFO  [root] information
+2013-08-04 19:19:00,921 DEBUG [root] debug
+2013-08-04 19:19:32,140 INFO  [test] information
+2013-08-04 19:19:32,141 DEBUG [test] debug
+2013-08-04 19:21:58,468 INFO  [test] information
+2013-08-04 19:21:58,469 DEBUG [test] debug
+2013-08-04 19:23:52,588 INFO  [root] information
+2013-08-04 19:23:52,588 DEBUG [root] debug
+2013-08-04 19:24:55,982 INFO  [root] information
+2013-08-04 19:24:55,985 DEBUG [root] debug
+2013-08-04 19:27:24,957 INFO  [root] information
+2013-08-04 19:27:24,961 DEBUG [root] debug

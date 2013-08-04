@@ -2,6 +2,7 @@ package design;
 
 import junit.framework.TestSuite;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.Assert;
 import org.junit.Test;
 
@@ -21,5 +22,14 @@ public class DependencyInjectionTests extends TestSuite{
 		Assert.isNotNull(ServiceLocator.ResolveType(ExtractMethodProcessor.class));
 		Assert.isNotNull(ServiceLocator.ResolveType(RenameTypeProcessor.class));
 		Assert.isNotNull(ServiceLocator.ResolveType(EventBus.class));
+		Assert.isNotNull(ServiceLocator.ResolveType(Logger.class));
+	}
+	
+	@Test
+	public void RetrieveLoggerTest()
+	{
+		Logger log = ServiceLocator.ResolveType(Logger.class);
+		log.info("information");
+		log.debug("debug");
 	}
 }
