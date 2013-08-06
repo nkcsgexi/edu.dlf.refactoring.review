@@ -14,7 +14,13 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
-import edu.dlf.refactoring.change.ChangeCalculator;
+import edu.dlf.refactoring.change.IChangeCalculator;
+import edu.dlf.refactoring.change.JavaModelLevelAnnotation.CompilationUnit;
+import edu.dlf.refactoring.change.JavaModelLevelAnnotation.JavaProject;
+import edu.dlf.refactoring.change.JavaModelLevelAnnotation.SourcePackage;
+import edu.dlf.refactoring.change.calculator.CompilationUnitChangeCalculator;
+import edu.dlf.refactoring.change.calculator.ProjectChangeCalculator;
+import edu.dlf.refactoring.change.calculator.SourcePackageChangeCalculator;
 import edu.dlf.refactoring.checkers.ExtractMethodChecker;
 import edu.dlf.refactoring.checkers.RenameMethodChecker;
 import edu.dlf.refactoring.checkers.RenameTypeChecker;
@@ -46,7 +52,11 @@ public class ServiceLocator extends AbstractModule
 		bind(RefactoringProcessor.class).annotatedWith(ExtractMethod.class).to(ExtractMethodProcessor.class);
 		bind(RefactoringProcessor.class).annotatedWith(RenameType.class).to(RenameTypeProcessor.class);
 		
-		bind(ChangeCalculator.class).in(Singleton.class);
+		
+		bind(IChangeCalculator.class).annotatedWith(JavaProject.class).to(ProjectChangeCalculator.class);
+		bind(IChangeCalculator.class).annotatedWith(SourcePackage.class).to(SourcePackageChangeCalculator.class);
+		bind(IChangeCalculator.class).annotatedWith(CompilationUnit.class).to(CompilationUnitChangeCalculator.class);
+		
 		bind(EventBus.class).to(RefactoringEventBus.class).in(Singleton.class);
 	}
 	
@@ -72,7 +82,6 @@ public class ServiceLocator extends AbstractModule
 		  Logger.getRootLogger().addAppender(console);
 		
 		  FileAppender fa = new FileAppender();
-
 		  fa.setName("FileLogger");
 		  fa.setFile("/home/xige/Desktop/RefReviewer.log", true, true, 1);
 		  fa.setLayout(new PatternLayout("%d %-5p [%c{1}] %m%n"));

@@ -17,6 +17,12 @@ public class XArrayList<T> extends ArrayList<T> {
 	public XArrayList() {
 		super();
 	}
+	
+	public static <S> XArrayList<S> CreateList()
+	{
+		return new XArrayList<S>();
+	}
+	
 
 	public XArrayList(Collection<? extends T> list) {
 		super();

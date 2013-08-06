@@ -2,7 +2,7 @@ package edu.dlf.refactoring.design;
 
 import com.google.common.eventbus.EventBus;
 
-import edu.dlf.refactoring.change.ChangeCalculator;
+import edu.dlf.refactoring.change.ChangeComponent;
 import edu.dlf.refactoring.processors.ExtractMethodProcessor;
 import edu.dlf.refactoring.processors.RenameMethodProcessor;
 import edu.dlf.refactoring.processors.RenameTypeProcessor;
@@ -17,6 +17,6 @@ public class RefactoringEventBus extends EventBus{
 		this._eventBus.register(ServiceLocator.ResolveType(RenameMethodProcessor.class));
 		this._eventBus.register(ServiceLocator.ResolveType(ExtractMethodProcessor.class));
 		this._eventBus.register(ServiceLocator.ResolveType(RenameTypeProcessor.class));
-		this._eventBus.register(ServiceLocator.ResolveType(ChangeCalculator.class));
+		this._eventBus.register(ServiceLocator.ResolveType(ChangeComponent.class));
 	}
 }

@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.google.common.eventbus.EventBus;
 
+import edu.dlf.refactoring.change.ChangeComponent;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.processors.ExtractMethodProcessor;
 import edu.dlf.refactoring.processors.RenameMethodProcessor;
@@ -21,6 +22,7 @@ public class DependencyInjectionTests extends TestSuite{
 		Assert.isNotNull(ServiceLocator.ResolveType(RenameMethodProcessor.class));
 		Assert.isNotNull(ServiceLocator.ResolveType(ExtractMethodProcessor.class));
 		Assert.isNotNull(ServiceLocator.ResolveType(RenameTypeProcessor.class));
+		Assert.isNotNull(ServiceLocator.ResolveType(ChangeComponent.class));
 		Assert.isNotNull(ServiceLocator.ResolveType(EventBus.class));
 		Assert.isNotNull(ServiceLocator.ResolveType(Logger.class));
 	}
