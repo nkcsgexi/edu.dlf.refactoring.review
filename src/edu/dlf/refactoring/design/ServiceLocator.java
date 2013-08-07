@@ -17,10 +17,14 @@ import com.google.inject.Singleton;
 import edu.dlf.refactoring.change.IChangeCalculator;
 import edu.dlf.refactoring.change.JavaModelLevelAnnotation.CompilationUnit;
 import edu.dlf.refactoring.change.JavaModelLevelAnnotation.JavaProject;
+import edu.dlf.refactoring.change.JavaModelLevelAnnotation.Method;
 import edu.dlf.refactoring.change.JavaModelLevelAnnotation.SourcePackage;
+import edu.dlf.refactoring.change.JavaModelLevelAnnotation.Type;
 import edu.dlf.refactoring.change.calculator.CompilationUnitChangeCalculator;
+import edu.dlf.refactoring.change.calculator.MethodChangeCalculator;
 import edu.dlf.refactoring.change.calculator.ProjectChangeCalculator;
 import edu.dlf.refactoring.change.calculator.SourcePackageChangeCalculator;
+import edu.dlf.refactoring.change.calculator.TypeChangeCalculator;
 import edu.dlf.refactoring.checkers.ExtractMethodChecker;
 import edu.dlf.refactoring.checkers.RenameMethodChecker;
 import edu.dlf.refactoring.checkers.RenameTypeChecker;
@@ -52,10 +56,11 @@ public class ServiceLocator extends AbstractModule
 		bind(RefactoringProcessor.class).annotatedWith(ExtractMethod.class).to(ExtractMethodProcessor.class);
 		bind(RefactoringProcessor.class).annotatedWith(RenameType.class).to(RenameTypeProcessor.class);
 		
-		
-		bind(IChangeCalculator.class).annotatedWith(JavaProject.class).to(ProjectChangeCalculator.class);
-		bind(IChangeCalculator.class).annotatedWith(SourcePackage.class).to(SourcePackageChangeCalculator.class);
 		bind(IChangeCalculator.class).annotatedWith(CompilationUnit.class).to(CompilationUnitChangeCalculator.class);
+		bind(IChangeCalculator.class).annotatedWith(SourcePackage.class).to(SourcePackageChangeCalculator.class);
+		bind(IChangeCalculator.class).annotatedWith(JavaProject.class).to(ProjectChangeCalculator.class);
+		bind(IChangeCalculator.class).annotatedWith(Method.class).to(MethodChangeCalculator.class);
+		bind(IChangeCalculator.class).annotatedWith(Type.class).to(TypeChangeCalculator.class);
 		
 		bind(EventBus.class).to(RefactoringEventBus.class).in(Singleton.class);
 	}

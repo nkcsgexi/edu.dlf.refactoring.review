@@ -21,5 +21,11 @@ public class JavaModelLevelAnnotation {
 
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface CompilationUnit {}
+		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface Type {}
+		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface Method {}
 	
 }

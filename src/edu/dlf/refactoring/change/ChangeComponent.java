@@ -17,7 +17,8 @@ public class ChangeComponent{
 
 	@Inject
 	public ChangeComponent(@JavaProject IChangeCalculator projectCalculator,
-			@SourcePackage IChangeCalculator packageCalculator, @CompilationUnit IChangeCalculator cuCalculator)
+			@SourcePackage IChangeCalculator packageCalculator, 
+			@CompilationUnit IChangeCalculator cuCalculator)
 	{
 		this.projectCalculator = projectCalculator;
 		this.packageCalculator = packageCalculator;
