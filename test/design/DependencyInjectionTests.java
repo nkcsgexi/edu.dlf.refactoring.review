@@ -9,6 +9,8 @@ import org.junit.Test;
 import com.google.common.eventbus.EventBus;
 
 import edu.dlf.refactoring.change.ChangeComponent;
+import edu.dlf.refactoring.change.calculator.BlockChangeCalculator;
+import edu.dlf.refactoring.change.calculator.IfStatementChangeCalculator;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.processors.ExtractMethodProcessor;
 import edu.dlf.refactoring.processors.RenameMethodProcessor;
@@ -25,13 +27,13 @@ public class DependencyInjectionTests extends TestSuite{
 		Assert.isNotNull(ServiceLocator.ResolveType(ChangeComponent.class));
 		Assert.isNotNull(ServiceLocator.ResolveType(EventBus.class));
 		Assert.isNotNull(ServiceLocator.ResolveType(Logger.class));
+		Assert.isNotNull(ServiceLocator.ResolveType(BlockChangeCalculator.class));
+		Assert.isNotNull(ServiceLocator.ResolveType(IfStatementChangeCalculator.class));
 	}
 	
 	@Test
 	public void RetrieveLoggerTest()
 	{
 		Logger log = ServiceLocator.ResolveType(Logger.class);
-		log.info("information");
-		log.debug("debug");
 	}
 }

@@ -2,24 +2,26 @@ package edu.dlf.refactoring.change.calculator;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.change.IChangeCalculator;
-import edu.dlf.refactoring.change.JavaModelLevelAnnotation.Method;
+import edu.dlf.refactoring.change.ASTAnnotations.Method;
+import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
+import edu.dlf.refactoring.change.IJavaModelChangeCalculator;
+import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.JavaElementPair;
 
-public class TypeChangeCalculator implements IChangeCalculator{
+public class TypeChangeCalculator implements IASTNodeChangeCalculator{
 
-	private final IChangeCalculator _mChangeCalculator;
+	private final IASTNodeChangeCalculator _mChangeCalculator;
 
 
 	@Inject
-	public TypeChangeCalculator(@Method IChangeCalculator _mChangeCalculator)
+	public TypeChangeCalculator(@Method IASTNodeChangeCalculator _mChangeCalculator)
 	{
 		this._mChangeCalculator = _mChangeCalculator;
 	}
-	
-	
+
+
 	@Override
-	public Void CalculateSourceChange(JavaElementPair pair) {
+	public Void CalculateASTNodeChange(ASTNodePair pair) {
 		// TODO Auto-generated method stub
 		return null;
 	}

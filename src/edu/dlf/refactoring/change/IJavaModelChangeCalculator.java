@@ -4,7 +4,7 @@ import com.google.common.eventbus.Subscribe;
 
 import edu.dlf.refactoring.design.JavaElementPair;
 
-public interface IChangeCalculator
+public interface IJavaModelChangeCalculator
 {
 	@Subscribe
 	Void CalculateSourceChange(JavaElementPair pair);

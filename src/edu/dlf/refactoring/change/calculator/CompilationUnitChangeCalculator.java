@@ -2,16 +2,17 @@ package edu.dlf.refactoring.change.calculator;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.change.IChangeCalculator;
-import edu.dlf.refactoring.change.JavaModelLevelAnnotation.Type;
+import edu.dlf.refactoring.change.ASTAnnotations.Type;
+import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
+import edu.dlf.refactoring.change.IJavaModelChangeCalculator;
 import edu.dlf.refactoring.design.JavaElementPair;
 
-public class CompilationUnitChangeCalculator implements IChangeCalculator{
+public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculator{
 
-	private IChangeCalculator _typeChangeCalculator;
+	private IASTNodeChangeCalculator _typeChangeCalculator;
 
 	@Inject
-	public CompilationUnitChangeCalculator(@Type IChangeCalculator _typeChangeCalculator)
+	public CompilationUnitChangeCalculator(@Type IASTNodeChangeCalculator _typeChangeCalculator)
 	{
 		this._typeChangeCalculator = _typeChangeCalculator;
 	}

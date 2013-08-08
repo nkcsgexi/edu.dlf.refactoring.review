@@ -11,14 +11,14 @@ import edu.dlf.refactoring.design.JavaElementPair;
 
 public class ChangeComponent{
 	
-	private final IChangeCalculator cuCalculator;
-	private final IChangeCalculator packageCalculator;
-	private final IChangeCalculator projectCalculator;
+	private final IJavaModelChangeCalculator cuCalculator;
+	private final IJavaModelChangeCalculator packageCalculator;
+	private final IJavaModelChangeCalculator projectCalculator;
 
 	@Inject
-	public ChangeComponent(@JavaProject IChangeCalculator projectCalculator,
-			@SourcePackage IChangeCalculator packageCalculator, 
-			@CompilationUnit IChangeCalculator cuCalculator)
+	public ChangeComponent(@JavaProject IJavaModelChangeCalculator projectCalculator,
+			@SourcePackage IJavaModelChangeCalculator packageCalculator, 
+			@CompilationUnit IJavaModelChangeCalculator cuCalculator)
 	{
 		this.projectCalculator = projectCalculator;
 		this.packageCalculator = packageCalculator;

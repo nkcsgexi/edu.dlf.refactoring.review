@@ -2,19 +2,19 @@ package edu.dlf.refactoring.change.calculator;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.change.IChangeCalculator;
+import edu.dlf.refactoring.change.IJavaModelChangeCalculator;
 import edu.dlf.refactoring.change.JavaModelLevelAnnotation.CompilationUnit;
 import edu.dlf.refactoring.change.JavaModelLevelAnnotation.SourcePackage;
 import edu.dlf.refactoring.design.JavaElementPair;
 
-public class ProjectChangeCalculator implements IChangeCalculator{
+public class ProjectChangeCalculator implements IJavaModelChangeCalculator{
 	
-	private final IChangeCalculator _pChangeCalculator;
-	private final IChangeCalculator _cuChangeCalculator;
+	private final IJavaModelChangeCalculator _pChangeCalculator;
+	private final IJavaModelChangeCalculator _cuChangeCalculator;
 
 	@Inject
-	public ProjectChangeCalculator(@CompilationUnit IChangeCalculator _cuChangeCalculator, 
-			@SourcePackage IChangeCalculator _pChangeCalculator)
+	public ProjectChangeCalculator(@CompilationUnit IJavaModelChangeCalculator _cuChangeCalculator, 
+			@SourcePackage IJavaModelChangeCalculator _pChangeCalculator)
 	{
 		this._cuChangeCalculator = _cuChangeCalculator;
 		this._pChangeCalculator = _pChangeCalculator;

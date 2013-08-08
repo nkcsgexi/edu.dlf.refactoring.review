@@ -11,14 +11,19 @@ import java.lang.annotation.Target;
 
 import com.google.inject.BindingAnnotation;
 
-public class JavaModelLevelAnnotation {
+public class ASTAnnotations {
+	
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface IfStatement {}
 
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
-		public @interface JavaProject {}
-
+		public @interface Block {}
+		
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
-		public @interface SourcePackage {}
-
+		public @interface Type {}
+		
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
-		public @interface CompilationUnit {}
+		public @interface Method {}		
+
 }
+

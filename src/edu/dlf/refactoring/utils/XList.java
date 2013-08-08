@@ -10,32 +10,34 @@ import java.util.List;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
-public class XArrayList<T> extends ArrayList<T> {
+public class XList<T> extends ArrayList<T> {
 
 	private static final long serialVersionUID = 4763945155939258143L;
 
-	public XArrayList() {
+	public XList() {
 		super();
 	}
 	
-	public static <S> XArrayList<S> CreateList()
+	public static <S> XList<S> CreateList()
 	{
-		return new XArrayList<S>();
+		return new XList<S>();
 	}
 	
+	
+	
 
-	public XArrayList(Collection<? extends T> list) {
+	public XList(Collection<? extends T> list) {
 		super();
 		this.addAll(list);
 	}
 
-	public XArrayList(T[] elements) {
+	public XList(T[] elements) {
 		super();
 		this.addAll(Arrays.asList(elements));
 	}
 
-	public XArrayList<T> where(Predicate<T> predicate) throws Exception {
-		XArrayList<T> list = new XArrayList<T>();
+	public XList<T> where(Predicate<T> predicate) throws Exception {
+		XList<T> list = new XList<T>();
 		for(T t : this)
 		{
 			if(predicate.apply(t))
@@ -62,18 +64,18 @@ public class XArrayList<T> extends ArrayList<T> {
 		}	
 	}
 
-	public <S> XArrayList<S> select(Function<T, S> mapper) throws Exception {
+	public <S> XList<S> select(Function<T, S> mapper) throws Exception {
 		List<S> tempList = new ArrayList<S>();
 		for (T t : this) {
 			tempList.add(mapper.apply(t));
 		}
-		return new XArrayList<S>(tempList);
+		return new XList<S>(tempList);
 	}
 	
 	
-	public <S> XArrayList<S> selectMany(Function<T, Collection<S>> func)
+	public <S> XList<S> selectMany(Function<T, Collection<S>> func)
 	{
-		XArrayList<S> list = new XArrayList<S>();
+		XList<S> list = new XList<S>();
 		for(T t : this)
 		{
 			list.addAll(func.apply(t));
@@ -81,20 +83,20 @@ public class XArrayList<T> extends ArrayList<T> {
 		return list;
 	}
 
-	public <S> XArrayList<S> convert(Function<T, S> convertor)
+	public <S> XList<S> convert(Function<T, S> convertor)
 			throws Exception {
 		List<S> tempList = new ArrayList<S>();
 		for (T t : this) {
 			tempList.add(convertor.apply(t));
 		}
-		return new XArrayList<S>(tempList);
+		return new XList<S>(tempList);
 	}
 
-	public XArrayList<T> orderBy(Comparator<T> comparator) {
+	public XList<T> orderBy(Comparator<T> comparator) {
 		ArrayList<T> tempList = new ArrayList<T>();
 		tempList.addAll(this);
 		Collections.sort(tempList, comparator);
-		return new XArrayList<T>(tempList);
+		return new XList<T>(tempList);
 	}
 
 	public T max(Comparator<T> comparator) {
@@ -129,7 +131,7 @@ public class XArrayList<T> extends ArrayList<T> {
 		return this.size() > 0;
 	}
 	
-	public <S> XArrayList<S> cast(Class S) throws Exception
+	public <S> XList<S> cast(Class S) throws Exception
 	{
 		return this.select(new Function<T, S>(){
 			@Override

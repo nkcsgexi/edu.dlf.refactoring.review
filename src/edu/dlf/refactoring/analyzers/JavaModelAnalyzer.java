@@ -11,7 +11,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import com.google.common.base.Predicate;
 
 import edu.dlf.refactoring.design.ServiceLocator;
-import edu.dlf.refactoring.utils.XArrayList;
+import edu.dlf.refactoring.utils.XList;
 
 
 public class JavaModelAnalyzer {
@@ -23,11 +23,11 @@ public class JavaModelAnalyzer {
 		throw new Exception();
 	}
 	
-	public static XArrayList<IJavaElement> getSourcePackages(IJavaElement project)
+	public static XList<IJavaElement> getSourcePackages(IJavaElement project)
 	{
-		XArrayList<IPackageFragment> packages;
+		XList<IPackageFragment> packages;
 		try {
-			packages = new XArrayList<IPackageFragment>
+			packages = new XList<IPackageFragment>
 				(((IJavaProject)project).getPackageFragments());
 			return packages.where(new Predicate<IPackageFragment>(){
 				@Override
@@ -41,26 +41,26 @@ public class JavaModelAnalyzer {
 				}}).cast(IJavaElement.class);
 		} catch (Exception e) {
 			log.fatal(e);
-			return new XArrayList<IJavaElement>();
+			return new XList<IJavaElement>();
 		}
 	}
 	
-	public static XArrayList<IJavaElement> getCompilationUnits(IJavaElement packageEle)
+	public static XList<IJavaElement> getCompilationUnits(IJavaElement packageEle)
 	{
-		XArrayList<ICompilationUnit> list;
+		XList<ICompilationUnit> list;
 		try {
-			list = new XArrayList<ICompilationUnit>(
+			list = new XList<ICompilationUnit>(
 					((IPackageFragment) packageEle).getCompilationUnits());
 			return list.cast(IJavaElement.class);
 		} catch (Exception e) {
 			log.fatal(e);
-			return new XArrayList<IJavaElement>();
+			return new XList<IJavaElement>();
 		}
 	}
 	
-	public static XArrayList<IJavaElement> getTypes(IJavaElement cu)
+	public static XList<IJavaElement> getTypes(IJavaElement cu)
 	{
-		XArrayList<IJavaElement> list = XArrayList.CreateList();
+		XList<IJavaElement> list = XList.CreateList();
 		try {
 			IType[] types = ((ICompilationUnit)cu).getAllTypes();
 			for(IJavaElement type : types)
@@ -74,24 +74,24 @@ public class JavaModelAnalyzer {
 		}
 	}
 	
-	public static XArrayList<IJavaElement> getMethods(IJavaElement type)
+	public static XList<IJavaElement> getMethods(IJavaElement type)
 	{
 		try {
-			XArrayList<IJavaElement> list = new XArrayList<IJavaElement>(((IType) type).getMethods());
+			XList<IJavaElement> list = new XList<IJavaElement>(((IType) type).getMethods());
 			return list;
 		} catch (Exception e) {
 			log.fatal(e);
-			return XArrayList.CreateList();
+			return XList.CreateList();
 		}
 	}
 	
-	public static XArrayList<IJavaElement> getFields(IJavaElement type)
+	public static XList<IJavaElement> getFields(IJavaElement type)
 	{
 		try {
-			return new XArrayList<IJavaElement>(((IType)type).getFields());
+			return new XList<IJavaElement>(((IType)type).getFields());
 		} catch (Exception e) {
 			log.fatal(e);
-			return XArrayList.CreateList();
+			return XList.CreateList();
 		}
 	}
 }
