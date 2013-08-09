@@ -8,38 +8,43 @@ import org.eclipse.jdt.core.dom.ASTParser;
 
 public class ASTAnalyzer {
 
-	private ASTAnalyzer() throws Exception
-	{
+	private ASTAnalyzer() throws Exception {
 		throw new Exception();
 	}
-	
-	public static ASTNode parseICompilationUnit(IJavaElement icu)
-	{
+
+	public static ASTNode parseICompilationUnit(IJavaElement icu) {
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
-	    parser.setKind(ASTParser.K_COMPILATION_UNIT);
-	    parser.setSource((ICompilationUnit)icu);
-	    parser.setResolveBindings(true);
-	    return parser.createAST(null);
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		parser.setSource((ICompilationUnit) icu);
+		parser.setResolveBindings(true);
+		return parser.createAST(null);
 	}
-	
-	public static ASTNode parseStatements(String source)
-	{
+
+	public static ASTNode parseStatements(String source) {
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setKind(ASTParser.K_STATEMENTS);
 		parser.setSource(source.toCharArray());
 		parser.setResolveBindings(true);
 		return parser.createAST(null);
 	}
-	 
-	public static ASTNode parseExpression(String source)
-	{
+
+	public static ASTNode parseExpression(String source) {
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setKind(ASTParser.K_EXPRESSION);
 		parser.setSource(source.toCharArray());
 		parser.setResolveBindings(true);
 		return parser.createAST(null);
 	}
-	
-	
-	
+
+	public static boolean areASTNodesSame(ASTNode before, ASTNode after) {
+		
+		if(before == null && after == null)
+			return true;
+		if(before == null || after == null)
+			return false;
+		String bs = StringUtils.RemoveWhiteSpace(before.toString());
+		String as = StringUtils.RemoveWhiteSpace(after.toString());
+		return as.equals(bs);
+	}
+
 }

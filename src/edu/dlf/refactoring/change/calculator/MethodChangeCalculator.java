@@ -21,7 +21,7 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 	Logger logger = ServiceLocator.ResolveType(Logger.class);
 	
 	@Override
-	public Void CalculateASTNodeChange(ASTNodePair pair) {
+	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
 		
 		MethodDeclaration methodBefore = (MethodDeclaration) pair.getNodeBefore();
 		MethodDeclaration methodAfter = (MethodDeclaration) pair.getNodeBefore();
@@ -46,7 +46,7 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 		{
 			if(diff.getType() == TYPE.CHANGE)
 			{
-			 
+				
 			}
 			else if(diff.getType() == TYPE.DELETE)
 			{

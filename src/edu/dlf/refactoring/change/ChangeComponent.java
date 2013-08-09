@@ -4,9 +4,9 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.google.inject.Inject;
-import edu.dlf.refactoring.change.JavaModelLevelAnnotation.CompilationUnit;
-import edu.dlf.refactoring.change.JavaModelLevelAnnotation.JavaProject;
-import edu.dlf.refactoring.change.JavaModelLevelAnnotation.SourcePackage;
+import edu.dlf.refactoring.change.JavaModelAnnotation.CompilationUnit;
+import edu.dlf.refactoring.change.JavaModelAnnotation.JavaProject;
+import edu.dlf.refactoring.change.JavaModelAnnotation.SourcePackage;
 import edu.dlf.refactoring.design.JavaElementPair;
 
 public class ChangeComponent{

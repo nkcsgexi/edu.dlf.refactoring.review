@@ -1,8 +1,9 @@
 package edu.dlf.refactoring.change;
 
 import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.ISourceChange;
 
 public interface IASTNodeChangeCalculator {
 
-	Void CalculateASTNodeChange(ASTNodePair pair);
+	ISourceChange CalculateASTNodeChange(ASTNodePair pair);
 }

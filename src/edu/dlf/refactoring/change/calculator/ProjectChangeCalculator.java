@@ -3,8 +3,8 @@ package edu.dlf.refactoring.change.calculator;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.change.IJavaModelChangeCalculator;
-import edu.dlf.refactoring.change.JavaModelLevelAnnotation.CompilationUnit;
-import edu.dlf.refactoring.change.JavaModelLevelAnnotation.SourcePackage;
+import edu.dlf.refactoring.change.JavaModelAnnotation.CompilationUnit;
+import edu.dlf.refactoring.change.JavaModelAnnotation.SourcePackage;
 import edu.dlf.refactoring.design.JavaElementPair;
 
 public class ProjectChangeCalculator implements IJavaModelChangeCalculator{

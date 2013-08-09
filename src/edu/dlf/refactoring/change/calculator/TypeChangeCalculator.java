@@ -4,9 +4,8 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.change.ASTAnnotations.Method;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
-import edu.dlf.refactoring.change.IJavaModelChangeCalculator;
 import edu.dlf.refactoring.design.ASTNodePair;
-import edu.dlf.refactoring.design.JavaElementPair;
+import edu.dlf.refactoring.design.ISourceChange;
 
 public class TypeChangeCalculator implements IASTNodeChangeCalculator{
 
@@ -21,7 +20,7 @@ public class TypeChangeCalculator implements IASTNodeChangeCalculator{
 
 
 	@Override
-	public Void CalculateASTNodeChange(ASTNodePair pair) {
+	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
 		// TODO Auto-generated method stub
 		return null;
 	}

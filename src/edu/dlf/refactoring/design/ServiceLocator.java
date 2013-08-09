@@ -15,21 +15,25 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
 import edu.dlf.refactoring.change.ASTAnnotations.Block;
+import edu.dlf.refactoring.change.ASTAnnotations.Expression;
 import edu.dlf.refactoring.change.ASTAnnotations.IfStatement;
 import edu.dlf.refactoring.change.ASTAnnotations.Method;
+import edu.dlf.refactoring.change.ASTAnnotations.Statement;
 import edu.dlf.refactoring.change.ASTAnnotations.Type;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.IJavaModelChangeCalculator;
-import edu.dlf.refactoring.change.JavaModelLevelAnnotation.CompilationUnit;
-import edu.dlf.refactoring.change.JavaModelLevelAnnotation.JavaProject;
-import edu.dlf.refactoring.change.JavaModelLevelAnnotation.SourcePackage;
+import edu.dlf.refactoring.change.JavaModelAnnotation.CompilationUnit;
+import edu.dlf.refactoring.change.JavaModelAnnotation.JavaProject;
+import edu.dlf.refactoring.change.JavaModelAnnotation.SourcePackage;
 import edu.dlf.refactoring.change.calculator.BlockChangeCalculator;
 import edu.dlf.refactoring.change.calculator.CompilationUnitChangeCalculator;
 import edu.dlf.refactoring.change.calculator.IfStatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.MethodChangeCalculator;
 import edu.dlf.refactoring.change.calculator.ProjectChangeCalculator;
 import edu.dlf.refactoring.change.calculator.SourcePackageChangeCalculator;
+import edu.dlf.refactoring.change.calculator.StatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.TypeChangeCalculator;
+import edu.dlf.refactoring.change.calculator.expression.ExpressionChangeCalculator;
 import edu.dlf.refactoring.checkers.ExtractMethodChecker;
 import edu.dlf.refactoring.checkers.RenameMethodChecker;
 import edu.dlf.refactoring.checkers.RenameTypeChecker;
@@ -68,8 +72,9 @@ public class ServiceLocator extends AbstractModule
 		bind(IASTNodeChangeCalculator.class).annotatedWith(Method.class).to(MethodChangeCalculator.class);
 		bind(IASTNodeChangeCalculator.class).annotatedWith(Type.class).to(TypeChangeCalculator.class);
 		bind(IASTNodeChangeCalculator.class).annotatedWith(IfStatement.class).to(IfStatementChangeCalculator.class);
+		bind(IASTNodeChangeCalculator.class).annotatedWith(Statement.class).to(StatementChangeCalculator.class);
 		bind(IASTNodeChangeCalculator.class).annotatedWith(Block.class).to(BlockChangeCalculator.class);
-		
+		bind(IASTNodeChangeCalculator.class).annotatedWith(Expression.class).to(ExpressionChangeCalculator.class);
 		
 		bind(EventBus.class).to(RefactoringEventBus.class).in(Singleton.class);
 	}

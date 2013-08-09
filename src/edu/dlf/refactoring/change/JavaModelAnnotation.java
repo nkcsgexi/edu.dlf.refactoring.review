@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 import com.google.inject.BindingAnnotation;
 
-public class JavaModelLevelAnnotation {
+public class JavaModelAnnotation {
 
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface JavaProject {}
