@@ -44,8 +44,8 @@ public class ASTAnalyzer {
 			return true;
 		if(before == null || after == null)
 			return false;
-		String bs = StringUtils.RemoveWhiteSpace(before.toString());
-		String as = StringUtils.RemoveWhiteSpace(after.toString());
+		String bs = XStringUtils.RemoveWhiteSpace(before.toString());
+		String as = XStringUtils.RemoveWhiteSpace(after.toString());
 		return as.equals(bs);
 	}
 	
