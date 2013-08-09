@@ -37,34 +37,10 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 
 	private void compareBody(Block b1, Block b2) throws Exception
 	{
-		XList<ASTNode> nodesBefore = new XList(b1.statements()).cast(ASTNode.class);
-		XList<ASTNode> nodesAfter = new XList(b2.statements()).cast(ASTNode.class);	
-		XList<String> statementsBefore = nodesBefore.cast(String.class);
-		XList<String> statementsAfter = nodesAfter.cast(String.class);
-		List<Delta> diffs = DiffUtils.diff(statementsBefore, statementsAfter).getDeltas();
-		for(Delta diff : diffs)
-		{
-			if(diff.getType() == TYPE.CHANGE)
-			{
-				
-			}
-			else if(diff.getType() == TYPE.DELETE)
-			{
-
-			 
-			} else if(diff.getType() == TYPE.INSERT)
-			{
 		
-			}
-		}
 	}
 	
 
-	private class MethodSourceChange implements ISourceChange
-	{
-		
-		
-	}
 	
 
 }

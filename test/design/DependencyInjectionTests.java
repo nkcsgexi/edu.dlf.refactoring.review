@@ -9,10 +9,10 @@ import org.junit.Test;
 import com.google.common.eventbus.EventBus;
 
 import edu.dlf.refactoring.change.ChangeComponent;
-import edu.dlf.refactoring.change.calculator.BlockChangeCalculator;
-import edu.dlf.refactoring.change.calculator.IfStatementChangeCalculator;
-import edu.dlf.refactoring.change.calculator.StatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.ExpressionChangeCalculator;
+import edu.dlf.refactoring.change.calculator.statement.BlockChangeCalculator;
+import edu.dlf.refactoring.change.calculator.statement.IfStatementChangeCalculator;
+import edu.dlf.refactoring.change.calculator.statement.StatementChangeCalculator;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.processors.ExtractMethodProcessor;
 import edu.dlf.refactoring.processors.RenameMethodProcessor;

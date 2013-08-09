@@ -6,6 +6,8 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 
+import edu.dlf.refactoring.utils.IEqualityComparer;
+
 public class ASTAnalyzer {
 
 	private ASTAnalyzer() throws Exception {
@@ -45,6 +47,16 @@ public class ASTAnalyzer {
 		String bs = StringUtils.RemoveWhiteSpace(before.toString());
 		String as = StringUtils.RemoveWhiteSpace(after.toString());
 		return as.equals(bs);
+	}
+	
+	
+	public static IEqualityComparer<ASTNode> getASTEqualityComparer()
+	{
+		return new IEqualityComparer<ASTNode>(){
+			@Override
+			public boolean AreEqual(ASTNode a, ASTNode b) {
+				return areASTNodesSame(a, b);
+			}};
 	}
 
 }

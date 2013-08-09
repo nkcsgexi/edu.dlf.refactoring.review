@@ -2,7 +2,7 @@ package edu.dlf.refactoring.change.calculator;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.change.ASTAnnotations.Type;
+import edu.dlf.refactoring.change.ASTAnnotations.TypeDeclarationAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.IJavaModelChangeCalculator;
 import edu.dlf.refactoring.design.JavaElementPair;
@@ -12,7 +12,7 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	private IASTNodeChangeCalculator _typeChangeCalculator;
 
 	@Inject
-	public CompilationUnitChangeCalculator(@Type IASTNodeChangeCalculator _typeChangeCalculator)
+	public CompilationUnitChangeCalculator(@TypeDeclarationAnnotation IASTNodeChangeCalculator _typeChangeCalculator)
 	{
 		this._typeChangeCalculator = _typeChangeCalculator;
 	}

@@ -23,9 +23,6 @@ public class XList<T> extends ArrayList<T> {
 		return new XList<S>();
 	}
 	
-	
-	
-
 	public XList(Collection<? extends T> list) {
 		super();
 		this.addAll(list);
@@ -166,6 +163,31 @@ public class XList<T> extends ArrayList<T> {
 		}
 		return sb.toString();
 	}
+	
+	public XList<T> Except(XList<T> list, IEqualityComparer<T> compare)
+	{
+		
+		XList<T> results = CreateList();
+		for(T t : this)
+		{
+			boolean isCommon = false;
+			
+			for (T another : list) {
+				if(compare.AreEqual(t, another))
+				{
+					isCommon = true;
+					break;
+				}
+			}
+			if(!isCommon)
+			{
+				results.add(t);
+			}
+		}
+		return results;
+	}
+	
+	
 
 	public String toString() {
 		return toString("\r\n");
