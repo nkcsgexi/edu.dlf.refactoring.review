@@ -77,19 +77,16 @@ public class BlockChangeCalculator implements IASTNodeChangeCalculator{
 							afterSts.get(diff.getRevised().getPosition() + i)	
 						)));
 					}
-					
 					if(diff.getOriginal().getLines().size() > changeCount)
 					{
 						container.addMultiSubChanges(CreateRemoveStatements(beforeSts.subList(changeCount, 
 								beforeSts.size() - 1)));
 					}
-					
 					if(diff.getRevised().getLines().size() > changeCount)
 					{
 						container.addMultiSubChanges(CreateAddStatements(afterSts.subList(changeCount, 
 								afterSts.size() - 1)));
 					}
-					
 				}
 				else if(diff.getType() == TYPE.DELETE)
 				{

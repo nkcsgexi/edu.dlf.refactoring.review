@@ -48,8 +48,8 @@ public class VariableDeclarationChangeCalculator implements IASTNodeChangeCalcul
 		XList<ASTNode> fragA =  new XList<ASTNode>((ASTNode[]) vdAfter.getStructuralProperty(VariableDeclarationExpression.
 				FRAGMENTS_PROPERTY));
 		
-		XList<ASTNode> changedFragB = fragB.Except(fragA, ASTAnalyzer.getASTEqualityComparer());
-		XList<ASTNode> changedFragA = fragA.Except(fragB, ASTAnalyzer.getASTEqualityComparer());
+		XList<ASTNode> changedFragB = fragB.except(fragA, ASTAnalyzer.getASTEqualityComparer());
+		XList<ASTNode> changedFragA = fragA.except(fragB, ASTAnalyzer.getASTEqualityComparer());
 		
 		
 		

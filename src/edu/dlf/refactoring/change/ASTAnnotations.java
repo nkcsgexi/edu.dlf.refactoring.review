@@ -23,10 +23,12 @@ public class ASTAnnotations extends AbstractModule{
 	
 		//
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface SimpleNameAnnotation {}
+	
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface TypeAnnotation {}
 
-	
-	
+
 		// Expressions
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface ExpressionAnnotation {}
@@ -57,12 +59,12 @@ public class ASTAnnotations extends AbstractModule{
 		public @interface TypeDeclarationAnnotation {}
 		
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
-		public @interface MethodAnnotation {}
+		public @interface MethodDeclarationAnnotation {}
 
 		
 		@Override
 		protected void configure() {
-			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodAnnotation.class).to(MethodChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodDeclarationAnnotation.class).to(MethodChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(TypeDeclarationAnnotation.class).to(TypeChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(IfStatementAnnotation.class).to(IfStatementChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(StatementAnnotation.class).to(StatementChangeCalculator.class);
@@ -78,7 +80,7 @@ public class ASTAnnotations extends AbstractModule{
 			bindConstant().annotatedWith(IfStatementAnnotation.class).to("IfStatement");
 			bindConstant().annotatedWith(BlockAnnotation.class).to("Block");
 			bindConstant().annotatedWith(TypeDeclarationAnnotation.class).to("TypeDeclaration");
-			bindConstant().annotatedWith(MethodAnnotation.class).to("Method");
+			bindConstant().annotatedWith(MethodDeclarationAnnotation.class).to("Method");
 		}
 
 }

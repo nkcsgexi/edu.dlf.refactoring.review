@@ -164,7 +164,7 @@ public class XList<T> extends ArrayList<T> {
 		return sb.toString();
 	}
 	
-	public XList<T> Except(XList<T> list, IEqualityComparer<T> compare)
+	public XList<T> except(XList<T> list, IEqualityComparer<T> compare)
 	{
 		
 		XList<T> results = CreateList();
@@ -185,6 +185,35 @@ public class XList<T> extends ArrayList<T> {
 			}
 		}
 		return results;
+	}
+	
+	
+	public XList<T> intersect(XList<T> list, IEqualityComparer<T> compare)
+	{
+		XList<T> result = new XList<T>();
+		for(T t : this)
+		{
+			boolean isCommon = false;
+			for(T another : list)
+			{
+				if(compare.AreEqual(t, another))
+				{
+					isCommon = true;
+				}
+			}
+			if(isCommon)
+			{
+				result.add(t);
+			}
+				
+		}
+		return result;
+	}
+	
+	@Override
+	public XList<T> subList(int fromInclusive, int toExclusive)
+	{
+		return new XList<T>(this.subList(fromInclusive, toExclusive));
 	}
 	
 	
