@@ -11,4 +11,8 @@ public class XStringUtils {
 	{
 		return text.replaceAll("\\s","");
 	}
+
+	public static int distance(String string, String string2) {
+		return 0;
+	}
 }
