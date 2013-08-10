@@ -3,10 +3,12 @@ package edu.dlf.refactoring.change.calculator.expression;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 
+import com.google.inject.Inject;
+
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
-import edu.dlf.refactoring.change.ASTAnnotations.TypeAnnotation;
-import edu.dlf.refactoring.change.ASTAnnotations.VariableDeclarationAnnotation;
-import edu.dlf.refactoring.change.ASTAnnotations.VariableDeclarationFragmentAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.TypeAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationFragmentAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.design.ASTNodePair;
@@ -19,6 +21,7 @@ public class VariableDeclarationChangeCalculator implements IASTNodeChangeCalcul
 	private final IASTNodeChangeCalculator typeCalculator;
 	private final ChangeBuilder changeBuilder;
 	
+	@Inject
 	public VariableDeclarationChangeCalculator(
 			@TypeAnnotation IASTNodeChangeCalculator typeCalculator, 
 			@VariableDeclarationFragmentAnnotation IASTNodeChangeCalculator fragCalculator,

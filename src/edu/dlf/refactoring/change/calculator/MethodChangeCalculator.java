@@ -5,15 +5,18 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import com.google.common.base.Function;
+import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
-import edu.dlf.refactoring.change.ASTAnnotations.BlockAnnotation;
-import edu.dlf.refactoring.change.ASTAnnotations.MethodDeclarationAnnotation;
-import edu.dlf.refactoring.change.ASTAnnotations.SimpleNameAnnotation;
-import edu.dlf.refactoring.change.ASTAnnotations.VariableDeclarationAnnotation;
+import edu.dlf.refactoring.analyzers.XStringUtils;
+import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
+import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDistanceCalculator;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
@@ -25,12 +28,11 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 	private final IASTNodeChangeCalculator blCalculator;
 	private final ChangeBuilder changeBuilder;
 	private final IASTNodeChangeCalculator snCalculator;
-	private final IASTNodeMapStrategy mapStrategy;
 	private final IASTNodeChangeCalculator vdCalculator;
 
+	@Inject
 	public MethodChangeCalculator(
 			@MethodDeclarationAnnotation String changeLevel,
-			IASTNodeMapStrategy mapStrategy,
 			@SimpleNameAnnotation IASTNodeChangeCalculator snCalculator,
 			@VariableDeclarationAnnotation IASTNodeChangeCalculator vdCalculator,
 			@BlockAnnotation IASTNodeChangeCalculator blCalculator) {
@@ -38,7 +40,6 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 		this.snCalculator = snCalculator;
 		this.blCalculator = blCalculator;
 		this.vdCalculator = vdCalculator;
-		this.mapStrategy = mapStrategy;
 	}
 
 	@Override
@@ -64,8 +65,10 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 					ASTAnalyzer.getASTEqualityComparer());
 			XList<ASTNode> pnAfter = pAfter.intersect(pBefore,
 					ASTAnalyzer.getASTEqualityComparer());
-
-			container.addMultiSubChanges(this.mapStrategy.map(pnBefore, pnAfter).select(
+			
+			IASTNodeMapStrategy strategy = createMapStrategy();
+			
+			container.addMultiSubChanges(strategy.map(pnBefore, pnAfter).select(
 					new Function<ASTNodePair, ISourceChange>() {
 						@Override
 						public ISourceChange apply(ASTNodePair pair) {
@@ -81,6 +84,16 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 			logger.fatal(e);
 			return changeBuilder.createUnknownChange(pair);
 		}
+	}
+
+	private IASTNodeMapStrategy createMapStrategy() {
+		return new SimilarityASTNodeMapStrategy(new IDistanceCalculator(){
+			@Override
+			public int calculateDistance(ASTNode before, ASTNode after) {
+				String nb = before.getStructuralProperty(MethodDeclaration.NAME_PROPERTY).toString();
+				String na = after.getStructuralProperty(MethodDeclaration.NAME_PROPERTY).toString();
+				return XStringUtils.distance(nb, na);
+			}});
 	}
 
 }

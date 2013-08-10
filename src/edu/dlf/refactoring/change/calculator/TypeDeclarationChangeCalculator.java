@@ -11,8 +11,8 @@ import com.google.common.base.Function;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.XStringUtils;
-import edu.dlf.refactoring.change.ASTAnnotations.MethodDeclarationAnnotation;
-import edu.dlf.refactoring.change.ASTAnnotations.TypeDeclarationAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.TypeDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;

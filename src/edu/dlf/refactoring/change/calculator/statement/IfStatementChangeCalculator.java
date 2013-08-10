@@ -5,9 +5,9 @@ import org.eclipse.jdt.core.dom.IfStatement;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.change.ASTAnnotations.ExpressionAnnotation;
-import edu.dlf.refactoring.change.ASTAnnotations.IfStatementAnnotation;
-import edu.dlf.refactoring.change.ASTAnnotations.StatementAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.IfStatementAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.StatementAnnotation;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;

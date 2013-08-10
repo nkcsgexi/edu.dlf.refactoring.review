@@ -3,12 +3,13 @@ package edu.dlf.refactoring.change.calculator.expression;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 
-import edu.dlf.refactoring.change.ASTAnnotations.AssignmentAnnotation;
-import edu.dlf.refactoring.change.ASTAnnotations.ExpressionAnnotation;
-import edu.dlf.refactoring.change.ASTAnnotations.VariableDeclarationAnnotation;
+import com.google.inject.Inject;
+
 import edu.dlf.refactoring.change.ChangeBuilder;
+import edu.dlf.refactoring.change.ChangeComponentInjector.AssignmentAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
-import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 
@@ -18,7 +19,7 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 	private final IASTNodeChangeCalculator asCalculator;
 	private final ChangeBuilder changeBuilder;
 
-
+	@Inject
 	public ExpressionChangeCalculator(
 			@ExpressionAnnotation String changeLevel,
 			@VariableDeclarationAnnotation IASTNodeChangeCalculator vdCalculator,			

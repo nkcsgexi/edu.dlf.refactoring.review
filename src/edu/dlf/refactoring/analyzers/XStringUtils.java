@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.analyzers;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class XStringUtils {
 	
 	private XStringUtils() throws Exception
@@ -12,7 +14,7 @@ public class XStringUtils {
 		return text.replaceAll("\\s","");
 	}
 
-	public static int distance(String string, String string2) {
-		return 0;
+	public static int distance(String s1, String s2) {
+		return StringUtils.getLevenshteinDistance(s1, s2);
 	}
 }

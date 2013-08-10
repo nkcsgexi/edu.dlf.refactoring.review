@@ -4,9 +4,10 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.google.inject.Inject;
-import edu.dlf.refactoring.change.JavaModelAnnotation.CompilationUnit;
-import edu.dlf.refactoring.change.JavaModelAnnotation.JavaProject;
-import edu.dlf.refactoring.change.JavaModelAnnotation.SourcePackage;
+
+import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.JavaProjectAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.SourcePackageAnnotation;
 import edu.dlf.refactoring.design.JavaElementPair;
 
 public class ChangeComponent{
@@ -16,9 +17,9 @@ public class ChangeComponent{
 	private final IJavaModelChangeCalculator projectCalculator;
 
 	@Inject
-	public ChangeComponent(@JavaProject IJavaModelChangeCalculator projectCalculator,
-			@SourcePackage IJavaModelChangeCalculator packageCalculator, 
-			@CompilationUnit IJavaModelChangeCalculator cuCalculator)
+	public ChangeComponent(@JavaProjectAnnotation IJavaModelChangeCalculator projectCalculator,
+			@SourcePackageAnnotation IJavaModelChangeCalculator packageCalculator, 
+			@CompilationUnitAnnotation IJavaModelChangeCalculator cuCalculator)
 	{
 		this.projectCalculator = projectCalculator;
 		this.packageCalculator = packageCalculator;

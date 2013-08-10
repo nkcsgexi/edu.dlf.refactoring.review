@@ -4,8 +4,8 @@ import org.eclipse.jdt.core.dom.Assignment;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.change.ASTAnnotations.AssignmentAnnotation;
-import edu.dlf.refactoring.change.ASTAnnotations.ExpressionAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.AssignmentAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;

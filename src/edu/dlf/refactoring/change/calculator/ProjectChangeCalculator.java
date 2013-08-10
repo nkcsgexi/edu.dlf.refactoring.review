@@ -2,9 +2,10 @@ package edu.dlf.refactoring.change.calculator;
 
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.SourcePackageAnnotation;
 import edu.dlf.refactoring.change.IJavaModelChangeCalculator;
-import edu.dlf.refactoring.change.JavaModelAnnotation.CompilationUnit;
-import edu.dlf.refactoring.change.JavaModelAnnotation.SourcePackage;
+import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.JavaElementPair;
 
 public class ProjectChangeCalculator implements IJavaModelChangeCalculator{
@@ -13,8 +14,8 @@ public class ProjectChangeCalculator implements IJavaModelChangeCalculator{
 	private final IJavaModelChangeCalculator _cuChangeCalculator;
 
 	@Inject
-	public ProjectChangeCalculator(@CompilationUnit IJavaModelChangeCalculator _cuChangeCalculator, 
-			@SourcePackage IJavaModelChangeCalculator _pChangeCalculator)
+	public ProjectChangeCalculator(@CompilationUnitAnnotation IJavaModelChangeCalculator _cuChangeCalculator, 
+			@SourcePackageAnnotation IJavaModelChangeCalculator _pChangeCalculator)
 	{
 		this._cuChangeCalculator = _cuChangeCalculator;
 		this._pChangeCalculator = _pChangeCalculator;
@@ -22,7 +23,7 @@ public class ProjectChangeCalculator implements IJavaModelChangeCalculator{
 	
 	
 	@Override
-	public Void CalculateSourceChange(JavaElementPair pair) {
+	public ISourceChange CalculateSourceChange(JavaElementPair pair) {
 		
 		
 		

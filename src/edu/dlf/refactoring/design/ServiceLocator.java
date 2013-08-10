@@ -14,8 +14,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
-import edu.dlf.refactoring.change.ASTAnnotations;
-import edu.dlf.refactoring.change.JavaModelAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector;
 import edu.dlf.refactoring.checkers.ExtractMethodChecker;
 import edu.dlf.refactoring.checkers.RenameMethodChecker;
 import edu.dlf.refactoring.checkers.RenameTypeChecker;
@@ -49,8 +48,7 @@ public class ServiceLocator extends AbstractModule
 		
 		bind(EventBus.class).to(RefactoringEventBus.class).in(Singleton.class);
 		
-		this.install(new JavaModelAnnotation());
-		this.install(new ASTAnnotations());
+		this.install(new ChangeComponentInjector());
 	}
 	
 	
