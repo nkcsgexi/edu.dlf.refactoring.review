@@ -103,6 +103,8 @@ public class ChangeComponentInjector extends AbstractModule{
 		
 		private void bindASTCalculators()
 		{
+			bind(IASTNodeChangeCalculator.class).annotatedWith(CompilationUnitAnnotation.class)
+				.to(CompilationUnitChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodDeclarationAnnotation.class).to(MethodChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(TypeDeclarationAnnotation.class).to(TypeDeclarationChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(IfStatementAnnotation.class).to(IfStatementChangeCalculator.class);

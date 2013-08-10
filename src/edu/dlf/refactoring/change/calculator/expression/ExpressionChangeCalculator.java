@@ -37,7 +37,6 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 		if(change != null)
 			return change;
 		
-		
 		Expression expBefore, expAfter;
 		expBefore = (Expression) pair.getNodeBefore();
 		expAfter = (Expression) pair.getNodeAfter();

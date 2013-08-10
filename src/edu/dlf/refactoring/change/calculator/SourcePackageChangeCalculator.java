@@ -21,7 +21,7 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 	
 	
 	@Override
-	public ISourceChange CalculateSourceChange(JavaElementPair pair) {
+	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
 		
 		return null;
 	}

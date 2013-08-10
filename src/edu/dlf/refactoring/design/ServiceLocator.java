@@ -84,7 +84,6 @@ public class ServiceLocator extends AbstractModule
 		  
 		  return Logger.getRootLogger();
 	  }
-
 }
 
 

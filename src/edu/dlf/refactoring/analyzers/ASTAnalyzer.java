@@ -22,6 +22,16 @@ public class ASTAnalyzer {
 		return parser.createAST(null);
 	}
 
+	
+	public static ASTNode parseICompilationUnit(String code) {
+		ASTParser parser = ASTParser.newParser(AST.JLS4);
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		parser.setSource(code.toCharArray());
+		parser.setResolveBindings(true);
+		return parser.createAST(null);
+	}
+	
+	
 	public static ASTNode parseStatements(String source) {
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setKind(ASTParser.K_STATEMENTS);

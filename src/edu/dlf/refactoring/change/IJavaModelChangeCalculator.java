@@ -8,6 +8,6 @@ import edu.dlf.refactoring.design.JavaElementPair;
 public interface IJavaModelChangeCalculator
 {
 	@Subscribe
-	ISourceChange CalculateSourceChange(JavaElementPair pair);
+	ISourceChange CalculateJavaModelChange(JavaElementPair pair);
 }
 

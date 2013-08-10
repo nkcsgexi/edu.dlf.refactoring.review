@@ -23,7 +23,8 @@ import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.XList;
 
-public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculator{
+public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculator, 
+	IASTNodeChangeCalculator{
 
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	private final IASTNodeChangeCalculator typeChangeCalculator;
@@ -40,10 +41,19 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	
 	
 	@Override
-	public ISourceChange CalculateSourceChange(JavaElementPair pair) {
+	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
 		
 		ASTNode cuBefore = ASTAnalyzer.parseICompilationUnit(pair.GetBeforeElement());
 		ASTNode cuAfter = ASTAnalyzer.parseICompilationUnit(pair.GetAfterElement());
+		return CalculateASTNodeChange(new ASTNodePair(cuBefore, cuAfter));
+	}
+
+
+	@Override
+	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
+		
+		ASTNode cuBefore = pair.getNodeBefore();
+		ASTNode cuAfter = pair.getNodeAfter();
 		ASTNodePair aPair = new ASTNodePair(cuBefore, cuAfter);
 		
 		ISourceChange change = changeBuilder.buildSimpleChange(aPair);
@@ -76,7 +86,6 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 			logger.fatal(e);
 			return changeBuilder.createUnknownChange(aPair);
 		}
-		
 	}
 
 }

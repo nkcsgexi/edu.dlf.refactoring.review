@@ -29,9 +29,9 @@ public class ChangeComponent{
 	public Void listener(JavaElementPair change)
 	{
 		if(change.GetBeforeElement() instanceof IJavaProject)
-			projectCalculator.CalculateSourceChange(change);
+			projectCalculator.CalculateJavaModelChange(change);
 		if(change.GetBeforeElement() instanceof ICompilationUnit)
-			cuCalculator.CalculateSourceChange(change);
+			cuCalculator.CalculateJavaModelChange(change);
 		return null;
 	}
 

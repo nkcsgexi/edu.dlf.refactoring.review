@@ -23,7 +23,7 @@ public class ProjectChangeCalculator implements IJavaModelChangeCalculator{
 	
 	
 	@Override
-	public ISourceChange CalculateSourceChange(JavaElementPair pair) {
+	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
 		
 		
 		
