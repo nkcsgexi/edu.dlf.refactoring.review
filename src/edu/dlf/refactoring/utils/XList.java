@@ -128,6 +128,19 @@ public class XList<T> extends ArrayList<T> {
 		return this.size() > 0;
 	}
 	
+	public boolean any(Predicate<T> p)
+	{
+		for(T t : this)
+		{
+			if(p.apply(t))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 	public <S> XList<S> cast(Class S) throws Exception
 	{
 		return this.select(new Function<T, S>(){
@@ -217,7 +230,12 @@ public class XList<T> extends ArrayList<T> {
 	}
 	
 	
-
+	public XList<T> cloneList()
+	{
+		return subList(0, this.size());
+	}
+	
+	
 	public String toString() {
 		return toString("\r\n");
 	}

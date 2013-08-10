@@ -13,7 +13,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
 
 import edu.dlf.refactoring.change.calculator.MethodChangeCalculator;
-import edu.dlf.refactoring.change.calculator.TypeChangeCalculator;
+import edu.dlf.refactoring.change.calculator.TypeDeclarationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.ExpressionChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.BlockChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.IfStatementChangeCalculator;
@@ -65,7 +65,7 @@ public class ASTAnnotations extends AbstractModule{
 		@Override
 		protected void configure() {
 			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodDeclarationAnnotation.class).to(MethodChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(TypeDeclarationAnnotation.class).to(TypeChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(TypeDeclarationAnnotation.class).to(TypeDeclarationChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(IfStatementAnnotation.class).to(IfStatementChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(StatementAnnotation.class).to(StatementChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(BlockAnnotation.class).to(BlockChangeCalculator.class);
