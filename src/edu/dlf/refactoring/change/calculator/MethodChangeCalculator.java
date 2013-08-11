@@ -52,7 +52,7 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 		try {
 			SubChangeContainer container = changeBuilder.createSubchangeContainer();
 			MethodDeclaration methodBefore = (MethodDeclaration) pair.getNodeBefore();
-			MethodDeclaration methodAfter = (MethodDeclaration) pair.getNodeBefore();
+			MethodDeclaration methodAfter = (MethodDeclaration) pair.getNodeAfter();
 
 			container.addSubChange(snCalculator
 				.CalculateASTNodeChange(new ASTNodePair(methodBefore
@@ -60,15 +60,9 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 
 			XList<ASTNode> pBefore = new XList<ASTNode>(methodBefore.parameters());
 			XList<ASTNode> pAfter = new XList<ASTNode>(methodAfter.parameters());
-
-			XList<ASTNode> pnBefore = pBefore.intersect(pAfter,
-					ASTAnalyzer.getASTEqualityComparer());
-			XList<ASTNode> pnAfter = pAfter.intersect(pBefore,
-					ASTAnalyzer.getASTEqualityComparer());
 			
 			IASTNodeMapStrategy strategy = createMapStrategy();
-			
-			container.addMultiSubChanges(strategy.map(pnBefore, pnAfter).select(
+			container.addMultiSubChanges(strategy.map(pBefore, pAfter).select(
 					new Function<ASTNodePair, ISourceChange>() {
 						@Override
 						public ISourceChange apply(ASTNodePair pair) {

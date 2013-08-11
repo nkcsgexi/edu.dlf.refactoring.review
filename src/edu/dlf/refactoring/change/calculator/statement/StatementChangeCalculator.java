@@ -62,7 +62,7 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 				(ASTNode)pair.getNodeAfter().getStructuralProperty(ExpressionStatement.EXPRESSION_PROPERTY))));
 			return container;
 		}
-
+		
 		return changeBuilder.createUnknownChange(pair);
 	}
 

@@ -88,6 +88,10 @@ public class SourceChangeUtils {
 				lines.add(0, change.getSourceChangeLevel());
 				return lines;
 			}
+			
+			if(change.getSourceChangeType() == SourceChangeType.NULL)
+				return XList.CreateList();
+			
 			XList<String> temp = new XList<String>();
 			temp.add(change.getSourceChangeLevel());
 			return temp;
