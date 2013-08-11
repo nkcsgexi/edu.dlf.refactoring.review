@@ -1,6 +1,7 @@
 package edu.dlf.refactoring.design;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 
 import com.google.common.base.Function;
 
@@ -29,4 +30,14 @@ public class ASTNodePair {
 				func.apply(nodeAfter));
 	}
 	
+	
+	public ASTNodePair selectByPropertyDescriptor(final StructuralPropertyDescriptor 
+			descriptor)
+	{
+		return select(new Function<ASTNode,ASTNode>(){
+			@Override
+			public ASTNode apply(ASTNode node){
+				return (ASTNode) node.getStructuralProperty(descriptor);
+			}});
+	}
 }

@@ -1,14 +1,13 @@
 package edu.dlf.refactoring.change.calculator.statement;
 
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.IfStatement;
 
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.IfStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.StatementAnnotation;
-import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.design.ASTNodePair;
@@ -43,12 +42,12 @@ public class IfStatementChangeCalculator implements IASTNodeChangeCalculator {
 		IfStatement ifBefore = (IfStatement)pair.getNodeBefore();
 		IfStatement ifAfter = (IfStatement)pair.getNodeAfter();
 		SubChangeContainer container = changeBuilder.createSubchangeContainer();	
-		container.addSubChange(expressionChangeCalculator.CalculateASTNodeChange(new ASTNodePair(ifBefore.getExpression(), 
-			ifAfter.getExpression())));
-		container.addSubChange(statementChangeCalculator.CalculateASTNodeChange(new ASTNodePair(ifBefore.getThenStatement(), 
-			ifAfter.getThenStatement())));
-		container.addSubChange(statementChangeCalculator.CalculateASTNodeChange(new ASTNodePair(ifBefore.getElseStatement(),
-			ifAfter.getElseStatement())));
+		container.addSubChange(expressionChangeCalculator.CalculateASTNodeChange(new 
+				ASTNodePair(ifBefore.getExpression(), ifAfter.getExpression())));
+		container.addSubChange(statementChangeCalculator.CalculateASTNodeChange(new 
+				ASTNodePair(ifBefore.getThenStatement(), ifAfter.getThenStatement())));
+		container.addSubChange(statementChangeCalculator.CalculateASTNodeChange(new 
+				ASTNodePair(ifBefore.getElseStatement(), ifAfter.getElseStatement())));
 		return container;
 	}
 }
