@@ -49,8 +49,8 @@ public class BlockChangeCalculator implements IASTNodeChangeCalculator{
 			if(change != null)
 				return change;
 			SubChangeContainer container = changeBuilder.createSubchangeContainer();
-			XList<ASTNode> beforeSts = new XList(((Block)pair.getNodeBefore()).statements());
-			XList<ASTNode> afterSts =new XList(((Block)pair.getNodeAfter()).statements());
+			XList<ASTNode> beforeSts = new XList<ASTNode>(((Block)pair.getNodeBefore()).statements());
+			XList<ASTNode> afterSts =new XList<ASTNode>(((Block)pair.getNodeAfter()).statements());
 			
 			Function<String, String> spaceRemover = new Function<String, String>(){
 				@Override
@@ -58,9 +58,17 @@ public class BlockChangeCalculator implements IASTNodeChangeCalculator{
 					return XStringUtils.RemoveWhiteSpace(text);
 			}};
 			
-			XList<String> beforeLines = beforeSts.cast(String.class);
+			XList<String> beforeLines = beforeSts.select(new Function<ASTNode, String>(){
+				@Override
+				public String apply(ASTNode node) {
+					return node.toString();
+				}});
 			beforeLines = beforeLines.select(spaceRemover);
-			XList<String> afterLines = afterSts.cast(String.class);
+			XList<String> afterLines = afterSts.select(new Function<ASTNode, String>(){
+				@Override
+				public String apply(ASTNode node) {
+					return node.toString();
+				}});
 			afterLines = afterLines.select(spaceRemover);
 			
 			List<Delta> diffs = DiffUtils.diff(beforeLines, afterLines).getDeltas();
@@ -80,24 +88,24 @@ public class BlockChangeCalculator implements IASTNodeChangeCalculator{
 					if(diff.getOriginal().getLines().size() > changeCount)
 					{
 						container.addMultiSubChanges(CreateRemoveStatements(beforeSts.subList(changeCount, 
-								beforeSts.size() - 1)));
+								beforeSts.size())));
 					}
 					if(diff.getRevised().getLines().size() > changeCount)
 					{
 						container.addMultiSubChanges(CreateAddStatements(afterSts.subList(changeCount, 
-								afterSts.size() - 1)));
+								afterSts.size())));
 					}
 				}
 				else if(diff.getType() == TYPE.DELETE)
 				{
 					int start = diff.getOriginal().getPosition();
-					int end = start + diff.getOriginal().size() - 1;
+					int end = start + diff.getOriginal().size();
 					container.addMultiSubChanges(this.CreateRemoveStatements(beforeSts.subList(start, end)));
 					
 				} else if(diff.getType() == TYPE.INSERT)
 				{
 					int start = diff.getRevised().getPosition();
-					int end = start + diff.getRevised().size() - 1;
+					int end = start + diff.getRevised().size();
 					container.addMultiSubChanges(this.CreateAddStatements(afterSts.subList(start, end)));
 				}
 			}

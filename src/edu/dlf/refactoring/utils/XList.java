@@ -228,7 +228,13 @@ public class XList<T> extends ArrayList<T> {
 	@Override
 	public XList<T> subList(int fromInclusive, int toExclusive)
 	{
-		return new XList<T>(this.subList(fromInclusive, toExclusive));
+		XList<T> result = new XList<T>();
+		for(int i = fromInclusive; i < toExclusive; i ++)
+		{
+			result.add(this.get(i));
+		}
+		return result;
+	
 	}
 	
 	
