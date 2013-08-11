@@ -34,7 +34,7 @@ public class XList<T> extends ArrayList<T> {
 		this.addAll(Arrays.asList(elements));
 	}
 
-	public XList<T> where(Predicate<T> predicate) throws Exception {
+	public XList<T> where(Predicate<T> predicate) {
 		XList<T> list = new XList<T>();
 		for(T t : this)
 		{
@@ -46,23 +46,23 @@ public class XList<T> extends ArrayList<T> {
 		return list;
 	}
 
-	public boolean exist(Predicate<T> predicate) throws Exception {
+	public boolean exist(Predicate<T> predicate) {
 		return where(predicate).size() > 0;
 	}
 
-	public boolean all(final Predicate<T> predicate) throws Exception {
+	public boolean all(final Predicate<T> predicate){
 		return where(predicate).size() == size();
 	}
 	
 
-	public void operateOnElement(Function<T, Void> op) throws Exception {
+	public void operateOnElement(Function<T, Void> op) {
 		for(T t : this)
 		{
 			op.apply(t);
 		}	
 	}
 
-	public <S> XList<S> select(Function<T, S> mapper) throws Exception {
+	public <S> XList<S> select(Function<T, S> mapper) {
 		List<S> tempList = new ArrayList<S>();
 		for (T t : this) {
 			tempList.add(mapper.apply(t));
@@ -82,8 +82,7 @@ public class XList<T> extends ArrayList<T> {
 	}
 	
 
-	public <S> XList<S> convert(Function<T, S> convertor)
-			throws Exception {
+	public <S> XList<S> convert(Function<T, S> convertor) {
 		List<S> tempList = new ArrayList<S>();
 		for (T t : this) {
 			tempList.add(convertor.apply(t));
@@ -106,7 +105,7 @@ public class XList<T> extends ArrayList<T> {
 		return Collections.min(this, comparator);
 	}
 
-	public T first(Predicate<T> predicate) throws Exception {
+	public T first(Predicate<T> predicate) {
 		List<T> tempList = this.where(predicate);
 		if (tempList.size() > 0) {
 			return tempList.get(0);
@@ -114,7 +113,7 @@ public class XList<T> extends ArrayList<T> {
 		return null;
 	}
 
-	public T last(Predicate<T> predicate) throws Exception {
+	public T last(Predicate<T> predicate) {
 		List<T> tempList = this.where(predicate);
 		if (tempList.size() > 0) {
 			return tempList.get(tempList.size() - 1);
@@ -143,7 +142,7 @@ public class XList<T> extends ArrayList<T> {
 	}
 	
 	
-	public <S> XList<S> cast(Class S) throws Exception
+	public <S> XList<S> cast(Class S)
 	{
 		return this.select(new Function<T, S>(){
 			@Override
@@ -152,7 +151,7 @@ public class XList<T> extends ArrayList<T> {
 			}});
 	}
 
-	public int count(Predicate<T> pre) throws Exception {
+	public int count(Predicate<T> pre) {
 		int count = 0;
 		for (T t : this) {
 			if (pre.apply(t)) {
@@ -162,7 +161,7 @@ public class XList<T> extends ArrayList<T> {
 		return count;
 	}
 
-	public Double sum(Function<T, Double> convertor) throws Exception {
+	public Double sum(Function<T, Double> convertor) {
 		Double all = 0.0;
 		for (T t : this) {
 			all += convertor.apply(t);

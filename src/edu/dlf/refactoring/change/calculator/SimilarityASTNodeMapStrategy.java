@@ -39,8 +39,7 @@ public class SimilarityASTNodeMapStrategy implements IASTNodeMapStrategy{
 	
 	
 	@Override
-	public XList<ASTNodePair> map(final XList<ASTNode> beforeNodes,
-			final XList<ASTNode> afterNodes) throws Exception {
+	public XList<ASTNodePair> map(final XList<ASTNode> beforeNodes, final XList<ASTNode> afterNodes) {
 	
 		XList<Entry> entries = new XList<Entry>();
 			
