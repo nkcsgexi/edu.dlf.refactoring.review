@@ -12,6 +12,7 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.XStringUtils;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
@@ -27,12 +28,15 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	private final IASTNodeChangeCalculator mChangeCalculator;
 	private final ChangeBuilder changeBuilder;
+	private final IASTNodeChangeCalculator snChangeCalculator;
 	
 	@Inject
 	public TypeDeclarationChangeCalculator(
+			@SimpleNameAnnotation IASTNodeChangeCalculator snChangeCalculator,
 			@TypeDeclarationAnnotation String changeLevel,
 			@MethodDeclarationAnnotation IASTNodeChangeCalculator mChangeCalculator)
 	{
+		this.snChangeCalculator = snChangeCalculator;
 		this.mChangeCalculator = mChangeCalculator;
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
@@ -45,6 +49,13 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			return change;
 		try{
 			SubChangeContainer container = changeBuilder.createSubchangeContainer();
+			container.addSubChange(snChangeCalculator.CalculateASTNodeChange(pair.select
+					(new Function<ASTNode, ASTNode>(){
+				@Override
+				public ASTNode apply(ASTNode n) {
+					return (ASTNode) n.getStructuralProperty(TypeDeclaration.NAME_PROPERTY);
+				}})));
+			
 			TypeDeclaration typeB = (TypeDeclaration) pair.getNodeBefore();
 			TypeDeclaration typeA = (TypeDeclaration) pair.getNodeAfter();
 			
