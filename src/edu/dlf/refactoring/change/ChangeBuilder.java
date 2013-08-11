@@ -26,6 +26,11 @@ public class ChangeBuilder {
 		return new AddASTNodeChange(this.changeLevel, node);
 	}
 
+	public UpdateASTNodeChange createUpdateNodesChange(ASTNodePair pair)
+	{
+		return new UpdateASTNodeChange(pair, changeLevel);
+	}
+
 	public SubChangeContainer createSubchangeContainer()
 	{
 		return new SubChangeContainer(this.changeLevel);

@@ -30,6 +30,17 @@ public class SubChangeContainer implements ISourceChange{
 	{
 		return this.subChanges.toArray(new ISourceChange[0]);
 	}
+	
+	
+	public Void removeSubChanges(Collection<ISourceChange> toRemove)
+	{
+		for(ISourceChange rm : toRemove)
+		{
+			subChanges.remove(toRemove);
+		}
+		
+		return null;
+	}
 
 	@Override
 	public boolean hasSubChanges() {
@@ -39,5 +50,10 @@ public class SubChangeContainer implements ISourceChange{
 	@Override
 	public String getSourceChangeLevel() {
 		return changeLevel;
+	}
+
+	@Override
+	public SourceChangeType getSourceChangeType() {
+		return SourceChangeType.PARENT;
 	}
 }

@@ -26,4 +26,9 @@ public class UnknownSourceChange extends ASTNodePair implements ISourceChange {
 		return "UNKNOWN";
 	}
 
+	@Override
+	public SourceChangeType getSourceChangeType() {
+		return SourceChangeType.UNKNOWN;
+	}
+
 }

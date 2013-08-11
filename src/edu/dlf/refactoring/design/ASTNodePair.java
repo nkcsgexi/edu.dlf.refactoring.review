@@ -2,6 +2,8 @@ package edu.dlf.refactoring.design;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
+import com.google.common.base.Function;
+
 public class ASTNodePair {
 
 	private final ASTNode nodeAfter;
@@ -20,4 +22,11 @@ public class ASTNodePair {
 	public ASTNode getNodeAfter() {
 		return nodeAfter;
 	}
+	
+	public ASTNodePair select(Function<ASTNode, ASTNode> func)
+	{
+		return new ASTNodePair(func.apply(nodeBefore), 
+				func.apply(nodeAfter));
+	}
+	
 }

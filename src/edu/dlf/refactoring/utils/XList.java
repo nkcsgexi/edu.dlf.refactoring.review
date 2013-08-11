@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -79,6 +80,7 @@ public class XList<T> extends ArrayList<T> {
 		}
 		return list;
 	}
+	
 
 	public <S> XList<S> convert(Function<T, S> convertor)
 			throws Exception {
@@ -233,6 +235,25 @@ public class XList<T> extends ArrayList<T> {
 	public XList<T> cloneList()
 	{
 		return subList(0, this.size());
+	}
+	
+	
+	public T aggregate(IAggregator<T> operator)
+	{
+		 Iterator<T> it = this.iterator();
+		 T current = null;
+		 if(it.hasNext())
+			 current = it.next();
+		 while(it.hasNext())
+		 {
+			 current = operator.aggregate(current, it.next());
+		 }
+		 return current;
+	}
+	
+	public interface IAggregator<S>
+	{
+		S aggregate(S s1, S s2);
 	}
 	
 	

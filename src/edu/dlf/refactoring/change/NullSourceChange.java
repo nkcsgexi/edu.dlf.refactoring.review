@@ -26,6 +26,11 @@ public class NullSourceChange implements ISourceChange{
 		return changeLevel;
 	}
 
+	@Override
+	public SourceChangeType getSourceChangeType() {
+		return SourceChangeType.NULL;
+	}
+
 }
 	
 	

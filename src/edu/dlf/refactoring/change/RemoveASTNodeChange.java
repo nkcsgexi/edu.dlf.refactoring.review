@@ -35,4 +35,9 @@ public class RemoveASTNodeChange implements ISourceChange{
 		return this.changeLevel;
 	}
 
+	@Override
+	public SourceChangeType getSourceChangeType() {
+		return SourceChangeType.REMOVE;
+	}
+
 }

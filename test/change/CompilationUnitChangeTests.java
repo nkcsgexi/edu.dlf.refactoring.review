@@ -1,15 +1,19 @@
 package change;
 
 import junit.framework.TestSuite;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.junit.Before;
 import org.junit.Test;
+
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.FileUtils;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
+import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.change.calculator.CompilationUnitChangeCalculator;
 import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
 
 public class CompilationUnitChangeTests extends TestSuite{
@@ -31,7 +35,10 @@ public class CompilationUnitChangeTests extends TestSuite{
 				"TestCUBefore1.java"));
 		ASTNode cuAfter = ASTAnalyzer.parseICompilationUnit(FileUtils.readAll(testFileFolder + 
 				"TestCUAfter1.java"));
-		calculator.CalculateASTNodeChange(new ASTNodePair(cuBefore, cuAfter));
+		ISourceChange change = calculator.CalculateASTNodeChange(new ASTNodePair(cuBefore, cuAfter));
+		change = SourceChangeUtils.pruneSourceChange(change);
+		String s = SourceChangeUtils.printChangeTree(change);
+		System.out.println(s);
 	}
 	
 }

@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.change.calculator;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -59,11 +61,11 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 		ISourceChange change = changeBuilder.buildSimpleChange(aPair);
 		if(change != null)
 			return change;
-		
 		try{	
+			
 			SubChangeContainer container = changeBuilder.createSubchangeContainer();
-			ASTNode[] typesBefore = (ASTNode[]) cuBefore.getStructuralProperty(CompilationUnit.TYPES_PROPERTY);
-			ASTNode[] typesAfter = (ASTNode[]) cuAfter.getStructuralProperty(CompilationUnit.TYPES_PROPERTY);
+			List typesBefore =  (List) cuBefore.getStructuralProperty(CompilationUnit.TYPES_PROPERTY);
+			List typesAfter = (List) cuAfter.getStructuralProperty(CompilationUnit.TYPES_PROPERTY);
 			
 			IASTNodeMapStrategy mapper = new SimilarityASTNodeMapStrategy(new IDistanceCalculator(){
 				@Override
