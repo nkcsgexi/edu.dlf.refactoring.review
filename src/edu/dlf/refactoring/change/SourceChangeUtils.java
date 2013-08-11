@@ -93,7 +93,7 @@ public class SourceChangeUtils {
 				return XList.CreateList();
 			
 			XList<String> temp = new XList<String>();
-			temp.add(change.getSourceChangeLevel());
+			temp.add(change.getSourceChangeLevel() + ":" + change.getSourceChangeType().toString());
 			return temp;
 		}catch(Exception e)
 		{

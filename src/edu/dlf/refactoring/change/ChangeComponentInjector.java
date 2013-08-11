@@ -65,6 +65,11 @@ public class ChangeComponentInjector extends AbstractModule{
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface BlockAnnotation {}
 		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface DoStatementAnnotation {}
+		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface WhileStatementAnnotation {}
 		
 		// Others
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)

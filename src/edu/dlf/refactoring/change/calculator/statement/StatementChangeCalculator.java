@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.ForStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.IfStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.StatementAnnotation;
 import edu.dlf.refactoring.change.ChangeBuilder;
@@ -20,17 +21,20 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 	private final IASTNodeChangeCalculator blockCalculator;
 	private final IASTNodeChangeCalculator ifCalculator;
 	private final IASTNodeChangeCalculator expressionCalculator;
+	private final IASTNodeChangeCalculator fsCalculator;
 	private final ChangeBuilder changeBuilder;
-
+	
 	@Inject
 	public StatementChangeCalculator(
 			@StatementAnnotation String changeLevel,
 			@IfStatementAnnotation IASTNodeChangeCalculator ifCalculator,
+			@ForStatementAnnotation IASTNodeChangeCalculator fsCalculator,
 			@BlockAnnotation IASTNodeChangeCalculator blockCalculator, 
 			@ExpressionAnnotation IASTNodeChangeCalculator expressionCalculator) {
 		this.ifCalculator = ifCalculator;
 		this.blockCalculator = blockCalculator;
 		this.expressionCalculator = expressionCalculator;
+		this.fsCalculator = fsCalculator;
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
 
@@ -52,6 +56,11 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 		if(pair.getNodeBefore().getNodeType() == ASTNode.BLOCK)
 		{
 			return blockCalculator.CalculateASTNodeChange(pair);
+		}
+		
+		if(pair.getNodeBefore().getNodeType() == ASTNode.FOR_STATEMENT)
+		{
+			return fsCalculator.CalculateASTNodeChange(pair);
 		}
 		
 		if(pair.getNodeBefore().getNodeType() == ASTNode.EXPRESSION_STATEMENT)

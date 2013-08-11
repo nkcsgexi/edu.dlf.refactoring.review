@@ -6,6 +6,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 
+import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDistanceCalculator;
 import edu.dlf.refactoring.utils.IEqualityComparer;
 
 public class ASTAnalyzer {
@@ -57,6 +58,17 @@ public class ASTAnalyzer {
 		String bs = XStringUtils.RemoveWhiteSpace(before.toString());
 		String as = XStringUtils.RemoveWhiteSpace(after.toString());
 		return as.equals(bs);
+	}
+	
+	
+	public static IDistanceCalculator getASTNodeCompleteDistanceCalculator()
+	{
+		return new IDistanceCalculator(){
+			@Override
+			public int calculateDistance(ASTNode before, ASTNode after) {
+				return XStringUtils.distance(XStringUtils.RemoveWhiteSpace(before.toString()),
+						XStringUtils.RemoveWhiteSpace(after.toString()));
+			}};
 	}
 	
 	
