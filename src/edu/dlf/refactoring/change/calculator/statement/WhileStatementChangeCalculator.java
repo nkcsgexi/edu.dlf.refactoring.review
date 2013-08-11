@@ -3,6 +3,8 @@ package edu.dlf.refactoring.change.calculator.statement;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
+import com.google.inject.Inject;
+
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
@@ -20,6 +22,7 @@ public class WhileStatementChangeCalculator implements IASTNodeChangeCalculator{
 	private final IASTNodeChangeCalculator bCalculator;
 	private final Logger logger;
 
+	@Inject
 	public WhileStatementChangeCalculator(
 			@WhileStatementAnnotation String changeLevel, 
 			@BlockAnnotation IASTNodeChangeCalculator bCalculator,

@@ -24,9 +24,11 @@ import edu.dlf.refactoring.change.calculator.expression.TypeChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.VariableDeclarationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.VariableDeclarationFragmentChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.BlockChangeCalculator;
+import edu.dlf.refactoring.change.calculator.statement.DoStatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.ForStatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.IfStatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.StatementChangeCalculator;
+import edu.dlf.refactoring.change.calculator.statement.WhileStatementChangeCalculator;
 
 public class ChangeComponentInjector extends AbstractModule{
 	
@@ -121,6 +123,8 @@ public class ChangeComponentInjector extends AbstractModule{
 			bind(IASTNodeChangeCalculator.class).annotatedWith(StatementAnnotation.class).to(StatementChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(BlockAnnotation.class).to(BlockChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(ForStatementAnnotation.class).to(ForStatementChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(WhileStatementAnnotation.class).to(WhileStatementChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(DoStatementAnnotation.class).to(DoStatementChangeCalculator.class);
 			
 			bind(IASTNodeChangeCalculator.class).annotatedWith(ExpressionAnnotation.class).to(ExpressionChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(AssignmentAnnotation.class).to(AssignmentChangeCalculator.class);
@@ -141,10 +145,14 @@ public class ChangeComponentInjector extends AbstractModule{
 			bindConstant().annotatedWith(VariableDeclarationAnnotation.class).to("VariableDeclaration");
 			bindConstant().annotatedWith(VariableDeclarationFragmentAnnotation.class).to("VariableDeclarationFragment");
 			bindConstant().annotatedWith(AssignmentAnnotation.class).to("Assignment");
+			
 			bindConstant().annotatedWith(StatementAnnotation.class).to("Statement");
 			bindConstant().annotatedWith(ForStatementAnnotation.class).to("ForStatement");
 			bindConstant().annotatedWith(IfStatementAnnotation.class).to("IfStatement");
+			bindConstant().annotatedWith(WhileStatementAnnotation.class).to("WhileStatement");
+			bindConstant().annotatedWith(DoStatementAnnotation.class).to("DoStatement");
 			bindConstant().annotatedWith(BlockAnnotation.class).to("Block");
+			
 			bindConstant().annotatedWith(TypeDeclarationAnnotation.class).to("TypeDeclaration");
 			bindConstant().annotatedWith(MethodDeclarationAnnotation.class).to("Method");
 			bindConstant().annotatedWith(CompilationUnitAnnotation.class).to("CompilationUnit");

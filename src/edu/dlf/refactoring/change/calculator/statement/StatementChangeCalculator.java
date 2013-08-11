@@ -6,11 +6,13 @@ import org.eclipse.jdt.core.dom.ExpressionStatement;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.DoStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ForStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.IfStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.StatementAnnotation;
 import edu.dlf.refactoring.change.ChangeBuilder;
+import edu.dlf.refactoring.change.ChangeComponentInjector.WhileStatementAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.design.ASTNodePair;
@@ -23,18 +25,24 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 	private final IASTNodeChangeCalculator expressionCalculator;
 	private final IASTNodeChangeCalculator fsCalculator;
 	private final ChangeBuilder changeBuilder;
+	private final IASTNodeChangeCalculator dsCalculator;
+	private final IASTNodeChangeCalculator wsCalculator;
 	
 	@Inject
 	public StatementChangeCalculator(
 			@StatementAnnotation String changeLevel,
 			@IfStatementAnnotation IASTNodeChangeCalculator ifCalculator,
 			@ForStatementAnnotation IASTNodeChangeCalculator fsCalculator,
+			@DoStatementAnnotation IASTNodeChangeCalculator dsCalculator,
+			@WhileStatementAnnotation IASTNodeChangeCalculator wsCalculator,
 			@BlockAnnotation IASTNodeChangeCalculator blockCalculator, 
 			@ExpressionAnnotation IASTNodeChangeCalculator expressionCalculator) {
 		this.ifCalculator = ifCalculator;
 		this.blockCalculator = blockCalculator;
 		this.expressionCalculator = expressionCalculator;
 		this.fsCalculator = fsCalculator;
+		this.wsCalculator = wsCalculator;
+		this.dsCalculator = dsCalculator;
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
 
@@ -47,32 +55,28 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 		
 		if(pair.getNodeBefore().getNodeType() != pair.getNodeAfter().getNodeType())
 			return this.changeBuilder.createUnknownChange(pair);
-	
-		if(pair.getNodeBefore().getNodeType() == ASTNode.IF_STATEMENT)
+		
+		switch(pair.getNodeBefore().getNodeType())
 		{
+		case ASTNode.IF_STATEMENT:
 			return ifCalculator.CalculateASTNodeChange(pair);
-		}
-		
-		if(pair.getNodeBefore().getNodeType() == ASTNode.BLOCK)
-		{
+		case ASTNode.BLOCK:
 			return blockCalculator.CalculateASTNodeChange(pair);
-		}
-		
-		if(pair.getNodeBefore().getNodeType() == ASTNode.FOR_STATEMENT)
-		{
+		case ASTNode.FOR_STATEMENT:
 			return fsCalculator.CalculateASTNodeChange(pair);
-		}
-		
-		if(pair.getNodeBefore().getNodeType() == ASTNode.EXPRESSION_STATEMENT)
-		{
+		case ASTNode.WHILE_STATEMENT:
+			return wsCalculator.CalculateASTNodeChange(pair);
+		case ASTNode.DO_STATEMENT:
+			return dsCalculator.CalculateASTNodeChange(pair);
+		case ASTNode.EXPRESSION_STATEMENT:
 			SubChangeContainer container = this.changeBuilder.createSubchangeContainer();
 			container.addSubChange(expressionCalculator.CalculateASTNodeChange(new ASTNodePair(
 				(ASTNode)pair.getNodeBefore().getStructuralProperty(ExpressionStatement.EXPRESSION_PROPERTY), 
 				(ASTNode)pair.getNodeAfter().getStructuralProperty(ExpressionStatement.EXPRESSION_PROPERTY))));
 			return container;
+		default:
+			return changeBuilder.createUnknownChange(pair);
 		}
-		
-		return changeBuilder.createUnknownChange(pair);
 	}
 
 
