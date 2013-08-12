@@ -6,12 +6,16 @@ import org.eclipse.jdt.core.dom.ExpressionStatement;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.BreakStatementAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.ContinueStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.DoStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ForStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.IfStatementAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.ReturnStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.StatementAnnotation;
 import edu.dlf.refactoring.change.ChangeBuilder;
+import edu.dlf.refactoring.change.ChangeComponentInjector.ThrowStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TryStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.WhileStatementAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
@@ -29,6 +33,10 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 	private final IASTNodeChangeCalculator dsCalculator;
 	private final IASTNodeChangeCalculator wsCalculator;
 	private final IASTNodeChangeCalculator tsCalculator;
+	private final IASTNodeChangeCalculator bsCalculator;
+	private final IASTNodeChangeCalculator csCalculator;
+	private final IASTNodeChangeCalculator rsCalculator;
+	private final IASTNodeChangeCalculator thsCalculator;
 	
 	@Inject
 	public StatementChangeCalculator(
@@ -37,7 +45,11 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 			@ForStatementAnnotation IASTNodeChangeCalculator fsCalculator,
 			@DoStatementAnnotation IASTNodeChangeCalculator dsCalculator,
 			@WhileStatementAnnotation IASTNodeChangeCalculator wsCalculator,
-			@TryStatementAnnotation IASTNodeChangeCalculator tsCalculator,
+			@TryStatementAnnotation IASTNodeChangeCalculator tsCalculator,		
+			@BreakStatementAnnotation IASTNodeChangeCalculator bsCalculator,
+			@ContinueStatementAnnotation IASTNodeChangeCalculator csCalculator,
+			@ReturnStatementAnnotation IASTNodeChangeCalculator rsCalculator,
+			@ThrowStatementAnnotation IASTNodeChangeCalculator thsCalculator,
 			@BlockAnnotation IASTNodeChangeCalculator blockCalculator, 
 			@ExpressionAnnotation IASTNodeChangeCalculator expressionCalculator) {
 		this.ifCalculator = ifCalculator;
@@ -47,6 +59,11 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 		this.wsCalculator = wsCalculator;
 		this.dsCalculator = dsCalculator;
 		this.tsCalculator = tsCalculator;
+		this.bsCalculator = bsCalculator;
+		this.csCalculator = csCalculator;
+		this.rsCalculator = rsCalculator;
+		this.thsCalculator = thsCalculator;
+		
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
 
@@ -74,6 +91,14 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 			return dsCalculator.CalculateASTNodeChange(pair);
 		case ASTNode.TRY_STATEMENT:
 			return tsCalculator.CalculateASTNodeChange(pair);
+		case ASTNode.BREAK_STATEMENT:
+			return bsCalculator.CalculateASTNodeChange(pair);	
+		case ASTNode.CONTINUE_STATEMENT:
+			return csCalculator.CalculateASTNodeChange(pair);	
+		case ASTNode.RETURN_STATEMENT:
+			return rsCalculator.CalculateASTNodeChange(pair);	
+		case ASTNode.THROW_STATEMENT:
+			return thsCalculator.CalculateASTNodeChange(pair);	
 		case ASTNode.EXPRESSION_STATEMENT:
 			SubChangeContainer container = this.changeBuilder.createSubchangeContainer();
 			container.addSubChange(expressionCalculator.CalculateASTNodeChange(new ASTNodePair(

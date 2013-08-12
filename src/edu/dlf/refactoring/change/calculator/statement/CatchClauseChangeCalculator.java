@@ -2,6 +2,8 @@ package edu.dlf.refactoring.change.calculator.statement;
 
 import org.eclipse.jdt.core.dom.CatchClause;
 
+import com.google.inject.Inject;
+
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CatchClauseAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
@@ -17,6 +19,7 @@ public class CatchClauseChangeCalculator implements IASTNodeChangeCalculator {
 	private final IASTNodeChangeCalculator vdCalculator;
 	private final IASTNodeChangeCalculator blCalculator;
 
+	@Inject
 	public CatchClauseChangeCalculator(
 			@CatchClauseAnnotation String changeLevel,
 			@VariableDeclarationAnnotation IASTNodeChangeCalculator vdCalculator,
