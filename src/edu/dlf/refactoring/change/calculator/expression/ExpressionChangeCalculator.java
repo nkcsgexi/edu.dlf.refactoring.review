@@ -9,6 +9,7 @@ import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.AssignmentAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.InfixExpressionAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.MethodInvocationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.NameAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.PrePostFixExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
@@ -24,6 +25,7 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 	private final IASTNodeChangeCalculator nCalculator;
 	private final IASTNodeChangeCalculator ppfCalculator;
 	private final IASTNodeChangeCalculator infCalculator;
+	private final IASTNodeChangeCalculator miCalculator;
 
 	@Inject
 	public ExpressionChangeCalculator(
@@ -32,13 +34,15 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 			@AssignmentAnnotation IASTNodeChangeCalculator asCalculator,
 			@NameAnnotation IASTNodeChangeCalculator nCalculator,
 			@PrePostFixExpressionAnnotation IASTNodeChangeCalculator ppfCalculator,
-			@InfixExpressionAnnotation IASTNodeChangeCalculator infCalculator)
+			@InfixExpressionAnnotation IASTNodeChangeCalculator infCalculator,
+			@MethodInvocationAnnotation IASTNodeChangeCalculator miCalculator)
 	{
 		this.asCalculator = asCalculator;
 		this.vdCalculator = vdCalculator;
 		this.nCalculator = nCalculator;
 		this.ppfCalculator = ppfCalculator;
 		this.infCalculator = infCalculator;
+		this.miCalculator = miCalculator;
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
 	
@@ -83,6 +87,11 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 		if(expBefore.getNodeType() == ASTNode.INFIX_EXPRESSION)
 		{
 			return this.infCalculator.CalculateASTNodeChange(pair);
+		}
+		
+		if(expBefore.getNodeType() == ASTNode.METHOD_INVOCATION)
+		{
+			return this.miCalculator.CalculateASTNodeChange(pair);
 		}
 		
 		return changeBuilder.createUnknownChange(pair);

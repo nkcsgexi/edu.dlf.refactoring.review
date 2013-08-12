@@ -12,5 +12,18 @@ public class TestCUBefore1
 		{
 			
 		}
+		
+		int w;
+		
+		while(iw > 0)
+		{
+			w ++;
+		}
+		foo();
+	}
+	
+	public void foo()
+	{
+		System.out.println("");
 	}
 }

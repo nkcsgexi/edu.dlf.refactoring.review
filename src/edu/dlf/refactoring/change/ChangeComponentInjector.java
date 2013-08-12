@@ -20,6 +20,7 @@ import edu.dlf.refactoring.change.calculator.TypeDeclarationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.AssignmentChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.ExpressionChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.InfixExpressionChangeCalculator;
+import edu.dlf.refactoring.change.calculator.expression.MethodInvocationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.NameChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.PrePostFixExpressionChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.QualifiedNameChangeCalculator;
@@ -78,6 +79,9 @@ public class ChangeComponentInjector extends AbstractModule{
 		
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface LiteralAnnotation {}
+		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface MethodInvocationAnnotation {}		
 
 		
 		
@@ -199,6 +203,8 @@ public class ChangeComponentInjector extends AbstractModule{
 				to(PrePostFixExpressionChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(InfixExpressionAnnotation.class).
 				to(InfixExpressionChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodInvocationAnnotation.class).
+				to(MethodInvocationChangeCalculator.class);
 		}
 
 
@@ -214,6 +220,8 @@ public class ChangeComponentInjector extends AbstractModule{
 			bindConstant().annotatedWith(VariableDeclarationAnnotation.class).to("VariableDeclaration");
 			bindConstant().annotatedWith(VariableDeclarationFragmentAnnotation.class).to("VariableDeclarationFragment");
 			bindConstant().annotatedWith(AssignmentAnnotation.class).to("Assignment");
+			bindConstant().annotatedWith(MethodInvocationAnnotation.class).to("MethodInvocation");
+	
 			
 			bindConstant().annotatedWith(StatementAnnotation.class).to("Statement");
 			bindConstant().annotatedWith(ForStatementAnnotation.class).to("ForStatement");

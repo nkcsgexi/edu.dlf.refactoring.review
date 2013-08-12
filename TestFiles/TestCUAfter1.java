@@ -13,5 +13,18 @@ public class TestCUAfter1
 		{
 			
 		}
+		int w;
+		
+		while(w > 0)
+		{
+			w ++;
+		}
+		
+		foo1();
+	}
+	
+	public void foo1()
+	{
+		System.out.println("");
 	}
 }

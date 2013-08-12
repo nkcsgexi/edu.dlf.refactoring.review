@@ -1,7 +1,5 @@
 package edu.dlf.refactoring.change.calculator.expression;
 
-import org.eclipse.jdt.core.dom.Type;
-
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.change.ChangeBuilder;
