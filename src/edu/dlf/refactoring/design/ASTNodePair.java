@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 
 import com.google.common.base.Function;
 
+import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.utils.XList;
 
 public class ASTNodePair {
@@ -52,6 +53,15 @@ public class ASTNodePair {
 		XList<ASTNode> afterList = new XList<ASTNode>((List)this.getNodeAfter().
 				getStructuralProperty(descriptor));
 		return new XList[]{beforeList, afterList};
+	}
+
+	public boolean areASTNodesSame() {
+		return ASTAnalyzer.areASTNodesSame(nodeBefore, nodeAfter);
+	}
+	
+	public boolean areASTNodeTypesSame()
+	{
+		return nodeBefore.getNodeType() == nodeAfter.getNodeType();
 	}
 	
 }

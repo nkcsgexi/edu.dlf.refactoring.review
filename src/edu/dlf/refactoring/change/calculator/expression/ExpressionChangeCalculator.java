@@ -8,6 +8,9 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.AssignmentAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.InfixExpressionAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.NameAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.PrePostFixExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.design.ASTNodePair;
@@ -18,15 +21,24 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 	private final IASTNodeChangeCalculator vdCalculator;
 	private final IASTNodeChangeCalculator asCalculator;
 	private final ChangeBuilder changeBuilder;
+	private final IASTNodeChangeCalculator nCalculator;
+	private final IASTNodeChangeCalculator ppfCalculator;
+	private final IASTNodeChangeCalculator infCalculator;
 
 	@Inject
 	public ExpressionChangeCalculator(
 			@ExpressionAnnotation String changeLevel,
 			@VariableDeclarationAnnotation IASTNodeChangeCalculator vdCalculator,			
-			@AssignmentAnnotation IASTNodeChangeCalculator asCalculator)
+			@AssignmentAnnotation IASTNodeChangeCalculator asCalculator,
+			@NameAnnotation IASTNodeChangeCalculator nCalculator,
+			@PrePostFixExpressionAnnotation IASTNodeChangeCalculator ppfCalculator,
+			@InfixExpressionAnnotation IASTNodeChangeCalculator infCalculator)
 	{
 		this.asCalculator = asCalculator;
 		this.vdCalculator = vdCalculator;
+		this.nCalculator = nCalculator;
+		this.ppfCalculator = ppfCalculator;
+		this.infCalculator = infCalculator;
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
 	
@@ -54,6 +66,23 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 		if(expBefore.getNodeType() == ASTNode.VARIABLE_DECLARATION_EXPRESSION)
 		{
 			return this.vdCalculator.CalculateASTNodeChange(pair);
+		}
+		
+		if(expBefore.getNodeType() == ASTNode.SIMPLE_NAME || 
+				expBefore.getNodeType() == ASTNode.QUALIFIED_NAME)
+		{
+			return this.nCalculator.CalculateASTNodeChange(pair);
+		}
+		
+		if(expBefore.getNodeType() == ASTNode.PREFIX_EXPRESSION || 
+				expBefore.getNodeType() == ASTNode.POSTFIX_EXPRESSION)
+		{
+			return this.ppfCalculator.CalculateASTNodeChange(pair);
+		}
+		
+		if(expBefore.getNodeType() == ASTNode.INFIX_EXPRESSION)
+		{
+			return this.infCalculator.CalculateASTNodeChange(pair);
 		}
 		
 		return changeBuilder.createUnknownChange(pair);

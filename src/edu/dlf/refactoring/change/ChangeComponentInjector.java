@@ -19,6 +19,10 @@ import edu.dlf.refactoring.change.calculator.SourcePackageChangeCalculator;
 import edu.dlf.refactoring.change.calculator.TypeDeclarationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.AssignmentChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.ExpressionChangeCalculator;
+import edu.dlf.refactoring.change.calculator.expression.InfixExpressionChangeCalculator;
+import edu.dlf.refactoring.change.calculator.expression.NameChangeCalculator;
+import edu.dlf.refactoring.change.calculator.expression.PrePostFixExpressionChangeCalculator;
+import edu.dlf.refactoring.change.calculator.expression.QualifiedNameChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.SimpleNameChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.TypeChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.VariableDeclarationChangeCalculator;
@@ -38,15 +42,18 @@ public class ChangeComponentInjector extends AbstractModule{
 	
 		//
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
-		public @interface SimpleNameAnnotation {}
-	
-		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface TypeAnnotation {}
 
 
 		// Expressions
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface ExpressionAnnotation {}
+
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface InfixExpressionAnnotation {}
+	
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface InfixExpressionOperatorAnnotation{}
 	
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface VariableDeclarationAnnotation {}
@@ -57,6 +64,22 @@ public class ChangeComponentInjector extends AbstractModule{
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface AssignmentAnnotation {}
 	
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface NameAnnotation {}
+	
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface QualifiedNameAnnotation {}
+		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface SimpleNameAnnotation {}
+		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface PrePostFixExpressionAnnotation {}
+		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface LiteralAnnotation {}
+
+		
 		
 		// Statements
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
@@ -167,11 +190,24 @@ public class ChangeComponentInjector extends AbstractModule{
 			bind(IASTNodeChangeCalculator.class).annotatedWith(TypeAnnotation.class).
 				to(TypeChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(SimpleNameAnnotation.class).
-				to(SimpleNameChangeCalculator.class);		
+				to(SimpleNameChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(NameAnnotation.class).
+				to(NameChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(QualifiedNameAnnotation.class).
+				to(QualifiedNameChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(PrePostFixExpressionAnnotation.class).
+				to(PrePostFixExpressionChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(InfixExpressionAnnotation.class).
+				to(InfixExpressionChangeCalculator.class);
 		}
 
 
 		private void bindAnnotationToStrings() {
+			bindConstant().annotatedWith(NameAnnotation.class).to("Name");
+			bindConstant().annotatedWith(QualifiedNameAnnotation.class).to("QualifiedName");
+			bindConstant().annotatedWith(PrePostFixExpressionAnnotation.class).to("PrePostFix");
+			bindConstant().annotatedWith(InfixExpressionAnnotation.class).to("InfexExpression");
+			bindConstant().annotatedWith(InfixExpressionOperatorAnnotation.class).to("InfexExpressionOperator");
 			bindConstant().annotatedWith(SimpleNameAnnotation.class).to("SimpleName");
 			bindConstant().annotatedWith(TypeAnnotation.class).to("Type");
 			bindConstant().annotatedWith(ExpressionAnnotation.class).to("Expression");

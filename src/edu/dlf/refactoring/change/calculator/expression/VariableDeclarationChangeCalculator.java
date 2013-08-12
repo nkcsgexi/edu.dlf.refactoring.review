@@ -10,13 +10,12 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import com.google.common.base.Function;
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.XStringUtils;
+import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationFragmentAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
-import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.change.calculator.IASTNodeMapStrategy;
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy;
