@@ -39,23 +39,9 @@ public class InfixExpressionChangeCalculator implements IASTNodeChangeCalculator
 		container.addSubChange(exCalculator.CalculateASTNodeChange(
 			pair.selectByPropertyDescriptor(
 				InfixExpression.LEFT_OPERAND_PROPERTY)));
-		container.addSubChange(createOperatorChange(pair.selectByPropertyDescriptor(
-				InfixExpression.OPERATOR_PROPERTY)));
 		container.addSubChange(exCalculator.CalculateASTNodeChange(
 			pair.selectByPropertyDescriptor(
 				InfixExpression.RIGHT_OPERAND_PROPERTY)));
 		return container;
 	}
-
-	private ISourceChange createOperatorChange(ASTNodePair operators) {
-		
-		if(!operators.areASTNodesSame())
-		{
-			return this.operatorChangeBuilder.createUpdateNodesChange(operators);
-		}
-		return this.operatorChangeBuilder.createNullChange();
-	}
-	
-	
-
 }
