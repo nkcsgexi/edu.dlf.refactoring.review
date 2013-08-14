@@ -3,13 +3,12 @@ package edu.dlf.refactoring.change;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jdt.core.dom.ASTNode;
 
 import com.google.common.base.Function;
 
 import edu.dlf.refactoring.design.ISourceChange;
-import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
+import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.XList;
 import edu.dlf.refactoring.utils.XList.IAggregator;
 
@@ -24,6 +23,20 @@ public class SourceChangeUtils {
 	{
 		pruneSubChanges(change);
 		return change;
+	}
+	
+	public static XList<ISourceChange> getSelfAndDescendent(ISourceChange root)
+	{
+		XList<ISourceChange> all = XList.CreateList();
+		XList<ISourceChange> unHandled = new XList<ISourceChange>(root);
+		while(unHandled.any())
+		{
+			ISourceChange first = unHandled.remove(0);
+			all.add(first);
+			unHandled.addAll(first.getSubSourceChanges());
+		}
+		
+		return all;
 	}
 	
 	

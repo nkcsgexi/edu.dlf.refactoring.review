@@ -2,7 +2,6 @@ package edu.dlf.refactoring.change;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
-import edu.dlf.refactoring.design.IASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.AbstractSourceChange;
 

@@ -19,10 +19,17 @@ public class XList<T> extends ArrayList<T> {
 		super();
 	}
 	
+	public XList(T t)
+	{
+		super();
+		this.add(t);
+	}
+	
 	public static <S> XList<S> CreateList()
 	{
 		return new XList<S>();
 	}
+	
 	
 	public XList(Collection<? extends T> list) {
 		super();
