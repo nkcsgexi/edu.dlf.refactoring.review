@@ -11,7 +11,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.DoStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
 
@@ -41,7 +41,7 @@ public class DoStatementChangeCalculator implements IASTNodeChangeCalculator{
 		if(change != null)
 			return change;
 		try{
-			SubChangeContainer container = changeBuilder.createSubchangeContainer();
+			SubChangeContainer container = changeBuilder.createSubchangeContainer(pair);
 			container.addSubChange(exCalculator.CalculateASTNodeChange(pair.
 					selectByPropertyDescriptor(DoStatement.EXPRESSION_PROPERTY)));
 			container.addSubChange(bCalculator.CalculateASTNodeChange(pair.

@@ -1,14 +1,14 @@
 package edu.dlf.refactoring.change;
 
 import edu.dlf.refactoring.design.ISourceChange;
+import edu.dlf.refactoring.design.ISourceChange.AbstractSourceChange;
 
-public class NullSourceChange implements ISourceChange{
+public class NullSourceChange extends AbstractSourceChange{
 
-	private final String changeLevel;
-
+	
 	public NullSourceChange(String changeLevel)
 	{
-		this.changeLevel = changeLevel;
+		super(changeLevel, null, null);
 	}
 	
 	@Override
@@ -22,15 +22,9 @@ public class NullSourceChange implements ISourceChange{
 	}
 
 	@Override
-	public String getSourceChangeLevel() {
-		return changeLevel;
-	}
-
-	@Override
 	public SourceChangeType getSourceChangeType() {
 		return SourceChangeType.NULL;
 	}
-
 }
 	
 	

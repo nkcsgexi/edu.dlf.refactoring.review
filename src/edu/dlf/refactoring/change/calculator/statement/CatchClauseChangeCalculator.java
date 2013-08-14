@@ -5,12 +5,12 @@ import org.eclipse.jdt.core.dom.CatchClause;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.change.ChangeBuilder;
+import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CatchClauseAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
-import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.SubChangeContainer;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 
 public class CatchClauseChangeCalculator implements IASTNodeChangeCalculator {
@@ -35,7 +35,7 @@ public class CatchClauseChangeCalculator implements IASTNodeChangeCalculator {
 		ISourceChange change = changeBuilder.buildSimpleChange(pair);
 		if(change != null)
 			return change;
-		SubChangeContainer container = changeBuilder.createSubchangeContainer();
+		SubChangeContainer container = changeBuilder.createSubchangeContainer(pair);
 		container.addSubChange(vdCalculator.CalculateASTNodeChange(pair.selectByPropertyDescriptor
 				(CatchClause.EXCEPTION_PROPERTY)));
 		container.addSubChange(blCalculator.CalculateASTNodeChange(pair.selectByPropertyDescriptor

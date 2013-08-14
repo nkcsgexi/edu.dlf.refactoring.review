@@ -5,6 +5,7 @@ import org.eclipse.jdt.core.dom.ExpressionStatement;
 
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BreakStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ContinueStatementAnnotation;
@@ -14,13 +15,12 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.ForStatementAnnotation
 import edu.dlf.refactoring.change.ChangeComponentInjector.IfStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ReturnStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.StatementAnnotation;
-import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ThrowStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TryStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.WhileStatementAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 
 public class StatementChangeCalculator implements IASTNodeChangeCalculator {
@@ -100,7 +100,7 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 		case ASTNode.THROW_STATEMENT:
 			return thsCalculator.CalculateASTNodeChange(pair);	
 		case ASTNode.EXPRESSION_STATEMENT:
-			SubChangeContainer container = this.changeBuilder.createSubchangeContainer();
+			SubChangeContainer container = this.changeBuilder.createSubchangeContainer(pair);
 			container.addSubChange(expressionCalculator.CalculateASTNodeChange(new ASTNodePair(
 				(ASTNode)pair.getNodeBefore().getStructuralProperty(ExpressionStatement.EXPRESSION_PROPERTY), 
 				(ASTNode)pair.getNodeAfter().getStructuralProperty(ExpressionStatement.EXPRESSION_PROPERTY))));

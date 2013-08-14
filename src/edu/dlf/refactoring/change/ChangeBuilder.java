@@ -3,7 +3,8 @@ package edu.dlf.refactoring.change;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 
 public class ChangeBuilder {
@@ -31,9 +32,9 @@ public class ChangeBuilder {
 		return new UpdateASTNodeChange(pair, changeLevel);
 	}
 
-	public SubChangeContainer createSubchangeContainer()
+	public SubChangeContainer createSubchangeContainer(IASTNodePair pair)
 	{
-		return new SubChangeContainer(this.changeLevel);
+		return new SubChangeContainer(this.changeLevel, pair);
 	}
 	
 	public NullSourceChange createNullChange()

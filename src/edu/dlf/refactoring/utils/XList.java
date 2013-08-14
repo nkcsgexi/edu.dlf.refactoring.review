@@ -71,6 +71,15 @@ public class XList<T> extends ArrayList<T> {
 	}
 	
 	
+	public void addAll(T[] elements)
+	{
+		for(T t : elements)
+		{
+			this.add(t);
+		}
+	}
+	
+	
 	public <S> XList<S> selectMany(Function<T, Collection<S>> func)
 	{
 		XList<S> list = new XList<S>();
@@ -243,7 +252,7 @@ public class XList<T> extends ArrayList<T> {
 	}
 	
 	
-	public T aggregate(IAggregator<T> operator)
+	public T aggregate(IAggregator<T, T> operator)
 	{
 		 Iterator<T> it = this.iterator();
 		 T current = null;
@@ -256,9 +265,20 @@ public class XList<T> extends ArrayList<T> {
 		 return current;
 	}
 	
-	public interface IAggregator<S>
+	public <S> S aggregate(S seed, IAggregator<S, T> agg)
 	{
-		S aggregate(S s1, S s2);
+		S current = seed;
+		for(T t : this)
+		{
+			current = agg.aggregate(current, t);
+		}
+		return current;
+	}
+	
+	
+	public interface IAggregator<S, T>
+	{
+		S aggregate(S s1, T s2);
 	}
 	
 	

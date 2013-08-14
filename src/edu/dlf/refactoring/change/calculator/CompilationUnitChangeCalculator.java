@@ -12,14 +12,14 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.XStringUtils;
+import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeDeclarationAnnotation;
-import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.IJavaModelChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDistanceCalculator;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator;
@@ -63,7 +63,7 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 			return change;
 		try{	
 			
-			SubChangeContainer container = changeBuilder.createSubchangeContainer();
+			SubChangeContainer container = changeBuilder.createSubchangeContainer(pair);
 			List typesBefore =  (List) cuBefore.getStructuralProperty(CompilationUnit.TYPES_PROPERTY);
 			List typesAfter = (List) cuAfter.getStructuralProperty(CompilationUnit.TYPES_PROPERTY);
 			

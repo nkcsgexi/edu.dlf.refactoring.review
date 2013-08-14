@@ -59,7 +59,7 @@ public class SourceChangeUtils {
 	
 	public static String printChangeTree(ISourceChange change)
 	{		
-		return internalPrintChangeTree(change).aggregate(new IAggregator<String>(){
+		return internalPrintChangeTree(change).aggregate(new IAggregator<String, String>(){
 			@Override
 			public String aggregate(String s1, String s2) {
 				return s1 + System.lineSeparator() + s2;

@@ -16,7 +16,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.ForStatementAnnotation
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.XList;
@@ -45,7 +45,7 @@ public class ForStatementChangeCalculator implements IASTNodeChangeCalculator{
 		if(change != null)
 			return change;
 		try {
-			SubChangeContainer container = changeBuilder.createSubchangeContainer();
+			SubChangeContainer container = changeBuilder.createSubchangeContainer(pair);
 			XList<ASTNode>[] lists = pair.selectChildrenByDescriptor(ForStatement.INITIALIZERS_PROPERTY);
 			container.addMultiSubChanges((new SimilarityASTNodeMapStrategy(ASTAnalyzer.
 				getASTNodeCompleteDistanceCalculator()).

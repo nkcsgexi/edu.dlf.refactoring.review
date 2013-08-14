@@ -16,7 +16,7 @@ import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy;
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDistanceCalculator;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.utils.XList;
 
@@ -44,7 +44,7 @@ public class TryStatementChangeCalculator implements IASTNodeChangeCalculator{
 		if(change != null)
 			return change;
 		
-		SubChangeContainer container = changeBuilder.createSubchangeContainer();
+		SubChangeContainer container = changeBuilder.createSubchangeContainer(pair);
 		container.addSubChange(blCalculator.CalculateASTNodeChange(pair.
 				selectByPropertyDescriptor(TryStatement.BODY_PROPERTY)));
 		XList[] catches = pair.selectChildrenByDescriptor(TryStatement.CATCH_CLAUSES_PROPERTY);

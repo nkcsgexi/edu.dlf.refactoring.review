@@ -10,7 +10,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.QualifiedNameAnnotatio
 import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 
 public class QualifiedNameChangeCalculator implements IASTNodeChangeCalculator {
@@ -35,7 +35,7 @@ public class QualifiedNameChangeCalculator implements IASTNodeChangeCalculator {
 		ISourceChange change = this.changeBuilder.buildSimpleChange(pair);
 		if(change != null)
 			return change;
-		SubChangeContainer container = this.changeBuilder.createSubchangeContainer();
+		SubChangeContainer container = this.changeBuilder.createSubchangeContainer(pair);
 		container.addSubChange(this.nCalculator.CalculateASTNodeChange(pair.selectByPropertyDescriptor
 				(QualifiedName.QUALIFIER_PROPERTY)));
 		container.addSubChange(this.snCalculator.CalculateASTNodeChange(pair.selectByPropertyDescriptor

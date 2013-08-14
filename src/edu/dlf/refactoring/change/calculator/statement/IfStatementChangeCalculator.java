@@ -10,7 +10,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.IfStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.StatementAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 
 public class IfStatementChangeCalculator implements IASTNodeChangeCalculator {
@@ -41,7 +41,7 @@ public class IfStatementChangeCalculator implements IASTNodeChangeCalculator {
 		
 		IfStatement ifBefore = (IfStatement)pair.getNodeBefore();
 		IfStatement ifAfter = (IfStatement)pair.getNodeAfter();
-		SubChangeContainer container = changeBuilder.createSubchangeContainer();	
+		SubChangeContainer container = changeBuilder.createSubchangeContainer(pair);	
 		container.addSubChange(expressionChangeCalculator.CalculateASTNodeChange(new 
 				ASTNodePair(ifBefore.getExpression(), ifAfter.getExpression())));
 		container.addSubChange(statementChangeCalculator.CalculateASTNodeChange(new 

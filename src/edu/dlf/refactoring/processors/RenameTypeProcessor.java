@@ -6,8 +6,8 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.design.IRefactoringChecker;
 import edu.dlf.refactoring.design.IRefactoringDetector;
 import edu.dlf.refactoring.design.ISourceChange;
-import edu.dlf.refactoring.design.RefactoringAnnotations.RenameType;
 import edu.dlf.refactoring.design.RefactoringProcessor;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 
 public class RenameTypeProcessor extends RefactoringProcessor{
 

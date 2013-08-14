@@ -4,12 +4,12 @@ import org.eclipse.jdt.core.dom.Assignment;
 
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.AssignmentAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
-import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 
 public class AssignmentChangeCalculator implements IASTNodeChangeCalculator{
@@ -32,7 +32,7 @@ public class AssignmentChangeCalculator implements IASTNodeChangeCalculator{
 		ISourceChange change = this.changeBuilder.buildSimpleChange(pair);
 		if(change != null)
 			return change;
-		SubChangeContainer container = this.changeBuilder.createSubchangeContainer();
+		SubChangeContainer container = this.changeBuilder.createSubchangeContainer(pair);
 		Assignment asBefore = (Assignment) pair.getNodeBefore();
 		Assignment asAfter = (Assignment) pair.getNodeAfter();
 		

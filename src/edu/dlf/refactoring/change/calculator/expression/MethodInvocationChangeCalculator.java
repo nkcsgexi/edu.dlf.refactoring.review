@@ -14,7 +14,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.TypeAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.utils.XList;
 
@@ -43,7 +43,7 @@ public class MethodInvocationChangeCalculator implements IASTNodeChangeCalculato
 		ISourceChange change = changeBuilder.buildSimpleChange(pair);
 		if(change != null)
 			return change;
-		SubChangeContainer container = changeBuilder.createSubchangeContainer();
+		SubChangeContainer container = changeBuilder.createSubchangeContainer(pair);
 		
 		container.addSubChange(exCalculator.CalculateASTNodeChange(pair.selectByPropertyDescriptor(
 				MethodInvocation.EXPRESSION_PROPERTY)));

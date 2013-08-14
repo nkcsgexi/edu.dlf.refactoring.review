@@ -1,6 +1,7 @@
 package edu.dlf.refactoring.design;
 
-public interface IRefactoringDetector {
-	
+import edu.dlf.refactoring.utils.XList;
 
+public interface IRefactoringDetector {
+	XList<IRefactoring> detectRefactoring(ISourceChange change);
 }

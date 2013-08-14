@@ -2,27 +2,33 @@ package edu.dlf.refactoring.change;
 
 import java.util.Collection;
 
+import edu.dlf.refactoring.design.IASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
+import edu.dlf.refactoring.design.ISourceChange.AbstractSourceChange;
 import edu.dlf.refactoring.utils.XList;
 
-public class SubChangeContainer implements ISourceChange{
+public class SubChangeContainer extends AbstractSourceChange{
 
 	private final XList<ISourceChange> subChanges = XList.CreateList();
-	private final String changeLevel;
 	
-	public SubChangeContainer(String changeLevel)
+	public SubChangeContainer(String changeLevel, IASTNodePair pair)
 	{
-		this.changeLevel = changeLevel;
+		super(changeLevel, pair.getNodeBefore(), pair.getNodeAfter());
 	}
 	
 	public void addSubChange(ISourceChange subChange)
 	{
+		((AbstractSourceChange) subChange).setParentChange(this);
 		this.subChanges.add(subChange);
 	}
 	
 	
 	public void addMultiSubChanges(Collection<ISourceChange> changes)
 	{
+		for(ISourceChange c : changes)
+		{
+			((AbstractSourceChange) c).setParentChange(this);
+		}
 		this.subChanges.addAll(changes);
 	}
 	
@@ -45,11 +51,6 @@ public class SubChangeContainer implements ISourceChange{
 	@Override
 	public boolean hasSubChanges() {
 		return subChanges.any();
-	}
-
-	@Override
-	public String getSourceChangeLevel() {
-		return changeLevel;
 	}
 
 	@Override

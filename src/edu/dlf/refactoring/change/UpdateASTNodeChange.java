@@ -1,16 +1,14 @@
 package edu.dlf.refactoring.change;
 
-import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
+import edu.dlf.refactoring.design.ISourceChange.AbstractSourceChange;
 
-public class UpdateASTNodeChange  extends ASTNodePair implements ISourceChange{
-
-	private final String changeLevel;
+public class UpdateASTNodeChange extends AbstractSourceChange
+{
 
 	public UpdateASTNodeChange(ASTNodePair pair, String changeLevel)
 	{
-		super(pair.getNodeBefore(), pair.getNodeAfter());
-		this.changeLevel = changeLevel;
+		super(changeLevel, pair.getNodeBefore(), pair.getNodeAfter());
 	}
 	
 	@Override
@@ -24,13 +22,7 @@ public class UpdateASTNodeChange  extends ASTNodePair implements ISourceChange{
 	}
 
 	@Override
-	public String getSourceChangeLevel() {
-		return changeLevel;
-	}
-
-	@Override
 	public SourceChangeType getSourceChangeType() {
 		return SourceChangeType.UPDATE;
 	}
-
 }

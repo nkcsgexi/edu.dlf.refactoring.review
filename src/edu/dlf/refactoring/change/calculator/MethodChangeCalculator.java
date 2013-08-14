@@ -7,17 +7,16 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import com.google.common.base.Function;
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.XStringUtils;
+import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
-import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDistanceCalculator;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.XList;
@@ -50,7 +49,7 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 			return change;
 
 		try {
-			SubChangeContainer container = changeBuilder.createSubchangeContainer();
+			SubChangeContainer container = changeBuilder.createSubchangeContainer(pair);
 			MethodDeclaration methodBefore = (MethodDeclaration) pair.getNodeBefore();
 			MethodDeclaration methodAfter = (MethodDeclaration) pair.getNodeAfter();
 

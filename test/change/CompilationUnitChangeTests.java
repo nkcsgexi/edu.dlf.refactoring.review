@@ -12,7 +12,7 @@ import edu.dlf.refactoring.analyzers.FileUtils;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.change.calculator.CompilationUnitChangeCalculator;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
 

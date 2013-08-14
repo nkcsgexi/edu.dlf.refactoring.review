@@ -2,13 +2,14 @@ package edu.dlf.refactoring.change;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
+import edu.dlf.refactoring.design.ISourceChange.AbstractSourceChange;
 
-public class UnknownSourceChange extends ASTNodePair implements ISourceChange {
+public class UnknownSourceChange extends AbstractSourceChange {
 
 	public UnknownSourceChange(ASTNode nodeBefore, ASTNode nodeAfter) {
-		super(nodeBefore, nodeAfter);
+		super("UNKNOWN", nodeBefore, nodeAfter);
 	}
 
 	@Override
@@ -22,13 +23,7 @@ public class UnknownSourceChange extends ASTNodePair implements ISourceChange {
 	}
 
 	@Override
-	public String getSourceChangeLevel() {
-		return "UNKNOWN";
-	}
-
-	@Override
 	public SourceChangeType getSourceChangeType() {
 		return SourceChangeType.UNKNOWN;
 	}
-
 }

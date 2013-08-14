@@ -14,7 +14,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.ReturnStatementAnnotat
 import edu.dlf.refactoring.change.ChangeComponentInjector.ThrowStatementAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 
 public class ReturnAndThrowStatementChangeCalculator implements IASTNodeChangeCalculator {
@@ -40,7 +40,7 @@ public class ReturnAndThrowStatementChangeCalculator implements IASTNodeChangeCa
 		ISourceChange change = builder.buildSimpleChange(pair);
 		if(change != null)
 			return change;
-		SubChangeContainer container = builder.createSubchangeContainer();
+		SubChangeContainer container = builder.createSubchangeContainer(pair);
 		if(pair.getNodeBefore().getNodeType() == ASTNode.RETURN_STATEMENT) {
 			container.addSubChange(exCalculator.CalculateASTNodeChange(pair.
 				selectByPropertyDescriptor(ReturnStatement.EXPRESSION_PROPERTY)));

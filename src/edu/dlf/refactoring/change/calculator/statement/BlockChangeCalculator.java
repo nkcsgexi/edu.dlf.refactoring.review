@@ -11,15 +11,15 @@ import com.google.common.base.Function;
 import com.google.inject.Inject;
 
 import difflib.Delta;
-import difflib.DiffUtils;
 import difflib.Delta.TYPE;
+import difflib.DiffUtils;
 import edu.dlf.refactoring.analyzers.XStringUtils;
+import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.StatementAnnotation;
-import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
-import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.XList;
@@ -48,7 +48,7 @@ public class BlockChangeCalculator implements IASTNodeChangeCalculator{
 			ISourceChange change = changeBuilder.buildSimpleChange(pair);
 			if(change != null)
 				return change;
-			SubChangeContainer container = changeBuilder.createSubchangeContainer();
+			SubChangeContainer container = changeBuilder.createSubchangeContainer(pair);
 			XList<ASTNode> beforeSts = new XList<ASTNode>(((Block)pair.getNodeBefore()).statements());
 			XList<ASTNode> afterSts =new XList<ASTNode>(((Block)pair.getNodeAfter()).statements());
 			
