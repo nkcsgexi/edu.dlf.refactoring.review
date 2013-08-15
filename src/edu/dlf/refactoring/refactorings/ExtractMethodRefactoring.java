@@ -1,32 +1,19 @@
 package edu.dlf.refactoring.refactorings;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 
-import edu.dlf.refactoring.design.IRefactoring;
+import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.utils.XList;
 
-public class ExtractMethodRefactoring implements IRefactoring{
+public class ExtractMethodRefactoring extends AbstractRefactoring{
 	
 	public static SingleNodeDescriptor DeclaredMethod = new SingleNodeDescriptor(){};
 	public static NodeListDescriptor ExtractedStatements = new NodeListDescriptor(){};
 	
-	@Override
-	public ASTNode getEffectedNode(SingleNodeDescriptor descriptor) {
-		if(descriptor == DeclaredMethod)
-		{
-			
-		}
-		return null;
+	public ExtractMethodRefactoring(XList<ASTNode> statements, ASTNode method)
+	{
+		super(RefactoringType.ExtractMethod);
+		this.addNodeList(ExtractedStatements, statements);
+		this.addSingleNode(DeclaredMethod, method);
 	}
-	
-	@Override
-	public XList<ASTNode> getEffectedNodeList(NodeListDescriptor descriptor) {
-		if(descriptor == ExtractedStatements)
-		{
-			
-		}
-		return null;
-	}
-	
-	
-	
 }

@@ -9,6 +9,7 @@ import edu.dlf.refactoring.checkers.RenameTypeChecker;
 import edu.dlf.refactoring.design.IRefactoringChecker;
 import edu.dlf.refactoring.design.IRefactoringDetector;
 import edu.dlf.refactoring.design.RefactoringProcessor;
+import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.processors.ExtractMethodProcessor;
 import edu.dlf.refactoring.processors.RenameMethodProcessor;
 import edu.dlf.refactoring.processors.RenameTypeProcessor;
@@ -35,7 +36,6 @@ public class RefactoringDetectionComponentInjector extends AbstractModule{
 
 	@Override
 	protected void configure() {
-		
 		bind(IRefactoringDetector.class).annotatedWith(RenameMethod.class).to(RenameMethodDetector.class);
 		bind(IRefactoringDetector.class).annotatedWith(ExtractMethod.class).to(ExtractMethodDetector.class);
 		bind(IRefactoringDetector.class).annotatedWith(RenameType.class).to(RenameTypeDetector.class);
@@ -48,6 +48,9 @@ public class RefactoringDetectionComponentInjector extends AbstractModule{
 		bind(RefactoringProcessor.class).annotatedWith(ExtractMethod.class).to(ExtractMethodProcessor.class);
 		bind(RefactoringProcessor.class).annotatedWith(RenameType.class).to(RenameTypeProcessor.class);
 		
+		bindConstant().annotatedWith(ExtractMethod.class).to(RefactoringType.ExtractMethod);
+		bindConstant().annotatedWith(RenameMethod.class).to(RefactoringType.RenameMethod);
+		bindConstant().annotatedWith(RenameType.class).to(RefactoringType.RenameType);
 	}
 		
 }

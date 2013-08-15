@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
@@ -19,7 +20,6 @@ import edu.dlf.refactoring.design.IRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.design.ServiceLocator;
-import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
 import edu.dlf.refactoring.utils.XList;
@@ -29,9 +29,9 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	private final IChangeSearchCriteria statementSearchCriteria;
 	private final IChangeSearchCriteria methodSearchCriteria;
-
+	
+	@Inject
 	public ExtractMethodDetector(
-			@ExtractMethod String type,
 			@StatementAnnotation String stChangeLevel,
 			@ExpressionAnnotation String expChangeLevel,
 			@MethodDeclarationAnnotation String mdChangeLevel)

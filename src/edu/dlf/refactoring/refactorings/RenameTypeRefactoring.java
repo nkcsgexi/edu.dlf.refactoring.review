@@ -1,22 +1,13 @@
 package edu.dlf.refactoring.refactorings;
 
-import org.eclipse.jdt.core.dom.ASTNode;
+import edu.dlf.refactoring.design.RefactoringType;
 
-import edu.dlf.refactoring.design.IRefactoring;
-import edu.dlf.refactoring.utils.XList;
 
-public class RenameTypeRefactoring implements IRefactoring{
+public class RenameTypeRefactoring extends AbstractRefactoring{
 
-	@Override
-	public ASTNode getEffectedNode(SingleNodeDescriptor descriptor) {
-		// TODO Auto-generated method stub
-		return null;
+	protected RenameTypeRefactoring() {
+		super(RefactoringType.RenameType);
 	}
 
-	@Override
-	public XList<ASTNode> getEffectedNodeList(NodeListDescriptor descriptor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

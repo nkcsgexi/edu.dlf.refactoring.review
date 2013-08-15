@@ -6,9 +6,9 @@ import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 
 public abstract class AbstractRefactoringDetector implements IRefactoringDetector{
 
+	
 	protected AbstractRefactoringDetector()
 	{
-		
 	}
 		
 	protected CascadeChangeCriteriaBuilder getCascadeCriteriaBuilder()
@@ -31,4 +31,5 @@ public abstract class AbstractRefactoringDetector implements IRefactoringDetecto
 		};
 		
 	}
+	
 }
