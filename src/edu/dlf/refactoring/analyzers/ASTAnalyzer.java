@@ -1,13 +1,18 @@
 package edu.dlf.refactoring.analyzers;
 
+import java.util.List;
+
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDistanceCalculator;
 import edu.dlf.refactoring.utils.IEqualityComparer;
+import edu.dlf.refactoring.utils.XList;
 
 public class ASTAnalyzer {
 
@@ -48,7 +53,55 @@ public class ASTAnalyzer {
 		parser.setResolveBindings(true);
 		return parser.createAST(null);
 	}
-
+	
+	public static XList<ASTNode> getAncestors(ASTNode node)
+	{
+		XList<ASTNode> results = XList.CreateList();
+		for(;node != null;)
+		{
+			results.add(node);
+			node = node.getParent();
+		}
+		return results;
+	}
+	
+	public static XList<ASTNode> getDecendents(ASTNode root)
+	{
+		XList<ASTNode> unhandledNodes = new XList<ASTNode>(root);
+		XList<ASTNode> results = new XList<ASTNode>();
+		
+		for(;unhandledNodes.any();)
+		{
+			ASTNode first = unhandledNodes.remove(0);
+			XList<ASTNode> children = getChildren(first);
+			results.addAll(children);
+			unhandledNodes.addAll(children);
+		}
+		return results;
+	}
+	
+	public static XList<ASTNode> getChildren(ASTNode root)
+	{
+		XList<ASTNode> allChildren = XList.CreateList();
+	    List list= root.structuralPropertiesForType();
+	    for (int i= 0; i < list.size(); i++) {
+	        StructuralPropertyDescriptor curr= (StructuralPropertyDescriptor) list.get(i);
+            Object child = root.getStructuralProperty(curr);
+	        if (child instanceof List) {
+	        	for(Object c : (List)child)
+	        	{
+	        		if(c instanceof ASTNode)
+	        		{
+	        			allChildren.add((ASTNode)c);
+	        		}
+	        	}
+	        } else if (child instanceof ASTNode) {
+	            allChildren.add((ASTNode)child);
+            }
+	    }
+	    return allChildren;
+	}
+	
 	public static boolean areASTNodesSame(ASTNode before, ASTNode after) {
 		
 		if(before == null && after == null)
@@ -79,6 +132,10 @@ public class ASTAnalyzer {
 			public boolean AreEqual(ASTNode a, ASTNode b) {
 				return areASTNodesSame(a, b);
 			}};
+	}
+
+	public static boolean isStatement(ASTNode node) {
+		return node instanceof Statement;
 	}
 
 }

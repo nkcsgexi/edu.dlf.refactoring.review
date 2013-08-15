@@ -1,5 +1,9 @@
 package edu.dlf.refactoring.detectors;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+
+import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
@@ -13,17 +17,22 @@ public abstract class BasicChangeSearchCriteria implements IChangeSearchCriteria
 	
 	@Override
 	public XList<IChangeSearchResult> getChangesMeetCriteria(ISourceChange root)
-	{
-		final XList<ISourceChange> results = XList.CreateList();
-		if (this.isChangeLevelOk(root.getSourceChangeLevel()) && 
-				this.isSourceChangeTypeOk(root.getSourceChangeType()))
-		{
-			results.add(root);
-		}
-		return results.any() ? new XList<IChangeSearchResult>(new IChangeSearchResult(){
+	{	
+		XList<ISourceChange> allNodes = SourceChangeUtils.getSelfAndDescendent(root);
+		return allNodes.where(new Predicate<ISourceChange>(){
 			@Override
-			public XList<ISourceChange> getSourceChanges() {
-				return results;
-			}}) : new XList<IChangeSearchResult>();
+			public boolean apply(ISourceChange c) {
+				return isChangeLevelOk(c.getSourceChangeLevel()) && isSourceChangeTypeOk
+						(c.getSourceChangeType());
+			}}).select(new Function<ISourceChange, IChangeSearchResult>(){
+				@Override
+				public IChangeSearchResult apply(final ISourceChange c) {
+					return new IChangeSearchResult(){
+						@Override
+						public XList<ISourceChange> getSourceChanges() {
+							return new XList<ISourceChange>(c);
+						}};
+				}});
+	
 	}
 }

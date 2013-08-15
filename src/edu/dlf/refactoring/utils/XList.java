@@ -8,8 +8,12 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+
+import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
 
 public class XList<T> extends ArrayList<T> {
 
@@ -128,7 +132,18 @@ public class XList<T> extends ArrayList<T> {
 		}
 		return null;
 	}
+	
+	public T first() {
+		return this.first(new Predicate<T>(){
+			@Override
+			public boolean apply(T arg0) {
+				return true;
+			}});
+	}
 
+	
+	
+	
 	public T last(Predicate<T> predicate) {
 		List<T> tempList = this.where(predicate);
 		if (tempList.size() > 0) {
@@ -136,6 +151,11 @@ public class XList<T> extends ArrayList<T> {
 		}
 		return null;
 	}
+	
+	public T last() {
+		return get(size() - 1);
+	}
+
 
 	public boolean empty() {
 		return this.size() == 0;
@@ -292,4 +312,5 @@ public class XList<T> extends ArrayList<T> {
 	public String toString() {
 		return toString("\r\n");
 	}
+
 }

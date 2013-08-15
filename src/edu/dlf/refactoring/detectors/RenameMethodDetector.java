@@ -10,18 +10,17 @@ import edu.dlf.refactoring.utils.XList;
 
 public class RenameMethodDetector implements IRefactoringDetector{
 
-	
-	private final SourceChangeSearcher changeSearcher;
+	private CascadeChangeCriteriaBuilder searchCriteriaBuilder;
 
 	public RenameMethodDetector(
 			@SimpleNameAnnotation String snChangeLevel,
 			@MethodDeclarationAnnotation String mdChangeLevel,
 			@MethodInvocationAnnotation String miChangeLevel)
 	{
-		this.changeSearcher = new SourceChangeSearcher();
-		this.changeSearcher.addSearchCriteria(1, snChangeLevel, SourceChangeType.UPDATE);
-		this.changeSearcher.addSearchCriteria(1, mdChangeLevel, SourceChangeType.PARENT);
-		this.changeSearcher.addSearchCriteria(1, miChangeLevel, SourceChangeType.PARENT);
+		this.searchCriteriaBuilder = new CascadeChangeCriteriaBuilder();
+		this.searchCriteriaBuilder.addNextChangeCriteria(mdChangeLevel, SourceChangeType.PARENT);
+		this.searchCriteriaBuilder.addNextChangeCriteria(snChangeLevel, SourceChangeType.UPDATE);
+		
 	}
 	
 
