@@ -2,12 +2,13 @@ package edu.dlf.refactoring.detectors;
 
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.utils.XList;
+import fj.data.List;
 
 public class SourceChangeSearcher {
 	
 	public interface IChangeSearchCriteria
 	{
-		XList<IChangeSearchResult> getChangesMeetCriteria(ISourceChange root); 
+		List<IChangeSearchResult> getChangesMeetCriteria(ISourceChange root); 
 	}
 	
 	public interface IChangeCriteriaBuilder
@@ -17,7 +18,7 @@ public class SourceChangeSearcher {
 	
 	public interface IChangeSearchResult
 	{
-		XList<ISourceChange> getSourceChanges();
+		List<ISourceChange> getSourceChanges();
 	}
 	
 }

@@ -1,23 +1,21 @@
 package edu.dlf.refactoring.detectors;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeCriteriaBuilder;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
-import edu.dlf.refactoring.utils.XList;
+import fj.F;
+import fj.data.List;
+import fj.data.List.Buffer;
 
 public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
-	private final XList<BasicChangeSearchCriteria> criteriaChain = XList
-			.CreateList();
+	private final Buffer<BasicChangeSearchCriteria> criteriaChain = Buffer.empty();
 
 	public CascadeChangeCriteriaBuilder addNextChangeCriteria(final String c,
 			final SourceChangeType t) {
-		this.criteriaChain.add(new BasicChangeSearchCriteria() {
+		this.criteriaChain.snoc(new BasicChangeSearchCriteria() {
 			@Override
 			protected boolean isChangeLevelOk(String changeLevel) {
 				return changeLevel.equals(c);
@@ -33,8 +31,7 @@ public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 
 	@Override
 	public IChangeSearchCriteria getSearchCriteria() {
-		final XList<BasicChangeSearchCriteria> chain = new XList(
-				this.criteriaChain);
+		final List<BasicChangeSearchCriteria> chain = criteriaChain.toList();
 		return new IChangeSearchCriteria() {
 
 			private boolean doesChangeMeetBasicCriteria(
@@ -45,32 +42,32 @@ public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 			}
 
 			@Override
-			public XList<IChangeSearchResult> getChangesMeetCriteria(
+			public List<IChangeSearchResult> getChangesMeetCriteria(
 					ISourceChange root) {
-				XList<ISourceChange> nodes = SourceChangeUtils
+				List<ISourceChange> nodes = SourceChangeUtils
 						.getSelfAndDescendent(root);
-				return nodes.where(new Predicate<ISourceChange>() {
+				return nodes.filter(new F<ISourceChange, Boolean>() {
 					@Override
-					public boolean apply(ISourceChange change) {
-						for (int i = chain.size() - 1; i >= 0; i++) {
-							if (!doesChangeMeetBasicCriteria(chain.get(i),
+					public Boolean f(ISourceChange change) {
+						for (int i = chain.length() - 1; i >= 0; i++) {
+							if (!doesChangeMeetBasicCriteria(chain.index(i),
 									change))
 								return false;
 						}
 						return true;
 					}
-				}).select(new Function<ISourceChange, IChangeSearchResult>() {
+				}).map(new F<ISourceChange, IChangeSearchResult>() {
 					@Override
-					public IChangeSearchResult apply(ISourceChange change) {
-						final XList<ISourceChange> changes = new XList<ISourceChange>();
-						for (int i = 0; i < chain.size(); i++) {
-							changes.add(change);
+					public IChangeSearchResult f(ISourceChange change) {
+						final Buffer<ISourceChange> changes = Buffer.empty();
+						for (int i = 0; i < chain.length(); i++) {
+							changes.snoc(change);
 							change = change.getParentChange();
 						}
 						return new IChangeSearchResult() {
 							@Override
-							public XList<ISourceChange> getSourceChanges() {
-								return changes;
+							public List<ISourceChange> getSourceChanges() {
+								return changes.toList();
 							}
 						};
 					}

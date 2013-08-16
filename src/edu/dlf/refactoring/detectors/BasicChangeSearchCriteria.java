@@ -1,14 +1,13 @@
 package edu.dlf.refactoring.detectors;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
-import edu.dlf.refactoring.utils.XList;
+import fj.F;
+import fj.data.List;
+import fj.data.List.Buffer;
 
 public abstract class BasicChangeSearchCriteria implements IChangeSearchCriteria
 {
@@ -16,23 +15,24 @@ public abstract class BasicChangeSearchCriteria implements IChangeSearchCriteria
 	protected abstract boolean isSourceChangeTypeOk(SourceChangeType type);
 	
 	@Override
-	public XList<IChangeSearchResult> getChangesMeetCriteria(ISourceChange root)
+	public List<IChangeSearchResult> getChangesMeetCriteria(ISourceChange root)
 	{	
-		XList<ISourceChange> allNodes = SourceChangeUtils.getSelfAndDescendent(root);
-		return allNodes.where(new Predicate<ISourceChange>(){
+		List<ISourceChange> allNodes = SourceChangeUtils.getSelfAndDescendent(root);
+		return allNodes.filter(new F<ISourceChange, Boolean>(){
 			@Override
-			public boolean apply(ISourceChange c) {
-				return isChangeLevelOk(c.getSourceChangeLevel()) && isSourceChangeTypeOk
-						(c.getSourceChangeType());
-			}}).select(new Function<ISourceChange, IChangeSearchResult>(){
+			public Boolean f(ISourceChange change) {
+				return isChangeLevelOk(change.getSourceChangeLevel()) &&
+						isSourceChangeTypeOk(change.getSourceChangeType());
+			}}).map(new F<ISourceChange, IChangeSearchResult>(){
 				@Override
-				public IChangeSearchResult apply(final ISourceChange c) {
+				public IChangeSearchResult f(final ISourceChange c) {
 					return new IChangeSearchResult(){
 						@Override
-						public XList<ISourceChange> getSourceChanges() {
-							return new XList<ISourceChange>(c);
+						public List<ISourceChange> getSourceChanges() {
+							Buffer<ISourceChange> buffer = Buffer.empty();
+							buffer.snoc(c);
+							return buffer.toList();
 						}};
 				}});
-	
 	}
 }

@@ -8,7 +8,7 @@ import edu.dlf.refactoring.design.IRefactoring;
 import edu.dlf.refactoring.design.IRefactoringDetector;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
-import edu.dlf.refactoring.utils.XList;
+import fj.data.List;
 
 public class RenameMethodDetector implements IRefactoringDetector{
 
@@ -29,7 +29,7 @@ public class RenameMethodDetector implements IRefactoringDetector{
 
 	
 	@Override
-	public XList<IRefactoring> detectRefactoring(ISourceChange change) {
+	public List<IRefactoring> detectRefactoring(ISourceChange change) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -11,6 +11,8 @@ import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.XList;
 import edu.dlf.refactoring.utils.XList.IAggregator;
+import fj.data.List;
+import fj.data.List.Buffer;
 
 public class SourceChangeUtils {
 
@@ -25,18 +27,18 @@ public class SourceChangeUtils {
 		return change;
 	}
 	
-	public static XList<ISourceChange> getSelfAndDescendent(ISourceChange root)
-	{
-		XList<ISourceChange> all = XList.CreateList();
-		XList<ISourceChange> unHandled = new XList<ISourceChange>(root);
-		while(unHandled.any())
+	public static List<ISourceChange> getSelfAndDescendent(ISourceChange root)
+	{	
+		Buffer<ISourceChange> buffer = Buffer.empty();
+		XList<ISourceChange> unhandled = XList.CreateList();
+		unhandled.add(root);
+		while(unhandled.any())
 		{
-			ISourceChange first = unHandled.remove(0);
-			all.add(first);
-			unHandled.addAll(first.getSubSourceChanges());
+			ISourceChange first = unhandled.remove(0);
+			buffer.snoc(first);
+			unhandled.addAll(first.getSubSourceChanges());
 		}
-		
-		return all;
+		return buffer.toList();
 	}
 	
 	

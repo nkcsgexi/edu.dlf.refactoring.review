@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.analyzers;
 
+
+
 import java.util.List;
 
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -13,6 +15,7 @@ import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDistanceCalculator;
 import edu.dlf.refactoring.utils.IEqualityComparer;
 import edu.dlf.refactoring.utils.XList;
+
 
 public class ASTAnalyzer {
 

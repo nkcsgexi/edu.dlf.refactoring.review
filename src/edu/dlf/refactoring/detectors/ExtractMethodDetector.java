@@ -1,6 +1,5 @@
 package edu.dlf.refactoring.detectors;
 
-import java.util.Collection;
 import java.util.Comparator;
 
 import org.apache.log4j.Logger;
@@ -14,7 +13,6 @@ import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.StatementAnnotation;
-import edu.dlf.refactoring.change.calculator.IASTNodeMapStrategy;
 import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.IRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
@@ -23,8 +21,10 @@ import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
 import edu.dlf.refactoring.refactorings.ExtractMethodRefactoring;
-import edu.dlf.refactoring.utils.IEqualityComparer;
-import edu.dlf.refactoring.utils.XList;
+import fj.Equal;
+import fj.F;
+import fj.Ord;
+import fj.data.List;
 
 public class ExtractMethodDetector extends AbstractRefactoringDetector {
 
@@ -43,80 +43,80 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 	}
 	
 	@Override
-	public XList<IRefactoring> detectRefactoring(ISourceChange change) {
-		
-		XList<IChangeSearchResult> staChanges = this.statementSearchCriteria.getChangesMeetCriteria(change);
-		XList<IChangeSearchResult> mdChanges = this.methodSearchCriteria.getChangesMeetCriteria(change);
-		if(staChanges.empty() || mdChanges.empty())
-			return XList.CreateList();
-		
+	public List<IRefactoring> detectRefactoring(ISourceChange change) {
+		List<IChangeSearchResult> staChanges = this.statementSearchCriteria.getChangesMeetCriteria(change);
+		List<IChangeSearchResult> mdChanges = this.methodSearchCriteria.getChangesMeetCriteria(change);
+		if(staChanges.isEmpty() || mdChanges.isEmpty())
+			return List.nil();
 		 try {
- 			XList<ASTNodePair> pairs = new StatementToMethodMapper().map(
-				 staChanges.selectMany(new Function<IChangeSearchResult, Collection<ASTNode>>(){
+ 			List<ASTNodePair> pairs = new StatementToMethodMapper().map(
+				 staChanges.bind(new F<IChangeSearchResult, List<ASTNode>>(){
 					@Override
-					public Collection<ASTNode> apply(IChangeSearchResult result) {
-						return result.getSourceChanges().select(new Function<ISourceChange, ASTNode>(){
+					public List<ASTNode> f(IChangeSearchResult result) {
+						return result.getSourceChanges().map(new F<ISourceChange, ASTNode>(){
 							@Override
-							public ASTNode apply(ISourceChange change) {
+							public ASTNode f(ISourceChange change) {
 								return change.getNodeBefore();
 							}});
 					}}),
-				mdChanges.selectMany(new Function<IChangeSearchResult, Collection<ASTNode>>(){
+				mdChanges.bind(new F<IChangeSearchResult, List<ASTNode>>(){
 					@Override
-					public Collection<ASTNode> apply(IChangeSearchResult result) {
-						return result.getSourceChanges().select(new Function<ISourceChange, ASTNode>(){
+					public List<ASTNode> f(IChangeSearchResult result) {
+						return result.getSourceChanges().map(new F<ISourceChange, ASTNode>(){
 							@Override
-							public ASTNode apply(ISourceChange change) {
+							public ASTNode f(ISourceChange change) {
 								return change.getNodeAfter();
 							}});
 					}}));	
  			return createRefactorings(pairs);
 		} catch (Exception e) {
 			logger.fatal(e);
-			return XList.CreateList();
+			return List.nil();
 		}
 	}
 	
-	private XList<IRefactoring> createRefactorings(XList<ASTNodePair> pairs) {
-		return pairs.groupBy(new IEqualityComparer<ASTNodePair>() {
+	private List<IRefactoring> createRefactorings(List<ASTNodePair> pairs) {
+		Equal<ASTNodePair> equal = Equal.equal(new F<ASTNodePair, F<ASTNodePair, Boolean>>(){
 			@Override
-			public boolean AreEqual(ASTNodePair a, ASTNodePair b) {
-				return a.getNodeAfter() == b.getNodeAfter();
-			}
-		}).select(new Function<XList<ASTNodePair>, IRefactoring>(){
-			@Override
-			public IRefactoring apply(XList<ASTNodePair> list) {		
-				return new ExtractMethodRefactoring(list.select(
-					new Function<ASTNodePair, ASTNode>(){
+			public F<ASTNodePair, Boolean> f(final ASTNodePair n1) {
+				return new F<ASTNodePair, Boolean>(){
 					@Override
-					public ASTNode apply(ASTNodePair pair) {
-						return pair.getNodeBefore();
-					}}), list.first().getNodeAfter());
+					public Boolean f(final ASTNodePair n2) {
+						return n1.getNodeAfter() == n2.getNodeAfter();
+					}};
+			}});
+		return pairs.group(equal).map(
+				new F<List<ASTNodePair>, IRefactoring>(){
+			@Override
+			public IRefactoring f(List<ASTNodePair> list) {		
+				return new ExtractMethodRefactoring(list.map(new F<ASTNodePair, ASTNode>(){
+					@Override
+					public ASTNode f(ASTNodePair p) {
+						return p.getNodeBefore();
+					}}), list.head().getNodeAfter());
 			}});
 	}
 
-	private class StatementToMethodMapper implements IASTNodeMapStrategy
+	private class StatementToMethodMapper
 	{
-		@Override
-		public XList<ASTNodePair> map(XList<ASTNode> statements, final XList<ASTNode> 
+		public List<ASTNodePair> map(final List<ASTNode> statements, final List<ASTNode> 
 				methods) throws Exception {
-			if(methods.size() == 1)
-			{
-				return statements.select(new Function<ASTNode, ASTNodePair>(){
+			if(methods.length() == 1) {
+				return statements.map(new F<ASTNode, ASTNodePair>(){
 					@Override
-					public ASTNodePair apply(ASTNode state) {
-						return new ASTNodePair(state, methods.first());
+					public ASTNodePair f(ASTNode state) {
+						return new ASTNodePair(state, methods.head());
 					}});
 			}
-			return statements.select(new Function<ASTNode, ASTNodePair>(){
+			return statements.map(new F<ASTNode, ASTNodePair>() {
 				@Override
-				public ASTNodePair apply(final ASTNode st) {
-					return new ASTNodePair(st, methods.min(new Comparator<ASTNode>(){
+				public ASTNodePair f(final ASTNode st) {					
+					Ord<ASTNode> ord = Ord.intOrd.comap(new F<ASTNode, Integer>(){
 						@Override
-						public int compare(ASTNode m1, ASTNode m2) {
-							return findClosestStatementDistance(m1, st) - 
-									findClosestStatementDistance(m2, st);
-						}}));
+						public Integer f(ASTNode method) {
+							return findClosestStatementDistance(method, st);
+						}});
+					return new ASTNodePair(st, methods.minimum(ord));
 				}});
 		}
 		

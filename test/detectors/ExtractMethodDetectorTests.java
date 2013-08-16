@@ -1,5 +1,7 @@
 package detectors;
 
+import junit.framework.TestSuite;
+
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -23,8 +25,7 @@ import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.detectors.ExtractMethodDetector;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponent;
 import edu.dlf.refactoring.refactorings.ExtractMethodRefactoring;
-import edu.dlf.refactoring.utils.XList;
-import junit.framework.TestSuite;
+import fj.data.List;
 
 public class ExtractMethodDetectorTests extends TestSuite{
 
@@ -60,11 +61,12 @@ public class ExtractMethodDetectorTests extends TestSuite{
 		ISourceChange change = cuCalculator.CalculateASTNodeChange(TestUtils.
 				getNodePairByFileNames("TestCUBefore1.java", "TestCUAfter1.java"));
 		change = SourceChangeUtils.pruneSourceChange(change);
-		XList<IRefactoring> refactorings = emDetector.detectRefactoring(change);
-		Assert.isTrue(refactorings.size() == 1);
-		IRefactoring refactoring = refactorings.first();
+		List<IRefactoring> refactorings = emDetector.detectRefactoring(change);
+		Assert.isTrue(refactorings.length() == 1);
+		IRefactoring refactoring = refactorings.head();
+		System.out.println(refactoring);
 		Assert.isTrue(refactoring.getRefactoringType() == RefactoringType.ExtractMethod);
-		Assert.isTrue(refactoring.getEffectedNodeList(ExtractMethodRefactoring.ExtractedStatements).size() == 3);
+		Assert.isTrue(refactoring.getEffectedNodeList(ExtractMethodRefactoring.ExtractedStatements).length() == 3);
 		Assert.isLegal(refactoring.getEffectedNode(ExtractMethodRefactoring.DeclaredMethod).
 				getStructuralProperty(MethodDeclaration.NAME_PROPERTY).toString().equals("barExtracted"));
 	}

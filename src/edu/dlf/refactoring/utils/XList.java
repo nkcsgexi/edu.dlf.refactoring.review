@@ -8,12 +8,11 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
-import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
+import fj.data.Array;
+import static fj.data.Array.array;
 
 public class XList<T> extends ArrayList<T> {
 
@@ -334,6 +333,10 @@ public class XList<T> extends ArrayList<T> {
 	
 	public String toString() {
 		return toString("\r\n");
+	}
+	
+	public Array<T> toFunctionalArray(){
+		return array();
 	}
 
 }

@@ -15,20 +15,26 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Extra
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import edu.dlf.refactoring.utils.XList;
+import fj.Effect;
+import fj.F;
+import fj.data.List;
+import fj.data.List.Buffer;
 
 public class RefactoringDetectionComponent implements IFactorComponent{
 	
-	XList<IRefactoringDetector> detectors = new XList<IRefactoringDetector>();
-	
+	private final List<IRefactoringDetector> detectors;
+
 	@Inject
 	public RefactoringDetectionComponent(
 			@RenameMethod IRefactoringDetector rmDetector,
 			@ExtractMethod IRefactoringDetector emDetector,
 			@RenameType IRefactoringDetector rtDetector)
 	{
-		detectors.add(rmDetector);
-		detectors.add(emDetector);
-		detectors.add(rtDetector);
+		Buffer<IRefactoringDetector> buffer = Buffer.empty();
+		buffer.snoc(rmDetector);
+		buffer.snoc(emDetector);
+		buffer.snoc(rtDetector);
+		this.detectors = buffer.toList();
 	}
 
 	@Override
@@ -36,17 +42,16 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 		if(event instanceof ISourceChange)
 		{
 			final ISourceChange change = (ISourceChange) event;
-			detectors.selectMany(new Function<IRefactoringDetector, 
-					Collection<IRefactoring>>(){
+			detectors.bind(new F<IRefactoringDetector, 
+					List<IRefactoring>>(){
 				@Override
-				public Collection<IRefactoring> apply(IRefactoringDetector d) {
+				public List<IRefactoring> f(IRefactoringDetector d) {
 					return d.detectRefactoring(change);
-				}}).operateOnElement(new Function<IRefactoring, Void>(){
+				}}).foreach(new Effect<IRefactoring>(){
 					@Override
-					public Void apply(IRefactoring ref) {
+					public void e(IRefactoring arg0) {
 						EventBus bus = ServiceLocator.ResolveType(EventBus.class);
-						bus.post(ref);
-						return null;
+						bus.post(arg0);
 					}});
 		}
 		return null;
