@@ -16,4 +16,17 @@ public class ExtractMethodRefactoring extends AbstractRefactoring{
 		this.addNodeList(ExtractedStatements, statements);
 		this.addSingleNode(DeclaredMethod, method);
 	}
+	
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append("Extracted statements:\n\n");
+		XList<ASTNode> statements = this.getEffectedNodeList(ExtractedStatements);
+		for(ASTNode s : statements)
+			sb.append(s + "\n");
+		sb.append("Declared method:\n\n");
+		sb.append(this.getEffectedNode(DeclaredMethod));
+		return sb.toString();
+	}
+	
 }

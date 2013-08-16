@@ -98,7 +98,8 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 	private class StatementToMethodMapper implements IASTNodeMapStrategy
 	{
 		@Override
-		public XList<ASTNodePair> map(XList<ASTNode> statements, final XList<ASTNode> methods) throws Exception {
+		public XList<ASTNodePair> map(XList<ASTNode> statements, final XList<ASTNode> 
+				methods) throws Exception {
 			if(methods.size() == 1)
 			{
 				return statements.select(new Function<ASTNode, ASTNodePair>(){
@@ -118,7 +119,6 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 						}}));
 				}});
 		}
-		
 		
 		private int findClosestStatementDistance(final ASTNode method, final ASTNode state)
 		{

@@ -26,4 +26,11 @@ public class TestCUBefore1
 	{
 		System.out.println("");
 	}
+	
+	public void bar()
+	{
+		int i = 0;
+		int k = 0;
+		int f = k;
+	}
 }

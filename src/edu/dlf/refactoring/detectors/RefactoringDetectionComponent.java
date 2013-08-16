@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.google.common.base.Function;
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.IRefactoring;
@@ -19,6 +20,7 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 	
 	XList<IRefactoringDetector> detectors = new XList<IRefactoringDetector>();
 	
+	@Inject
 	public RefactoringDetectionComponent(
 			@RenameMethod IRefactoringDetector rmDetector,
 			@ExtractMethod IRefactoringDetector emDetector,
@@ -45,7 +47,7 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 						EventBus bus = ServiceLocator.ResolveType(EventBus.class);
 						bus.post(ref);
 						return null;
-					}});;
+					}});
 		}
 		return null;
 	}

@@ -27,4 +27,16 @@ public class TestCUAfter1
 	{
 		System.out.println("");
 	}
+	
+	public void bar()
+	{
+		
+	}
+	
+	public void barExtracted()
+	{
+		int i = 0;
+		int k = 0;
+		int f = k;
+	}
 }

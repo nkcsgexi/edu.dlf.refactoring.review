@@ -1,4 +1,6 @@
 package edu.dlf.refactoring.detectors;
+import com.google.inject.Inject;
+
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodInvocationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
@@ -12,6 +14,7 @@ public class RenameMethodDetector implements IRefactoringDetector{
 
 	private CascadeChangeCriteriaBuilder searchCriteriaBuilder;
 
+	@Inject
 	public RenameMethodDetector(
 			@SimpleNameAnnotation String snChangeLevel,
 			@MethodDeclarationAnnotation String mdChangeLevel,
