@@ -22,6 +22,8 @@ import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
+import edu.dlf.refactoring.refactorings.ExtractMethodRefactoring;
+import edu.dlf.refactoring.utils.IEqualityComparer;
 import edu.dlf.refactoring.utils.XList;
 
 public class ExtractMethodDetector extends AbstractRefactoringDetector {
@@ -67,18 +69,34 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 							public ASTNode apply(ISourceChange change) {
 								return change.getNodeAfter();
 							}});
-					}}));
- 		
+					}}));	
+ 			return createRefactorings(pairs);
 		} catch (Exception e) {
 			logger.fatal(e);
-			
+			return XList.CreateList();
 		}
-		return null;
 	}
 	
+	private XList<IRefactoring> createRefactorings(XList<ASTNodePair> pairs) {
+		return pairs.groupBy(new IEqualityComparer<ASTNodePair>() {
+			@Override
+			public boolean AreEqual(ASTNodePair a, ASTNodePair b) {
+				return a.getNodeAfter() == b.getNodeAfter();
+			}
+		}).select(new Function<XList<ASTNodePair>, IRefactoring>(){
+			@Override
+			public IRefactoring apply(XList<ASTNodePair> list) {		
+				return new ExtractMethodRefactoring(list.select(
+					new Function<ASTNodePair, ASTNode>(){
+					@Override
+					public ASTNode apply(ASTNodePair pair) {
+						return pair.getNodeBefore();
+					}}), list.first().getNodeAfter());
+			}});
+	}
+
 	private class StatementToMethodMapper implements IASTNodeMapStrategy
 	{
-
 		@Override
 		public XList<ASTNodePair> map(XList<ASTNode> statements, final XList<ASTNode> methods) throws Exception {
 			if(methods.size() == 1)

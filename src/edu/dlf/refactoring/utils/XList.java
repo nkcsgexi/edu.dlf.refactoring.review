@@ -178,6 +178,29 @@ public class XList<T> extends ArrayList<T> {
 	}
 	
 	
+	public <S> XList<XList<T>> groupBy(IEqualityComparer<T> comparer)
+	{
+		XList<XList<T>> listSet = new XList<XList<T>>();
+		for(T t : this)
+		{
+			boolean foundList = false;
+			for(XList<T> list : listSet)
+			{
+				if(comparer.AreEqual(list.first(), t))
+				{
+					list.add(t);
+					foundList = true;
+					break;
+				}
+			}
+			if(foundList)
+				continue;
+			listSet.add(new XList<T>(t));
+		}
+		return listSet;
+	}
+	
+	
 	public <S> XList<S> cast(Class S)
 	{
 		return this.select(new Function<T, S>(){
