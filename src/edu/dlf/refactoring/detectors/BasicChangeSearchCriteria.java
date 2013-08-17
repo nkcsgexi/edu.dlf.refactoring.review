@@ -15,7 +15,7 @@ public abstract class BasicChangeSearchCriteria implements IChangeSearchCriteria
 	protected abstract boolean isSourceChangeTypeOk(SourceChangeType type);
 	
 	@Override
-	public List<IChangeSearchResult> getChangesMeetCriteria(ISourceChange root)
+	public List<IChangeSearchResult> search(ISourceChange root)
 	{	
 		List<ISourceChange> allNodes = SourceChangeUtils.getSelfAndDescendent(root);
 		return allNodes.filter(new F<ISourceChange, Boolean>(){

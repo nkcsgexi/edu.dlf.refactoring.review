@@ -1,13 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: RefReview
-Bundle-SymbolicName: RefReview
+Bundle-SymbolicName: RefReview;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: refreview.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jdt.core,
- org.junit
+ org.junit,
+ org.eclipse.ui.source,
+ org.eclipse.jdt.core.source
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,

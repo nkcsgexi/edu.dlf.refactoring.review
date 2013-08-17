@@ -42,7 +42,6 @@ public class CompilationUnitChangeTests extends TestSuite{
 		ISourceChange change = calculator.CalculateASTNodeChange(new ASTNodePair(cuBefore, cuAfter));
 		change = SourceChangeUtils.pruneSourceChange(change);
 		String s = SourceChangeUtils.printChangeTree(change);
-		System.out.println(s);
 	}
 	
 	@Test
@@ -58,7 +57,7 @@ public class CompilationUnitChangeTests extends TestSuite{
 		changeBuilder.addSingleChangeCriteria("Method", SourceChangeType.PARENT).
 			addSingleChangeCriteria("BlockStatement", SourceChangeType.PARENT).
 				addSingleChangeCriteria("Statement", SourceChangeType.ADD);
-		List<IChangeSearchResult> results = changeBuilder.getSearchCriteria().getChangesMeetCriteria(change);
+		List<IChangeSearchResult> results = changeBuilder.getSearchCriteria().search(change);
 		Assert.isTrue(results.isNotEmpty());
 		Assert.isTrue(results.length() == 1);
 		Assert.isTrue(results.head().getSourceChanges().length() == 3);

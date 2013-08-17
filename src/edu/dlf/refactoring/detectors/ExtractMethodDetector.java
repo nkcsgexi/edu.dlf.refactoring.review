@@ -40,8 +40,8 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 	
 	@Override
 	public List<IRefactoring> detectRefactoring(ISourceChange change) {
-		List<IChangeSearchResult> staChanges = this.statementSearchCriteria.getChangesMeetCriteria(change);
-		List<IChangeSearchResult> mdChanges = this.methodSearchCriteria.getChangesMeetCriteria(change);
+		List<IChangeSearchResult> staChanges = this.statementSearchCriteria.search(change);
+		List<IChangeSearchResult> mdChanges = this.methodSearchCriteria.search(change);
 		if(staChanges.isEmpty() || mdChanges.isEmpty())
 			return List.nil();
 		 try {

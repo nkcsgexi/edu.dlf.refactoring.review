@@ -8,7 +8,7 @@ public class SourceChangeSearcher {
 	
 	public interface IChangeSearchCriteria
 	{
-		List<IChangeSearchResult> getChangesMeetCriteria(ISourceChange root); 
+		List<IChangeSearchResult> search(ISourceChange root); 
 	}
 	
 	public interface IChangeCriteriaBuilder

@@ -125,7 +125,7 @@ public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 		logger.info("Search pattern: " + patternString);
 		return new IChangeSearchCriteria() {
 			@Override
-			public List<IChangeSearchResult> getChangesMeetCriteria(ISourceChange root) {
+			public List<IChangeSearchResult> search(ISourceChange root) {
 				return SourceChangeUtils.getSelfAndDescendent(root).filter(new F<ISourceChange, Boolean>(){
 					@Override
 					public Boolean f(ISourceChange change) {
