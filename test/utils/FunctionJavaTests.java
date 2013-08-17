@@ -1,11 +1,13 @@
 package utils;
 
+import junit.framework.TestSuite;
+
 import org.junit.Test;
 
-import fj.data.Array;
 import fj.data.List;
 import fj.data.List.Buffer;
-import junit.framework.TestSuite;
+	
+
 
 public class FunctionJavaTests extends TestSuite{
 	
@@ -29,14 +31,16 @@ public class FunctionJavaTests extends TestSuite{
 		{
 			System.out.println(i);
 		}
+		
+		System.out.println(buffer.toList().splitAt(1)._1().length());
+		System.out.println(buffer.toList().splitAt(1)._2().length());
  	}
 	
 	
 	@Test
 	public void arrayTest()
 	{
-		Array<Integer> array;
-	
+		
 	}
 
 }

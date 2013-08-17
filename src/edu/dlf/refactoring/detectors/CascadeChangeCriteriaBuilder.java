@@ -1,5 +1,10 @@
 package edu.dlf.refactoring.detectors;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
@@ -11,67 +16,109 @@ import fj.data.List;
 import fj.data.List.Buffer;
 
 public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
-	private final Buffer<BasicChangeSearchCriteria> criteriaChain = Buffer.empty();
+	private final Buffer<String> criteriaChain = Buffer.empty();
 
-	public CascadeChangeCriteriaBuilder addNextChangeCriteria(final String c,
+	public CascadeChangeCriteriaBuilder addSingleChangeCriteria(final String c,
 			final SourceChangeType t) {
-		this.criteriaChain.snoc(new BasicChangeSearchCriteria() {
-			@Override
-			protected boolean isChangeLevelOk(String changeLevel) {
-				return changeLevel.equals(c);
-			}
-
-			@Override
-			protected boolean isSourceChangeTypeOk(SourceChangeType type) {
-				return type == t;
-			}
-		});
+		criteriaChain.snoc("(@" + c + t.toString() + ")");
 		return this;
 	}
-
-	@Override
-	public IChangeSearchCriteria getSearchCriteria() {
-		final List<BasicChangeSearchCriteria> chain = criteriaChain.toList();
-		return new IChangeSearchCriteria() {
-
-			private boolean doesChangeMeetBasicCriteria(
-					BasicChangeSearchCriteria criteria, ISourceChange change) {
-				return criteria.isChangeLevelOk(change.getSourceChangeLevel())
-						&& criteria.isSourceChangeTypeOk(change
-								.getSourceChangeType());
-			}
-
+	
+	public CascadeChangeCriteriaBuilder addOneOrMoreChangeCriteria(final String c, 
+			final SourceChangeType t)
+	{
+		criteriaChain.snoc("(@" + c + t.toString() + ")+");
+		return this;
+	}
+	
+	
+	public CascadeChangeCriteriaBuilder addZeroOrMoreChangeCriteria(final String c, 
+			final SourceChangeType t)
+	{
+		criteriaChain.snoc("(@" + c + t.toString() + ")*");
+		return this;
+	}
+	
+	
+	private String getElementaryChagneString(ISourceChange change)
+	{
+		return "@" + change.getSourceChangeLevel() + change.getSourceChangeType();
+	}
+	
+	private String createChangeString(ISourceChange change)
+	{
+		StringBuilder sb = new StringBuilder();
+		while(change != null)
+		{
+			sb.insert(0, getElementaryChagneString(change));
+			change = change.getParentChange();
+		}
+		return sb.toString();
+	}
+	
+	private List<ISourceChange> getChangesFromRootToLeaf(ISourceChange leaf)
+	{
+		Buffer<ISourceChange> buffer = Buffer.empty();
+		while(leaf != null)
+		{
+			buffer.snoc(leaf);
+			leaf = leaf.getParentChange();
+		}
+		return buffer.toList().reverse();
+	}
+	
+	
+	private String getCurrentSearchPattern()
+	{
+		return this.criteriaChain.toList().foldLeft(new F<StringBuilder, 
+				F<String, StringBuilder>>(){
 			@Override
-			public List<IChangeSearchResult> getChangesMeetCriteria(
-					ISourceChange root) {
-				List<ISourceChange> nodes = SourceChangeUtils
-						.getSelfAndDescendent(root);
-				return nodes.filter(new F<ISourceChange, Boolean>() {
+			public F<String, StringBuilder> f(final StringBuilder sb) {
+				return new F<String, StringBuilder>(){
 					@Override
-					public Boolean f(ISourceChange change) {
-						for (int i = chain.length() - 1; i >= 0; i++) {
-							if (!doesChangeMeetBasicCriteria(chain.index(i),
-									change))
-								return false;
-						}
-						return true;
-					}
-				}).map(new F<ISourceChange, IChangeSearchResult>() {
+					public StringBuilder f(String s) {
+						return sb.append(s);
+					}};
+			}}, new StringBuilder()).toString();
+	}
+	
+	private List<IChangeSearchResult> getMatchedChangeChain(final String patternString,ISourceChange leaf)
+	{
+		final List<ISourceChange> changeList = getChangesFromRootToLeaf(leaf);
+		Buffer<String> matches = Buffer.empty();
+		Pattern pattern = Pattern.compile(patternString);
+		Matcher m = pattern.matcher(createChangeString(leaf));
+		while(m.find())
+		{
+			matches.snoc(m.group(1));
+		}
+		return matches.toList().map(new F<String, List<ISourceChange>>(){
+			@Override
+			public List<ISourceChange> f(String s) {
+				int start = StringUtils.countMatches(patternString.substring(0, patternString.indexOf(s)), "@");
+				int length = StringUtils.countMatches(s, "@");
+				return changeList.splitAt(start - 1)._2().splitAt(length)._1();
+			}}).map
+				(new F<List<ISourceChange>, IChangeSearchResult>(){
 					@Override
-					public IChangeSearchResult f(ISourceChange change) {
-						final Buffer<ISourceChange> changes = Buffer.empty();
-						for (int i = 0; i < chain.length(); i++) {
-							changes.snoc(change);
-							change = change.getParentChange();
-						}
+					public IChangeSearchResult f(final List<ISourceChange> list) {
 						return new IChangeSearchResult() {
 							@Override
 							public List<ISourceChange> getSourceChanges() {
-								return changes.toList();
+								return list;
 							}
 						};
-					}
-				});
+					}});
+	}
+	
+	
+	@Override
+	public IChangeSearchCriteria getSearchCriteria() {
+		final String patternString = getCurrentSearchPattern();
+		return new IChangeSearchCriteria() {
+			@Override
+			public List<IChangeSearchResult> getChangesMeetCriteria(ISourceChange root) {
+				return getMatchedChangeChain(patternString, root);
 			}
 		};
 	}

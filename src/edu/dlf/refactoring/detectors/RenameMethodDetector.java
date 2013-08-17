@@ -21,8 +21,8 @@ public class RenameMethodDetector implements IRefactoringDetector{
 			@MethodInvocationAnnotation String miChangeLevel)
 	{
 		this.searchCriteriaBuilder = new CascadeChangeCriteriaBuilder();
-		this.searchCriteriaBuilder.addNextChangeCriteria(mdChangeLevel, SourceChangeType.PARENT);
-		this.searchCriteriaBuilder.addNextChangeCriteria(snChangeLevel, SourceChangeType.UPDATE);
+		this.searchCriteriaBuilder.addSingleChangeCriteria(mdChangeLevel, SourceChangeType.PARENT);
+		this.searchCriteriaBuilder.addSingleChangeCriteria(snChangeLevel, SourceChangeType.UPDATE);
 		
 	}
 	

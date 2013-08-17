@@ -1,14 +1,10 @@
 package edu.dlf.refactoring.detectors;
-
 import java.util.Comparator;
-
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;
-
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
@@ -139,5 +135,4 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 					});
 		}
 	}
-	
 }
