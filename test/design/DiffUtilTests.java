@@ -3,11 +3,12 @@ package design;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.TestSuite;
+
 import org.junit.Test;
 
 import difflib.Delta;
 import difflib.DiffUtils;
-import junit.framework.TestSuite;
 
 public class DiffUtilTests extends TestSuite{
 	

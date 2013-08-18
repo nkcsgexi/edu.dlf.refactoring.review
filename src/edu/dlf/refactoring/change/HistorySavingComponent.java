@@ -1,18 +1,24 @@
 package edu.dlf.refactoring.change;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.analyzers.ASTAnalyzer;
+import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.IFactorComponent;
-import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator;
+import edu.dlf.refactoring.design.ServiceLocator.ChangeCompAnnotation;
+import edu.dlf.refactoring.design.ServiceLocator.HistorySavingCompAnnotation;
 import fj.Effect;
 import fj.F;
 import fj.data.List;
@@ -21,53 +27,72 @@ import fj.data.List.Buffer;
 public class HistorySavingComponent implements IFactorComponent {
 
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
-	private final EventBus bus = ServiceLocator.ResolveType(EventBus.class);
-	private final HashMap<String, Buffer<ICompilationUnit>> history = 
-			new HashMap<String, Buffer<ICompilationUnit>>();
+	private final HashMap<String, ArrayList<ASTNode>> history = 
+			new HashMap<String, ArrayList<ASTNode>>();
+	private final EventBus bus;
 	
 	@Inject
-	public HistorySavingComponent()
+	public HistorySavingComponent(@ChangeCompAnnotation IFactorComponent component)
 	{
-		
+		this.bus = new EventBus();
+		this.bus.register(component);
 	}
-	
-	
-	
+
+	@Subscribe
 	@Override
 	public Void listen(Object event)
 	{
-		if(event instanceof ICompilationUnit)
-		{
-			ICompilationUnit iu = (ICompilationUnit) event;
-			String path = getPath(iu);
-			if(path != null)
+		try {
+			if(event instanceof ICompilationUnit)
 			{
-				if(history.containsKey(path))
+				logger.info("Get event.");
+				ICompilationUnit iu = (ICompilationUnit) event;
+				ASTNode cu = ASTAnalyzer.parseICompilationUnit(iu);
+				String path = getPath(iu);
+				if(path != null)
 				{
-					Buffer buffer = history.get(path);
-					buffer.snoc(iu);
-					HandleChange(buffer.toList().reverse());
-				}
-				else
-				{
-					Buffer buffer = Buffer.empty();
-					buffer.snoc(iu);
-					this.history.put(path, buffer);
+					if(history.containsKey(path))
+					{
+						ArrayList<ASTNode> list = history.get(path);
+						list.add(0, cu);
+						HandleChange(ToFunctionalList(list));
+					}
+					else
+					{
+						ArrayList<ASTNode> list = new ArrayList<ASTNode>();
+						list.add(cu);
+						this.history.put(path, list);
+					}
 				}
 			}
+		}catch(Exception e)
+		{
+			logger.fatal(e);
 		}
 		return null;
 	}
 	
-	private void HandleChange(List<ICompilationUnit> changeList) {
-		final ICompilationUnit after = changeList.head();
-		changeList.splitAt(1)._2().map(new F<ICompilationUnit, JavaElementPair>(){
+	List<ASTNode> ToFunctionalList(ArrayList<ASTNode> list)
+	{
+		Buffer<ASTNode> buffer = Buffer.empty();
+		for(ASTNode n : list)
+		{
+			buffer.snoc(n);
+		}
+		return buffer.toList();
+	}
+	
+	
+	
+	private void HandleChange(List<ASTNode> changeList) {
+		final ASTNode after = changeList.head();
+		changeList.splitAt(1)._2().map(new F<ASTNode, ASTNodePair>(){
 			@Override
-			public JavaElementPair f(ICompilationUnit before) {
-				return new JavaElementPair(before, after);
-			}}).foreach(new Effect<JavaElementPair>(){
+			public ASTNodePair f(ASTNode before) {
+				return new ASTNodePair(before, after);
+			}}).foreach(new Effect<ASTNodePair>(){
 				@Override
-				public void e(JavaElementPair pair) {
+				public void e(ASTNodePair pair) {
 					bus.post(pair);
 				}});
 	}

@@ -1,20 +1,25 @@
 package edu.dlf.refactoring.refactorings;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import edu.dlf.refactoring.design.RefactoringType;
+import edu.dlf.refactoring.design.ServiceLocator;
 import fj.data.List;
 
 public class ExtractMethodRefactoring extends AbstractRefactoring{
 	
 	public static SingleNodeDescriptor DeclaredMethod = new SingleNodeDescriptor(){};
 	public static NodeListDescriptor ExtractedStatements = new NodeListDescriptor(){};
+	private Logger logger = ServiceLocator.ResolveType(Logger.class);
+	
 	
 	public ExtractMethodRefactoring(List<ASTNode> statements, ASTNode method)
 	{
 		super(RefactoringType.ExtractMethod);
 		this.addNodeList(ExtractedStatements, statements);
 		this.addSingleNode(DeclaredMethod, method);
+		logger.info("Extract method created.");
 	}
 	
 	public String toString()

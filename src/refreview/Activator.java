@@ -3,13 +3,6 @@ package refreview;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import com.google.common.eventbus.EventBus;
-
-import edu.dlf.refactoring.change.ChangeComponent;
-import edu.dlf.refactoring.change.HistorySavingComponent;
-import edu.dlf.refactoring.design.ServiceLocator;
-import edu.dlf.refactoring.detectors.RefactoringDetectionComponent;
-
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -35,7 +28,6 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		initialize();
 	}
 
 	/*
@@ -54,14 +46,5 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
-	}
-
-	
-	private void initialize()
-	{
-		EventBus bus = ServiceLocator.ResolveType(EventBus.class);
-		bus.register(ServiceLocator.ResolveType(HistorySavingComponent.class));
-		bus.register(ServiceLocator.ResolveType(ChangeComponent.class));
-		bus.register(ServiceLocator.ResolveType(RefactoringDetectionComponent.class));
 	}
 }

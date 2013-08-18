@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.utils;
 
+import static fj.data.Array.array;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,7 +14,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
 import fj.data.Array;
-import static fj.data.Array.array;
 
 public class XList<T> extends ArrayList<T> {
 

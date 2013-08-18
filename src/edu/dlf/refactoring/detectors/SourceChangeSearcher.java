@@ -1,7 +1,6 @@
 package edu.dlf.refactoring.detectors;
 
 import edu.dlf.refactoring.design.ISourceChange;
-import edu.dlf.refactoring.utils.XList;
 import fj.data.List;
 
 public class SourceChangeSearcher {

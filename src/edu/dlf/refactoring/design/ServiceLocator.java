@@ -1,6 +1,15 @@
 package edu.dlf.refactoring.design;
 
 
+import static java.lang.annotation.ElementType.CONSTRUCTOR;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
@@ -9,6 +18,7 @@ import org.apache.log4j.PatternLayout;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
+import com.google.inject.BindingAnnotation;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -22,20 +32,40 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector;
 
 public class ServiceLocator extends AbstractModule
 {
-	private static AbstractModule _instance = new ServiceLocator();
+	private final static AbstractModule _instance = new ServiceLocator();
+	
+	
+	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+	public @interface HistorySavingCompAnnotation {}
+	
+	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+	public @interface ChangeCompAnnotation {}
+	
+	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+	public @interface RefactoringDetectionCompAnnotation {}
+	
+	
+	
+	private ServiceLocator()
+	{
+		
+	}
 	
 	@Override
 	protected void configure() {
-		bind(EventBus.class).in(Singleton.class);
+		
+		this.install(new ChangeComponentInjector());
+		this.install(new RefactoringDetectionComponentInjector());
 		bind(HistorySavingComponent.class).in(Singleton.class);
 		bind(ChangeComponent.class).in(Singleton.class);
 		bind(RefactoringDetectionComponent.class).in(Singleton.class);
-		this.install(new ChangeComponentInjector());
-		this.install(new RefactoringDetectionComponentInjector());
+		
+		bind(IFactorComponent.class).annotatedWith(HistorySavingCompAnnotation.class).to(HistorySavingComponent.class);
+		bind(IFactorComponent.class).annotatedWith(ChangeCompAnnotation.class).to(ChangeComponent.class);
+		bind(IFactorComponent.class).annotatedWith(RefactoringDetectionCompAnnotation.class).to(RefactoringDetectionComponent.class);
 	}
-	
-	
-	
+
+
 	public static <T> T ResolveType (Class T)
 	{		
 		Injector injector = Guice.createInjector(_instance);

@@ -1,9 +1,9 @@
 package edu.dlf.refactoring.detectors;
 
-import java.util.Collection;
+import org.apache.log4j.Logger;
 
-import com.google.common.base.Function;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.design.IFactorComponent;
@@ -14,7 +14,6 @@ import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
-import edu.dlf.refactoring.utils.XList;
 import fj.Effect;
 import fj.F;
 import fj.data.List;
@@ -23,6 +22,7 @@ import fj.data.List.Buffer;
 public class RefactoringDetectionComponent implements IFactorComponent{
 	
 	private final List<IRefactoringDetector> detectors;
+	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 
 	@Inject
 	public RefactoringDetectionComponent(
@@ -37,10 +37,12 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 		this.detectors = buffer.toList();
 	}
 
+	@Subscribe
 	@Override
 	public Void listen(Object event) {
 		if(event instanceof ISourceChange)
 		{
+			logger.info("Refactoring dection component gets event.");
 			final ISourceChange change = (ISourceChange) event;
 			detectors.bind(new F<IRefactoringDetector, 
 					List<IRefactoring>>(){

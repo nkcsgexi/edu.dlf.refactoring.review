@@ -1,5 +1,14 @@
 package edu.dlf.refactoring.detectors;
 
+import static java.lang.annotation.ElementType.CONSTRUCTOR;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
 
@@ -13,15 +22,6 @@ import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.processors.ExtractMethodProcessor;
 import edu.dlf.refactoring.processors.RenameMethodProcessor;
 import edu.dlf.refactoring.processors.RenameTypeProcessor;
-
-import java.lang.annotation.Target;
-import java.lang.annotation.Retention;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.CONSTRUCTOR;
 
 public class RefactoringDetectionComponentInjector extends AbstractModule{
 

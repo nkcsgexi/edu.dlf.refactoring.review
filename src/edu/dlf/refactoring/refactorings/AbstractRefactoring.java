@@ -6,7 +6,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 
 import edu.dlf.refactoring.design.IRefactoring;
 import edu.dlf.refactoring.design.RefactoringType;
-import edu.dlf.refactoring.utils.XList;
 import fj.data.List;
 
 abstract class AbstractRefactoring implements IRefactoring
