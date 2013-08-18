@@ -18,7 +18,6 @@ import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.design.ServiceLocator.ChangeCompAnnotation;
-import edu.dlf.refactoring.design.ServiceLocator.HistorySavingCompAnnotation;
 import fj.Effect;
 import fj.F;
 import fj.data.List;
@@ -54,8 +53,10 @@ public class HistorySavingComponent implements IFactorComponent {
 					if(history.containsKey(path))
 					{
 						ArrayList<ASTNode> list = history.get(path);
-						list.add(0, cu);
-						HandleChange(ToFunctionalList(list));
+						if(!ASTAnalyzer.AreASTNodeSame(cu, list.get(0))){
+							list.add(0, cu);
+							HandleChange(ToFunctionalList(list));
+						}
 					}
 					else
 					{
@@ -64,6 +65,7 @@ public class HistorySavingComponent implements IFactorComponent {
 						this.history.put(path, list);
 					}
 				}
+				logger.info("Handled event.");
 			}
 		}catch(Exception e)
 		{
@@ -81,6 +83,8 @@ public class HistorySavingComponent implements IFactorComponent {
 		}
 		return buffer.toList();
 	}
+	
+	
 	
 	
 	

@@ -32,7 +32,7 @@ public class RenameTypeDetector extends AbstractRefactoringDetector{
 		
 		
 		
-		return null;
+		return List.nil();
 	}
 
 }

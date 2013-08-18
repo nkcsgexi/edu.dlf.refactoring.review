@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTMatcher;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Statement;
@@ -127,6 +128,11 @@ public class ASTAnalyzer {
 			}};
 	}
 	
+	
+	public static boolean AreASTNodeSame (ASTNode node1, ASTNode node2)
+	{
+		return node1.subtreeMatch(new ASTMatcher(), node2);
+	}
 	
 	public static IEqualityComparer<ASTNode> getASTEqualityComparer()
 	{

@@ -53,7 +53,8 @@ public class ChangeComponent implements IFactorComponent{
 					projectCalculator.CalculateJavaModelChange(change)));
 			if(change.GetBeforeElement() instanceof ICompilationUnit)
 				bus.post(SourceChangeUtils.pruneSourceChange(
-					icuCalculator.CalculateJavaModelChange(change)));		
+					icuCalculator.CalculateJavaModelChange(change)));
+			logger.info("Handled event.");
 		}
 		
 		if(event instanceof IASTNodePair)
@@ -61,6 +62,7 @@ public class ChangeComponent implements IFactorComponent{
 			logger.info("Get event.");
 			bus.post(SourceChangeUtils.pruneSourceChange(cuCalculator.
 				CalculateASTNodeChange((ASTNodePair) event)));
+			logger.info("Handled event.");
 		}
 		
 		return null;

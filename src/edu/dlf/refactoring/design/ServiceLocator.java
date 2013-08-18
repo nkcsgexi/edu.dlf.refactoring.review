@@ -16,7 +16,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
-import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Guice;
@@ -56,6 +55,7 @@ public class ServiceLocator extends AbstractModule
 		
 		this.install(new ChangeComponentInjector());
 		this.install(new RefactoringDetectionComponentInjector());
+		
 		bind(HistorySavingComponent.class).in(Singleton.class);
 		bind(ChangeComponent.class).in(Singleton.class);
 		bind(RefactoringDetectionComponent.class).in(Singleton.class);
@@ -81,7 +81,7 @@ public class ServiceLocator extends AbstractModule
 		  ConsoleAppender console = new ConsoleAppender(); //create appender
 		  String PATTERN = "%d [%p|%c|%C{1}] %m%n";
 		  console.setLayout(new PatternLayout(PATTERN)); 
-		  console.setThreshold(Level.DEBUG);
+		  console.setThreshold(Level.ALL);
 		  console.activateOptions();
 		  Logger.getRootLogger().addAppender(console);
 		
@@ -89,10 +89,9 @@ public class ServiceLocator extends AbstractModule
 		  fa.setName("FileLogger");
 		  fa.setFile("/home/xige/Desktop/RefReviewer.log", true, true, 1);
 		  fa.setLayout(new PatternLayout("%d %-5p [%c{1}] %m%n"));
-		  fa.setThreshold(Level.DEBUG);
+		  fa.setThreshold(Level.ALL);
 		  fa.setAppend(true);
 		  fa.activateOptions();
-	
 		  Logger.getRootLogger().addAppender(fa);
 		  
 		  return Logger.getRootLogger();

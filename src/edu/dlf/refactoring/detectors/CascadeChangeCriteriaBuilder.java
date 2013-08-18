@@ -97,7 +97,6 @@ public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 		while(m.find())
 		{
 			matches.snoc(m.group(0));
-			logger.info("Matched string:" + m.group(0));
 		}
 		return matches.toList().map(new F<String, List<ISourceChange>>(){
 			@Override
@@ -122,7 +121,6 @@ public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 	@Override
 	public IChangeSearchCriteria getSearchCriteria() {
 		final String patternString = getCurrentSearchPattern();
-		logger.info("Search pattern: " + patternString);
 		return new IChangeSearchCriteria() {
 			@Override
 			public List<IChangeSearchResult> search(ISourceChange root) {

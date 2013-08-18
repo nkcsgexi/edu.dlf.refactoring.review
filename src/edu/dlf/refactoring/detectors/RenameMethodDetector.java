@@ -42,7 +42,7 @@ public class RenameMethodDetector extends AbstractRefactoringDetector{
 			return List.nil();
 		
 		
-		return null;
+		return List.nil();
 	}
 
 }

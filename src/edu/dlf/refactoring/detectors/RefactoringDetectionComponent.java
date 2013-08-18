@@ -2,7 +2,6 @@ package edu.dlf.refactoring.detectors;
 
 import org.apache.log4j.Logger;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
@@ -17,12 +16,12 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import fj.Effect;
 import fj.F;
 import fj.data.List;
-import fj.data.List.Buffer;
+import static fj.data.List.list;  
 
 public class RefactoringDetectionComponent implements IFactorComponent{
 	
-	private final List<IRefactoringDetector> detectors;
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
+	private final List<IRefactoringDetector> detectorsList;
 
 	@Inject
 	public RefactoringDetectionComponent(
@@ -30,21 +29,17 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 			@ExtractMethod IRefactoringDetector emDetector,
 			@RenameType IRefactoringDetector rtDetector)
 	{
-		Buffer<IRefactoringDetector> buffer = Buffer.empty();
-		buffer.snoc(rmDetector);
-		buffer.snoc(emDetector);
-		buffer.snoc(rtDetector);
-		this.detectors = buffer.toList();
+		this.detectorsList = list(rmDetector, emDetector, rtDetector);
 	}
-
+	
 	@Subscribe
 	@Override
 	public Void listen(Object event) {
 		if(event instanceof ISourceChange)
 		{
-			logger.info("Refactoring dection component gets event.");
+			logger.info("get event.");
 			final ISourceChange change = (ISourceChange) event;
-			detectors.bind(new F<IRefactoringDetector, 
+			this.detectorsList.bind(new F<IRefactoringDetector, 
 					List<IRefactoring>>(){
 				@Override
 				public List<IRefactoring> f(IRefactoringDetector d) {
@@ -52,9 +47,9 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 				}}).foreach(new Effect<IRefactoring>(){
 					@Override
 					public void e(IRefactoring arg0) {
-						EventBus bus = ServiceLocator.ResolveType(EventBus.class);
-						bus.post(arg0);
+						// TODO:
 					}});
+			logger.info("Handled event.");
 		}
 		return null;
 	}
