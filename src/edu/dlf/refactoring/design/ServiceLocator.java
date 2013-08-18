@@ -15,6 +15,7 @@ import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.apache.log4j.RollingFileAppender;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
@@ -85,11 +86,13 @@ public class ServiceLocator extends AbstractModule
 		  console.activateOptions();
 		  Logger.getRootLogger().addAppender(console);
 		
-		  FileAppender fa = new FileAppender();
+		  RollingFileAppender fa = new RollingFileAppender();
+		  fa.setImmediateFlush(true);
+		  fa.setMaximumFileSize(Integer.MAX_VALUE);
 		  fa.setName("FileLogger");
 		  fa.setFile("/home/xige/Desktop/RefReviewer.log", true, true, 1);
 		  fa.setLayout(new PatternLayout("%d %-5p [%c{1}] %m%n"));
-		  fa.setThreshold(Level.ALL);
+		  fa.setThreshold(Level.DEBUG);
 		  fa.setAppend(true);
 		  fa.activateOptions();
 		  Logger.getRootLogger().addAppender(fa);
