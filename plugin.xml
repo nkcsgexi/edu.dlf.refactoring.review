@@ -3,9 +3,10 @@
 <plugin>
    <extension
          point="org.eclipse.jdt.core.compilationParticipant">
+      <compilationParticipant
+            class="refreview.BeneFactorCompilationParticipant"
+            createsProblems="false"
+            id="RefReview.compilationParticipant1">
+      </compilationParticipant>
    </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-   </extension>
-
 </plugin>

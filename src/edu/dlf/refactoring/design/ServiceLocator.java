@@ -14,7 +14,10 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
+import edu.dlf.refactoring.change.ChangeComponent;
 import edu.dlf.refactoring.change.ChangeComponentInjector;
+import edu.dlf.refactoring.change.HistorySavingComponent;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponent;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector;
 
 public class ServiceLocator extends AbstractModule
@@ -23,7 +26,10 @@ public class ServiceLocator extends AbstractModule
 	
 	@Override
 	protected void configure() {
-		bind(EventBus.class).to(RefactoringEventBus.class).in(Singleton.class);
+		bind(EventBus.class).in(Singleton.class);
+		bind(HistorySavingComponent.class).in(Singleton.class);
+		bind(ChangeComponent.class).in(Singleton.class);
+		bind(RefactoringDetectionComponent.class).in(Singleton.class);
 		this.install(new ChangeComponentInjector());
 		this.install(new RefactoringDetectionComponentInjector());
 	}
