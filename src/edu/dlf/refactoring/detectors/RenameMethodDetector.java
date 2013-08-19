@@ -16,7 +16,6 @@ import edu.dlf.refactoring.refactorings.RenameMethodRefactoring;
 import fj.Equal;
 import fj.F;
 import fj.data.List;
-import fj.data.List.Buffer;
 
 public class RenameMethodDetector extends AbstractRefactoringDetector{
 	private final IChangeSearchCriteria declarationChangeCriteira;
@@ -58,9 +57,7 @@ public class RenameMethodDetector extends AbstractRefactoringDetector{
 		List<IChangeSearchResult> invChanges = this.invocationChangeCriteira.search(change);
 		if(decChanges.isEmpty() && invChanges.isEmpty())
 			return List.nil();
-		Buffer<IRefactoring> buffer = Buffer.empty();
 		
-		// Rename from a declared method
 		return decChanges.append(invChanges).filter(new F<IChangeSearchResult, Boolean>(){
 			@Override
 			public Boolean f(IChangeSearchResult result) {
@@ -72,8 +69,8 @@ public class RenameMethodDetector extends AbstractRefactoringDetector{
 					return new F<IChangeSearchResult, Boolean>(){
 						@Override
 						public Boolean f(IChangeSearchResult r2) {
-							return areBindingSame(getLastChangeBeforeName(r1), getLastChangeBeforeName(r2)) ||
-									areBindingSame(getLastChangeAfterName(r1), getLastChangeAfterName(r2));
+							return areBindingSame(getLastChangeBeforeName(r1), getLastChangeBeforeName(r2)) 
+								|| areBindingSame(getLastChangeAfterName(r1), getLastChangeAfterName(r2));
 						}};
 				}})).map(new F<List<IChangeSearchResult>, IRefactoring>(){
 					@Override
@@ -90,7 +87,5 @@ public class RenameMethodDetector extends AbstractRefactoringDetector{
 							}});
 						return new RenameMethodRefactoring(namesBefore, namesAfter);				
 					}});
-		
 	}
-
 }
