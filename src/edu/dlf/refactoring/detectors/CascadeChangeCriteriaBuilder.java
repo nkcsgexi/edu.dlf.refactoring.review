@@ -87,7 +87,7 @@ public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 			}}, new StringBuilder()).toString();
 	}
 	
-	private List<IChangeSearchResult> getMatchedChangeChain(final String patternString,ISourceChange leaf)
+	private List<IChangeSearchResult> getMatchedChangeChain(final String patternString, final ISourceChange leaf)
 	{
 		final List<ISourceChange> changeList = getChangesFromRootToLeaf(leaf);
 		Buffer<String> matches = Buffer.empty();
@@ -101,11 +101,10 @@ public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 		return matches.toList().map(new F<String, List<ISourceChange>>(){
 			@Override
 			public List<ISourceChange> f(String s) {
-				int start = StringUtils.countMatches(patternString.substring(0, leafString.indexOf(s)), "@");
+				int start = StringUtils.countMatches(leafString.substring(0, leafString.indexOf(s)), "@");
 				int length = StringUtils.countMatches(s, "@");
-				return changeList.splitAt(start - 1)._2().splitAt(length)._1();
-			}}).map
-				(new F<List<ISourceChange>, IChangeSearchResult>(){
+				return changeList.splitAt(start)._2().splitAt(length)._1();
+			}}).map(new F<List<ISourceChange>, IChangeSearchResult>(){
 					@Override
 					public IChangeSearchResult f(final List<ISourceChange> list) {
 						return new IChangeSearchResult() {

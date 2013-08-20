@@ -4,6 +4,7 @@ import junit.framework.TestSuite;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,7 +25,9 @@ import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.detectors.ExtractMethodDetector;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponent;
+import edu.dlf.refactoring.detectors.RenameMethodDetector;
 import edu.dlf.refactoring.refactorings.ExtractMethodRefactoring;
+import edu.dlf.refactoring.refactorings.RenameMethodRefactoring;
 import fj.data.List;
 
 public class ExtractMethodDetectorTests extends TestSuite{
@@ -35,6 +38,7 @@ public class ExtractMethodDetectorTests extends TestSuite{
 	private static IASTNodeChangeCalculator cuCalculator;
 	private static IRefactoringDetector emDetector;
 	private static Logger logger = ServiceLocator.ResolveType(Logger.class);
+	private static IRefactoringDetector rmDetector;
 	
 	@BeforeClass
 	public static void setUp()
@@ -46,6 +50,7 @@ public class ExtractMethodDetectorTests extends TestSuite{
 		bus = ServiceLocator.ResolveType(EventBus.class);
 		cuCalculator = ServiceLocator.ResolveType(CompilationUnitChangeCalculator.class);
 		emDetector = ServiceLocator.ResolveType(ExtractMethodDetector.class);
+		rmDetector = ServiceLocator.ResolveType(RenameMethodDetector.class);
 	}
 	
 	@Test
@@ -71,6 +76,21 @@ public class ExtractMethodDetectorTests extends TestSuite{
 				getStructuralProperty(MethodDeclaration.NAME_PROPERTY).toString().equals("barExtracted"));
 	}
 	
+	
+	@Test
+	public void detectRenameMethodTest() throws Exception
+	{
+		ISourceChange change = cuCalculator.CalculateASTNodeChange(TestUtils.
+				getNodePairByFileNames("TestCUBefore1.java", "TestCUAfter1.java"));
+		change = SourceChangeUtils.pruneSourceChange(change);
+		List<IRefactoring> refactorings = rmDetector.detectRefactoring(change);
+		Assert.isTrue(refactorings.length() == 2);
+		IRefactoring ref = refactorings.head();
+		Assert.isTrue(ref instanceof RenameMethodRefactoring);
+		List<ASTNode> namesBefore = ref.getEffectedNodeList(RenameMethodRefactoring.SimpleNamesBefore);
+		List<ASTNode> namesAfter = ref.getEffectedNodeList(RenameMethodRefactoring.SimpleNamesAfter);
+		
+	}
 
 	
 	
