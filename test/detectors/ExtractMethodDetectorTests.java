@@ -18,7 +18,7 @@ import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.change.calculator.CompilationUnitChangeCalculator;
 import edu.dlf.refactoring.design.IFactorComponent;
-import edu.dlf.refactoring.design.IRefactoring;
+import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringDetector;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.RefactoringType;
@@ -66,9 +66,9 @@ public class ExtractMethodDetectorTests extends TestSuite{
 		ISourceChange change = cuCalculator.CalculateASTNodeChange(TestUtils.
 				getNodePairByFileNames("TestCUBefore1.java", "TestCUAfter1.java"));
 		change = SourceChangeUtils.pruneSourceChange(change);
-		List<IRefactoring> refactorings = emDetector.detectRefactoring(change);
+		List<IDetectedRefactoring> refactorings = emDetector.detectRefactoring(change);
 		Assert.isTrue(refactorings.length() == 1);
-		IRefactoring refactoring = refactorings.head();
+		IDetectedRefactoring refactoring = refactorings.head();
 		System.out.println(refactoring);
 		Assert.isTrue(refactoring.getRefactoringType() == RefactoringType.ExtractMethod);
 		Assert.isTrue(refactoring.getEffectedNodeList(ExtractMethodRefactoring.ExtractedStatements).length() == 3);
@@ -83,9 +83,9 @@ public class ExtractMethodDetectorTests extends TestSuite{
 		ISourceChange change = cuCalculator.CalculateASTNodeChange(TestUtils.
 				getNodePairByFileNames("TestCUBefore1.java", "TestCUAfter1.java"));
 		change = SourceChangeUtils.pruneSourceChange(change);
-		List<IRefactoring> refactorings = rmDetector.detectRefactoring(change);
+		List<IDetectedRefactoring> refactorings = rmDetector.detectRefactoring(change);
 		Assert.isTrue(refactorings.length() == 2);
-		IRefactoring ref = refactorings.head();
+		IDetectedRefactoring ref = refactorings.head();
 		Assert.isTrue(ref instanceof RenameMethodRefactoring);
 		List<ASTNode> namesBefore = ref.getEffectedNodeList(RenameMethodRefactoring.SimpleNamesBefore);
 		List<ASTNode> namesAfter = ref.getEffectedNodeList(RenameMethodRefactoring.SimpleNamesAfter);

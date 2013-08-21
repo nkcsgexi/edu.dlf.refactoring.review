@@ -13,7 +13,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.StatementAnnotation;
 import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
-import edu.dlf.refactoring.design.IRefactoring;
+import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.design.ServiceLocator;
@@ -42,7 +42,7 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 	}
 	
 	@Override
-	public List<IRefactoring> detectRefactoring(ISourceChange change) {
+	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
 		List<IChangeSearchResult> staChanges = this.statementSearchCriteria.search(change);
 		List<IChangeSearchResult> mdChanges = this.methodSearchCriteria.search(change);
 		if(staChanges.isEmpty() || mdChanges.isEmpty())
@@ -74,7 +74,7 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 		}
 	}
 	
-	private List<IRefactoring> createRefactorings(List<ASTNodePair> pairs) {
+	private List<IDetectedRefactoring> createRefactorings(List<ASTNodePair> pairs) {
 		Equal<ASTNodePair> equal = Equal.equal(new F<ASTNodePair, F<ASTNodePair, Boolean>>(){
 			@Override
 			public F<ASTNodePair, Boolean> f(final ASTNodePair n1) {
@@ -84,9 +84,9 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 						return n1.getNodeAfter() == n2.getNodeAfter();
 					}};
 			}});
-		return pairs.group(equal).map(new F<List<ASTNodePair>, IRefactoring>(){
+		return pairs.group(equal).map(new F<List<ASTNodePair>, IDetectedRefactoring>(){
 			@Override
-			public IRefactoring f(List<ASTNodePair> list) {		
+			public IDetectedRefactoring f(List<ASTNodePair> list) {		
 				return new ExtractMethodRefactoring(list.map(new F<ASTNodePair, ASTNode>(){
 					@Override
 					public ASTNode f(ASTNodePair p) {

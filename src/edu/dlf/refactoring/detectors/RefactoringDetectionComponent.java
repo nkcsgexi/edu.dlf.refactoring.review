@@ -6,7 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.design.IFactorComponent;
-import edu.dlf.refactoring.design.IRefactoring;
+import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringDetector;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
@@ -40,13 +40,13 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 			logger.info("get event.");
 			final ISourceChange change = (ISourceChange) event;
 			this.detectorsList.bind(new F<IRefactoringDetector, 
-					List<IRefactoring>>(){
+					List<IDetectedRefactoring>>(){
 				@Override
-				public List<IRefactoring> f(IRefactoringDetector d) {
+				public List<IDetectedRefactoring> f(IRefactoringDetector d) {
 					return d.detectRefactoring(change);
-				}}).foreach(new Effect<IRefactoring>(){
+				}}).foreach(new Effect<IDetectedRefactoring>(){
 					@Override
-					public void e(IRefactoring arg0) {
+					public void e(IDetectedRefactoring arg0) {
 						// TODO:
 					}});
 			logger.info("Handled event.");

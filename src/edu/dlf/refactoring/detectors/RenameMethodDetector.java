@@ -7,7 +7,7 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodInvocationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
-import edu.dlf.refactoring.design.IRefactoring;
+import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
@@ -52,7 +52,7 @@ public class RenameMethodDetector extends AbstractRefactoringDetector{
 	}
 	
 	@Override
-	public List<IRefactoring> detectRefactoring(ISourceChange change) {
+	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
 		List<IChangeSearchResult> decChanges = this.declarationChangeCriteira.search(change);
 		List<IChangeSearchResult> invChanges = this.invocationChangeCriteira.search(change);
 		if(decChanges.isEmpty() && invChanges.isEmpty())
@@ -72,9 +72,9 @@ public class RenameMethodDetector extends AbstractRefactoringDetector{
 							return areBindingSame(getLastChangeBeforeName(r1), getLastChangeBeforeName(r2)) 
 								|| areBindingSame(getLastChangeAfterName(r1), getLastChangeAfterName(r2));
 						}};
-				}})).map(new F<List<IChangeSearchResult>, IRefactoring>(){
+				}})).map(new F<List<IChangeSearchResult>, IDetectedRefactoring>(){
 					@Override
-					public IRefactoring f(List<IChangeSearchResult> results) {
+					public IDetectedRefactoring f(List<IChangeSearchResult> results) {
 						List<ASTNode> namesBefore = results.map(new F<IChangeSearchResult, ASTNode>(){
 							@Override
 							public ASTNode f(IChangeSearchResult result) {

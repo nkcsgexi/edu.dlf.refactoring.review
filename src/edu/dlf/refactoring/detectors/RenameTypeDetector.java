@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.change.ChangeComponentInjector.NameAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeDeclarationAnnotation;
-import edu.dlf.refactoring.design.IRefactoring;
+import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import fj.data.List;
@@ -28,7 +28,7 @@ public class RenameTypeDetector extends AbstractRefactoringDetector{
 	
 	
 	@Override
-	public List<IRefactoring> detectRefactoring(ISourceChange change) {
+	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
 		
 		
 		

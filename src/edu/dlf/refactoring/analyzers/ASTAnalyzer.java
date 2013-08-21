@@ -29,6 +29,7 @@ public class ASTAnalyzer {
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setSource((ICompilationUnit) icu);
 		parser.setResolveBindings(true);
+		parser.setBindingsRecovery(true);
 		return parser.createAST(null);
 	}
 
@@ -38,6 +39,7 @@ public class ASTAnalyzer {
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setSource(code.toCharArray());
 		parser.setResolveBindings(true);
+		parser.setBindingsRecovery(true);
 		return parser.createAST(null);
 	}
 	
@@ -47,6 +49,7 @@ public class ASTAnalyzer {
 		parser.setKind(ASTParser.K_STATEMENTS);
 		parser.setSource(source.toCharArray());
 		parser.setResolveBindings(true);
+		parser.setBindingsRecovery(true);
 		return parser.createAST(null);
 	}
 
@@ -55,6 +58,7 @@ public class ASTAnalyzer {
 		parser.setKind(ASTParser.K_EXPRESSION);
 		parser.setSource(source.toCharArray());
 		parser.setResolveBindings(true);
+		parser.setBindingsRecovery(true);
 		return parser.createAST(null);
 	}
 	

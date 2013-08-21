@@ -4,11 +4,11 @@ import java.util.HashMap;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
-import edu.dlf.refactoring.design.IRefactoring;
+import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.RefactoringType;
 import fj.data.List;
 
-abstract class AbstractRefactoring implements IRefactoring
+abstract class AbstractRefactoring implements IDetectedRefactoring
 {
 	private final HashMap<SingleNodeDescriptor, ASTNode> singleNodes;
 	private final HashMap<NodeListDescriptor, List<ASTNode>> nodeLists;
