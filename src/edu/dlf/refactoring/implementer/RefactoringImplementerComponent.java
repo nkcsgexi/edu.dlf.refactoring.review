@@ -21,10 +21,13 @@ import fj.data.HashMap;
 public class RefactoringImplementerComponent implements IFactorComponent{
 	
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
+	
 	private final LoadingCache<IDetectedRefactoring, IImplementedRefactoring> 
 		implementedRefactoringCache;
+	
 	private final F<IDetectedRefactoring, IImplementedRefactoring> 
 		implementRefactoringFunc;
+	
 	private final HashMap<RefactoringType, IRefactoringImplementer> 
 		implementers;
 

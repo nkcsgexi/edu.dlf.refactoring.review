@@ -16,6 +16,8 @@ import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDistanceCalculator;
 import edu.dlf.refactoring.utils.IEqualityComparer;
 import edu.dlf.refactoring.utils.XList;
+import fj.F;
+import fj.data.Option;
 
 
 public class ASTAnalyzer {
@@ -72,6 +74,17 @@ public class ASTAnalyzer {
 		}
 		return results;
 	}
+	
+	public static Option<ASTNode> getAncestor(ASTNode node, F<ASTNode, Boolean> 
+		predicate)
+	{
+		while(node != null && predicate.f(node) != true)
+		{
+			node = node.getParent();
+		}
+		return Option.fromNull(node);
+	}
+	
 	
 	public static XList<ASTNode> getDecendents(ASTNode root)
 	{
@@ -149,6 +162,12 @@ public class ASTAnalyzer {
 
 	public static boolean isStatement(ASTNode node) {
 		return node instanceof Statement;
+	}
+
+	public static Boolean AreASTNodeNeighbors(ASTNode node1, ASTNode node2) {
+		
+		
+		return null;
 	}
 
 }

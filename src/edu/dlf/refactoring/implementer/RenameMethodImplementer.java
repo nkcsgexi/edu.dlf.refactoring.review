@@ -7,8 +7,12 @@ import edu.dlf.refactoring.design.IRefactoringImplementer;
 public class RenameMethodImplementer implements IRefactoringImplementer{
 
 	@Override
-	public IImplementedRefactoring implementRefactoring(IDetectedRefactoring refactoring) {
-		// TODO Auto-generated method stub
+	public IImplementedRefactoring implementRefactoring(IDetectedRefactoring 
+			refactoring) {
+		
+		
+		
+		
 		return null;
 	}
 

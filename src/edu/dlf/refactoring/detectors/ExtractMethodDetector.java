@@ -19,7 +19,7 @@ import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
-import edu.dlf.refactoring.refactorings.ExtractMethodRefactoring;
+import edu.dlf.refactoring.refactorings.DetectedExtractMethodRefactoring;
 import fj.Equal;
 import fj.F;
 import fj.Ord;
@@ -87,7 +87,7 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 		return pairs.group(equal).map(new F<List<ASTNodePair>, IDetectedRefactoring>(){
 			@Override
 			public IDetectedRefactoring f(List<ASTNodePair> list) {		
-				return new ExtractMethodRefactoring(list.map(new F<ASTNodePair, ASTNode>(){
+				return new DetectedExtractMethodRefactoring(list.map(new F<ASTNodePair, ASTNode>(){
 					@Override
 					public ASTNode f(ASTNodePair p) {
 						return p.getNodeBefore();

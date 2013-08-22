@@ -7,14 +7,14 @@ import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.data.List;
 
-public class ExtractMethodRefactoring extends AbstractRefactoring{
+public class DetectedExtractMethodRefactoring extends AbstractRefactoring{
 	
 	public static SingleNodeDescriptor DeclaredMethod = new SingleNodeDescriptor(){};
 	public static NodeListDescriptor ExtractedStatements = new NodeListDescriptor(){};
 	private Logger logger = ServiceLocator.ResolveType(Logger.class);
 	
 	
-	public ExtractMethodRefactoring(List<ASTNode> statements, ASTNode method)
+	public DetectedExtractMethodRefactoring(List<ASTNode> statements, ASTNode method)
 	{
 		super(RefactoringType.ExtractMethod);
 		this.addNodeList(ExtractedStatements, statements);

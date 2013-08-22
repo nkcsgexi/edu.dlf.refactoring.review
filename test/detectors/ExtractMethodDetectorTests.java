@@ -26,7 +26,7 @@ import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.detectors.ExtractMethodDetector;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponent;
 import edu.dlf.refactoring.detectors.RenameMethodDetector;
-import edu.dlf.refactoring.refactorings.ExtractMethodRefactoring;
+import edu.dlf.refactoring.refactorings.DetectedExtractMethodRefactoring;
 import edu.dlf.refactoring.refactorings.RenameMethodRefactoring;
 import fj.data.List;
 
@@ -71,8 +71,8 @@ public class ExtractMethodDetectorTests extends TestSuite{
 		IDetectedRefactoring refactoring = refactorings.head();
 		System.out.println(refactoring);
 		Assert.isTrue(refactoring.getRefactoringType() == RefactoringType.ExtractMethod);
-		Assert.isTrue(refactoring.getEffectedNodeList(ExtractMethodRefactoring.ExtractedStatements).length() == 3);
-		Assert.isLegal(refactoring.getEffectedNode(ExtractMethodRefactoring.DeclaredMethod).
+		Assert.isTrue(refactoring.getEffectedNodeList(DetectedExtractMethodRefactoring.ExtractedStatements).length() == 3);
+		Assert.isLegal(refactoring.getEffectedNode(DetectedExtractMethodRefactoring.DeclaredMethod).
 				getStructuralProperty(MethodDeclaration.NAME_PROPERTY).toString().equals("barExtracted"));
 	}
 	
