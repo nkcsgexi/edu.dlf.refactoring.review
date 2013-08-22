@@ -3,16 +3,19 @@ package edu.dlf.refactoring.implementer;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.corext.refactoring.code.ExtractMethodRefactoring;
+import org.eclipse.ltk.core.refactoring.Change;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringImplementer;
 import edu.dlf.refactoring.refactorings.DetectedExtractMethodRefactoring;
+import edu.dlf.refactoring.utils.RefactoringUtils;
 import fj.F;
 import fj.Ord;
 import fj.P2;
 import fj.data.List;
+import fj.data.Option;
 
 public class ExtractMethodImplementer implements IRefactoringImplementer{
 
@@ -34,7 +37,11 @@ public class ExtractMethodImplementer implements IRefactoringImplementer{
 		CompilationUnit unit = (CompilationUnit) statements.head().getRoot();
 		ExtractMethodRefactoring refactoring  = new ExtractMethodRefactoring
 				(unit, start, end - start);
-		
+		Option<Change> change = RefactoringUtils.createChange(refactoring);
+		if(change.isSome())
+		{
+			return null;
+		}
 		return null;
 	}
 	
