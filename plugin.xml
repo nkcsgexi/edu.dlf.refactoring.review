@@ -9,4 +9,27 @@
             id="RefReview.compilationParticipant1">
       </compilationParticipant>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.dlf.refactoring.ui.BeforeChangeCodeView"
+            id="RefReview.BeforeChangeCodeView"
+            name="Code after change"
+            restorable="true">
+      </view>
+      <view
+            class="edu.dlf.refactoring.ui.AfterChangeCodeView"
+            id="RefReview.AfterChangeCodeView"
+            name="Code after change"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="edu.dlf.refactoring.ui.ReviewPerspectiveFactory"
+            id="RefReview.CodeReviewPerspective"
+            name="Code Review">
+      </perspective>
+   </extension>
 </plugin>

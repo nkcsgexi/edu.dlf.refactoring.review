@@ -4,13 +4,11 @@ import org.eclipse.jdt.core.dom.ASTNode;
 
 import fj.data.List;
 
-public interface IDetectedRefactoring {
+public interface IDetectedRefactoring extends IRefactoring {
 	ASTNode getEffectedNode(SingleNodeDescriptor descriptor);
 	List<ASTNode> getEffectedNodeList(NodeListDescriptor descriptor);
 	RefactoringType getRefactoringType();
 	
 	interface SingleNodeDescriptor{}
 	interface NodeListDescriptor{}
-	
-	
 }

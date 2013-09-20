@@ -9,6 +9,7 @@ import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringImplementer;
+import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.refactorings.DetectedExtractMethodRefactoring;
 import edu.dlf.refactoring.utils.RefactoringUtils;
 import fj.F;
@@ -20,7 +21,7 @@ import fj.data.Option;
 public class ExtractMethodImplementer implements IRefactoringImplementer{
 
 	@Override
-	public IImplementedRefactoring implementRefactoring(IDetectedRefactoring 
+	public Option<IImplementedRefactoring> implementRefactoring(IDetectedRefactoring 
 			detectedRefactoring) {
 		List<ASTNode> statements = detectedRefactoring.getEffectedNodeList
 				(DetectedExtractMethodRefactoring.ExtractedStatements);
@@ -40,9 +41,11 @@ public class ExtractMethodImplementer implements IRefactoringImplementer{
 		Option<Change> change = RefactoringUtils.createChange(refactoring);
 		if(change.isSome())
 		{
-			return null;
+			return Option.some((IImplementedRefactoring)new 
+				ImplementedRefactoring(RefactoringType.ExtractMethod, 
+					change.some()));
 		}
-		return null;
+		return Option.some(null);
 	}
 	
 	

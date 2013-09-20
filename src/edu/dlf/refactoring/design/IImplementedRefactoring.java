@@ -1,5 +1,8 @@
 package edu.dlf.refactoring.design;
 
-public interface IImplementedRefactoring {
+import org.eclipse.ltk.core.refactoring.Change;
+
+public interface IImplementedRefactoring extends IRefactoring{
 	RefactoringType getRefactoringType();
+	Change getChange();
 }

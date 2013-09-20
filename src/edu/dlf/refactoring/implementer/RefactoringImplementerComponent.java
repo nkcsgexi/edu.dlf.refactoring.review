@@ -46,7 +46,7 @@ public class RefactoringImplementerComponent implements IFactorComponent{
 			@Override
 			public IImplementedRefactoring f(IDetectedRefactoring detected) {
 				return implementers.get(detected.getRefactoringType()).some().
-						implementRefactoring(detected);
+						implementRefactoring(detected).some();
 			}};
 		
 		

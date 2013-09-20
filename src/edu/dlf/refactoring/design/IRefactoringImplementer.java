@@ -1,6 +1,8 @@
 package edu.dlf.refactoring.design;
 
+import fj.data.Option;
+
 public interface IRefactoringImplementer {
-	IImplementedRefactoring implementRefactoring(IDetectedRefactoring 
+	Option<IImplementedRefactoring> implementRefactoring(IDetectedRefactoring 
 			refactoring);
 }
