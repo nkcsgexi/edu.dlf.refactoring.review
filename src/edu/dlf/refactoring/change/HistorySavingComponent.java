@@ -53,7 +53,7 @@ public class HistorySavingComponent implements IFactorComponent {
 					if(history.containsKey(path))
 					{
 						ArrayList<ASTNode> list = history.get(path);
-						if(!ASTAnalyzer.AreASTNodeSame(cu, list.get(0))){
+						if(!ASTAnalyzer.areASTNodeSame(cu, list.get(0))){
 							list.add(0, cu);
 							HandleChange(ToFunctionalList(list));
 						}

@@ -28,7 +28,8 @@ public class ChangeComponent implements IFactorComponent{
 	private final EventBus bus;
 	
 	@Inject
-	public ChangeComponent(@JavaProjectAnnotation IJavaModelChangeCalculator projectCalculator,
+	public ChangeComponent(
+			@JavaProjectAnnotation IJavaModelChangeCalculator projectCalculator,
 			@SourcePackageAnnotation IJavaModelChangeCalculator packageCalculator, 
 			@CompilationUnitAnnotation IJavaModelChangeCalculator icuCalculator,
 			@CompilationUnitAnnotation IASTNodeChangeCalculator cuCalculator,

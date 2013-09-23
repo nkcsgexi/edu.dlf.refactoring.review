@@ -1,3 +1,5 @@
+package dlf.test;
+
 public class TestCUAfter1
 {
 	public void int method()

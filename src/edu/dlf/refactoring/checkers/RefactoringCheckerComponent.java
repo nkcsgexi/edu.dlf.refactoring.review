@@ -1,6 +1,10 @@
 package edu.dlf.refactoring.checkers;
 
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringChecker;
@@ -10,10 +14,12 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import fj.data.HashMap;
 
-public class RefactoringCheckerComponent implements IFactorComponent{
+public class RefactoringCheckerComponent extends EventBus implements 
+		IFactorComponent{
 
 	private final HashMap<RefactoringType, IRefactoringChecker> map;
 	
+	@Inject
 	public RefactoringCheckerComponent(
 			@ExtractMethod IRefactoringChecker emChecker,
 			@RenameMethod IRefactoringChecker rmChecker,
@@ -25,14 +31,14 @@ public class RefactoringCheckerComponent implements IFactorComponent{
 		this.map.set(RefactoringType.RenameType, rtChecker);
 	}
 	
-	
+	@Subscribe
 	@Override
 	public Void listen(Object event) {
 		IDetectedRefactoring refactoring = (IDetectedRefactoring)event;
 		IRefactoringChecker checker = this.map.get(refactoring.
 				getRefactoringType()).some();
-		checker.checkRefactoring(refactoring);
+		ICheckingResult result = checker.checkRefactoring(refactoring);
+		this.post(result);
 		return null;
 	}
-
 }

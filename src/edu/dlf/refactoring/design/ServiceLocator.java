@@ -11,7 +11,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -27,6 +26,7 @@ import com.google.inject.Singleton;
 import edu.dlf.refactoring.change.ChangeComponent;
 import edu.dlf.refactoring.change.ChangeComponentInjector;
 import edu.dlf.refactoring.change.HistorySavingComponent;
+import edu.dlf.refactoring.checkers.RefactoringCheckerComponent;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponent;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector;
 
@@ -43,7 +43,9 @@ public class ServiceLocator extends AbstractModule
 	
 	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 	public @interface RefactoringDetectionCompAnnotation {}
-	
+
+	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+	public @interface RefactoringCheckerCompAnnotation {}
 	
 	
 	private ServiceLocator()
@@ -60,10 +62,12 @@ public class ServiceLocator extends AbstractModule
 		bind(HistorySavingComponent.class).in(Singleton.class);
 		bind(ChangeComponent.class).in(Singleton.class);
 		bind(RefactoringDetectionComponent.class).in(Singleton.class);
+		bind(RefactoringCheckerComponent.class).in(Singleton.class);
 		
 		bind(IFactorComponent.class).annotatedWith(HistorySavingCompAnnotation.class).to(HistorySavingComponent.class);
 		bind(IFactorComponent.class).annotatedWith(ChangeCompAnnotation.class).to(ChangeComponent.class);
 		bind(IFactorComponent.class).annotatedWith(RefactoringDetectionCompAnnotation.class).to(RefactoringDetectionComponent.class);
+		bind(IFactorComponent.class).annotatedWith(RefactoringCheckerCompAnnotation.class).to(RefactoringCheckerComponent.class);
 	}
 
 

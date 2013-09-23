@@ -32,4 +32,42 @@
             name="Code Review">
       </perspective>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="RefReview"
+            defaultHandler="org.eclipse.ui.internal.about.AboutHandler"
+            id="RefReview.ShowDiff"
+            name="Show Diff">
+      </command>
+   </extension>
+     <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               label="Review"
+               mnemonic="M"
+               id="dlf.refactoring.review.menu">
+            <command
+                  commandId="RefReview.ShowDiff"
+                  icon="img/favicon.ico"
+                  id="dlf.refactoring.review.menu.command"
+                  mnemonic="S">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="dlf.refactoring.review.toolbar">
+            <command
+                  commandId="RefReview.ShowDiff"
+                  icon="img/favicon.ico"
+                  id="dlf.refactoring.review.toobar.command"
+                  tooltip="Code review">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
 </plugin>

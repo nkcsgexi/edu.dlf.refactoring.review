@@ -55,7 +55,7 @@ public class ExtractMethodImplementer implements IRefactoringImplementer{
 			@Override
 			public Boolean f(P2<ASTNode, ASTNode> pair) {
 				if(pair._2() == null) return true;
-				return ASTAnalyzer.AreASTNodeNeighbors(pair._1(), pair._2());
+				return ASTAnalyzer.areNodesNeighbors(pair._1(), pair._2());
 			}})._1().map(new F<P2<ASTNode, ASTNode>, ASTNode>(){
 				@Override
 				public ASTNode f(P2<ASTNode, ASTNode> arg0) {

@@ -1,15 +1,12 @@
 package edu.dlf.refactoring.checkers;
 import org.apache.log4j.Logger;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.ltk.core.refactoring.Change;
-import edu.dlf.refactoring.design.ICheckingResult;
+
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringChecker;
 import edu.dlf.refactoring.design.IRefactoringImplementer;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
-import edu.dlf.refactoring.refactorings.DetectedExtractMethodRefactoring;
 import fj.data.Option;
 
 public class ExtractMethodChecker implements IRefactoringChecker{
@@ -32,14 +29,17 @@ public class ExtractMethodChecker implements IRefactoringChecker{
 		if(op.isSome())
 		{
 			IImplementedRefactoring implemented = op.some();
-			ASTNode method = detectedRefactoring.getEffectedNode(
-					DetectedExtractMethodRefactoring.DeclaredMethod);
-			Change change = implemented.getChange();
-			
-			
+			if(isRefactoringSame(implemented, detectedRefactoring))
+			{
+				return new DefaultCheckingResult(true, detectedRefactoring);
+			}
 		}
+		return new DefaultCheckingResult(false, detectedRefactoring);
+	}
 
-		return null;
+	private boolean isRefactoringSame(IImplementedRefactoring implemented,
+			IDetectedRefactoring detectedRefactoring) {
+		return false;
 	}
 
 }

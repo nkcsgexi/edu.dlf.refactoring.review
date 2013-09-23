@@ -25,5 +25,4 @@ public class TestUtils {
 		return new ASTNodePair(getCUByFileName(file1), getCUByFileName(file2));
 	}
 	
-	
 }

@@ -3,15 +3,17 @@ package edu.dlf.refactoring.analyzers;
 
 
 import java.util.List;
-
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTMatcher;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDistanceCalculator;
 import edu.dlf.refactoring.utils.IEqualityComparer;
@@ -145,8 +147,26 @@ public class ASTAnalyzer {
 			}};
 	}
 	
+	public static String getMainTypeName(ASTNode node)
+	{
+		String pack = "";
+		ASTNode root = node.getRoot();
+		Object pNode = root.getStructuralProperty(CompilationUnit.PACKAGE_PROPERTY);
+		if( pNode!= null) {
+			pack = ((PackageDeclaration)pNode).getName().getFullyQualifiedName() + ".";
+		}
+		List<ASTNode> list = (List<ASTNode>) root.getStructuralProperty
+				(CompilationUnit.TYPES_PROPERTY);
+		if(!list.isEmpty())
+		{
+			TypeDeclaration type = (TypeDeclaration)list.get(0);
+			return pack + type.getName().getIdentifier();
+		}
+		return "";
+	}
 	
-	public static boolean AreASTNodeSame (ASTNode node1, ASTNode node2)
+	
+	public static boolean areASTNodeSame (ASTNode node1, ASTNode node2)
 	{
 		return node1.subtreeMatch(new ASTMatcher(), node2);
 	}
@@ -159,12 +179,13 @@ public class ASTAnalyzer {
 				return areASTNodesSame(a, b);
 			}};
 	}
-
+	
+	
 	public static boolean isStatement(ASTNode node) {
 		return node instanceof Statement;
 	}
 
-	public static Boolean AreASTNodeNeighbors(ASTNode node1, ASTNode node2) {
+	public static Boolean areNodesNeighbors(ASTNode node1, ASTNode node2) {
 		
 		
 		return null;

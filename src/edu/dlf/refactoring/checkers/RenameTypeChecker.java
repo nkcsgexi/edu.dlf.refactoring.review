@@ -1,6 +1,5 @@
 package edu.dlf.refactoring.checkers;
 
-import edu.dlf.refactoring.design.ICheckingResult;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringChecker;
 

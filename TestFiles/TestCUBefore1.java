@@ -1,3 +1,5 @@
+package dlf.test;
+
 public class TestCUBefore1
 {
 	public void int method()
