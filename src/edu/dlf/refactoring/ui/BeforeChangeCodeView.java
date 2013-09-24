@@ -12,4 +12,9 @@ public class BeforeChangeCodeView extends CodeView {
 	public void setFocus() {
 	
 	}
+
+	@Override
+	public void updateCodeViews(StyledTextUpdater[] updaters) {
+		UpdateCodeInternal(updaters[0]);
+	}
 }

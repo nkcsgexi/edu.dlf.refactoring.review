@@ -29,6 +29,8 @@ import edu.dlf.refactoring.change.HistorySavingComponent;
 import edu.dlf.refactoring.checkers.RefactoringCheckerComponent;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponent;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector;
+import edu.dlf.refactoring.implementer.ImplementerCompInjector;
+import edu.dlf.refactoring.ui.UICompInjector;
 
 public class ServiceLocator extends AbstractModule
 {
@@ -58,6 +60,8 @@ public class ServiceLocator extends AbstractModule
 		
 		this.install(new ChangeComponentInjector());
 		this.install(new RefactoringDetectionComponentInjector());
+		this.install(new ImplementerCompInjector());
+		this.install(new UICompInjector());
 		
 		bind(HistorySavingComponent.class).in(Singleton.class);
 		bind(ChangeComponent.class).in(Singleton.class);

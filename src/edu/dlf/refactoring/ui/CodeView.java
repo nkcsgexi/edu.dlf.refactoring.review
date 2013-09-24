@@ -6,6 +6,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import com.google.common.eventbus.Subscribe;
+
 import edu.dlf.refactoring.utils.UIUtils;
 
 public abstract class CodeView extends ViewPart {
@@ -27,12 +29,15 @@ public abstract class CodeView extends ViewPart {
 		updator.addText("This is first line\n", UIUtils.Green, UIUtils.CodeFont);
 		updator.addText("This is second line\n", UIUtils.Blue, UIUtils.CodeFont);
 		updator.addText("This is third line\n", UIUtils.Red, UIUtils.CodeFont);
-		this.Update(updator);
+		updator.UpdateStyledText(this.styledText);
 	}
 	
-	public final void Update(StyledTextUpdater updater)
+	protected void UpdateCodeInternal(StyledTextUpdater updater)
 	{
-		updater.UpdateStyledText(this.styledText);
+		updater.UpdateStyledText(styledText);
 	}
 	
+	@Subscribe
+	public abstract void updateCodeViews(StyledTextUpdater[] updaters); 
+
 }

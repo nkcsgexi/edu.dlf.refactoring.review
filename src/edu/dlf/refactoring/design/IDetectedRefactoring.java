@@ -7,6 +7,8 @@ import fj.data.List;
 public interface IDetectedRefactoring extends IRefactoring {
 	ASTNode getEffectedNode(SingleNodeDescriptor descriptor);
 	List<ASTNode> getEffectedNodeList(NodeListDescriptor descriptor);
+	List<SingleNodeDescriptor> getSingleNodeDescriptors();
+	List<NodeListDescriptor> getNodeListDescritors();
 	RefactoringType getRefactoringType();
 	
 	interface SingleNodeDescriptor{}

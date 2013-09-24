@@ -25,4 +25,14 @@ public class RenameMethodRefactoring extends AbstractRefactoring{
 	{
 		return "";
 	}
+
+	@Override
+	public List<SingleNodeDescriptor> getSingleNodeDescriptors() {
+		return List.nil();
+	}
+
+	@Override
+	public List<NodeListDescriptor> getNodeListDescritors() {
+		return List.single(SimpleNamesBefore).snoc(SimpleNamesAfter);
+	}
 }

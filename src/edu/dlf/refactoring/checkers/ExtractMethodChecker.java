@@ -1,6 +1,8 @@
 package edu.dlf.refactoring.checkers;
 import org.apache.log4j.Logger;
 
+import com.google.inject.Inject;
+
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringChecker;
@@ -14,7 +16,7 @@ public class ExtractMethodChecker implements IRefactoringChecker{
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	private final IRefactoringImplementer implementer;
 	
-	
+	@Inject
 	public ExtractMethodChecker(@ExtractMethod IRefactoringImplementer 
 			emImplementer)
 	{

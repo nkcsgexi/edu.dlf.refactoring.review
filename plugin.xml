@@ -23,6 +23,12 @@
             name="Code after change"
             restorable="true">
       </view>
+      <view
+            class="edu.dlf.refactoring.ui.DiffTreeView"
+            id="RefReview.DiffTreeView"
+            name="Diff Structure"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -36,9 +42,15 @@
          point="org.eclipse.ui.commands">
       <command
             categoryId="RefReview"
-            defaultHandler="edu.dlf.refactoring.ui.ShowDiffCommandHandler"
-            id="RefReview.ShowDiff"
-            name="Show Diff">
+            defaultHandler="edu.dlf.refactoring.ui.RefReviewCommandHandler"
+            id="RefReview.CalculateDiff"
+            name="Calculate Diff">
+      </command>
+      <command
+            categoryId="RefReview"
+            defaultHandler="edu.dlf.refactoring.ui.RefReviewCommandHandler"
+            id="RefReview.ChangeViewedCode"
+            name="Change View">
       </command>
    </extension>
      <extension
@@ -50,10 +62,11 @@
                mnemonic="M"
                id="dlf.refactoring.review.menu">
             <command
-                  commandId="RefReview.ShowDiff"
+                  commandId="RefReview.CalculateDiff"
                   icon="img/favicon.ico"
                   id="dlf.refactoring.review.menu.command"
-                  mnemonic="S">
+                  mnemonic="S"
+                  tooltip="Calculate Diff">
             </command>
          </menu>
       </menuContribution>
@@ -62,10 +75,10 @@
          <toolbar
                id="dlf.refactoring.review.toolbar">
             <command
-                  commandId="RefReview.ShowDiff"
+                  commandId="RefReview.CalculateDiff"
                   icon="img/favicon.ico"
                   id="dlf.refactoring.review.toobar.command"
-                  tooltip="Code review">
+                  tooltip="Calculate Diff">
             </command>
          </toolbar>
       </menuContribution>

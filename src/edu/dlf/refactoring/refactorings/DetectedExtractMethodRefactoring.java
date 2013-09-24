@@ -33,5 +33,15 @@ public class DetectedExtractMethodRefactoring extends AbstractRefactoring{
 		sb.append(this.getEffectedNode(DeclaredMethod));
 		return sb.toString();
 	}
+
+	@Override
+	public List<SingleNodeDescriptor> getSingleNodeDescriptors() {
+		return List.single(DeclaredMethod);
+	}
+
+	@Override
+	public List<NodeListDescriptor> getNodeListDescritors() {
+		return List.single(ExtractedStatements);
+	}
 	
 }
