@@ -36,7 +36,7 @@
          point="org.eclipse.ui.commands">
       <command
             categoryId="RefReview"
-            defaultHandler="org.eclipse.ui.internal.about.AboutHandler"
+            defaultHandler="edu.dlf.refactoring.ui.ShowDiffCommandHandler"
             id="RefReview.ShowDiff"
             name="Show Diff">
       </command>
