@@ -69,4 +69,10 @@ public class ChangeComponent implements IFactorComponent{
 		return null;
 	}
 
+	@Override
+	public Void registerListener(Object listener) {
+		this.bus.register(listener);
+		return null;
+	}
+
 }

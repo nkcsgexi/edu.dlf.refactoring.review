@@ -30,6 +30,7 @@ import edu.dlf.refactoring.checkers.RefactoringCheckerComponent;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponent;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector;
 import edu.dlf.refactoring.implementer.ImplementerCompInjector;
+import edu.dlf.refactoring.ui.CodeReviewUIComponent;
 import edu.dlf.refactoring.ui.UICompInjector;
 
 public class ServiceLocator extends AbstractModule
@@ -48,6 +49,9 @@ public class ServiceLocator extends AbstractModule
 
 	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 	public @interface RefactoringCheckerCompAnnotation {}
+	
+	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+	public @interface UICompAnnotation {}
 	
 	
 	private ServiceLocator()
@@ -72,6 +76,8 @@ public class ServiceLocator extends AbstractModule
 		bind(IFactorComponent.class).annotatedWith(ChangeCompAnnotation.class).to(ChangeComponent.class);
 		bind(IFactorComponent.class).annotatedWith(RefactoringDetectionCompAnnotation.class).to(RefactoringDetectionComponent.class);
 		bind(IFactorComponent.class).annotatedWith(RefactoringCheckerCompAnnotation.class).to(RefactoringCheckerComponent.class);
+		bind(IFactorComponent.class).annotatedWith(UICompAnnotation.class).to(CodeReviewUIComponent.class);
+		
 	}
 
 

@@ -41,6 +41,17 @@ public class SourceChangeUtils {
 		return buffer.toList();
 	}
 	
+	public static List<ISourceChange> getAncestors(ISourceChange child)
+	{
+		Buffer<ISourceChange> results = Buffer.empty();
+		for(ISourceChange change = child.getParentChange(); change != null; 
+				change = change.getParentChange())
+		{
+			results.snoc(change);
+		}
+		return results.toList();
+	}
+	
 	
 	private static boolean pruneSubChanges(ISourceChange change)
 	{

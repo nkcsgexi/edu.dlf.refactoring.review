@@ -84,10 +84,6 @@ public class HistorySavingComponent implements IFactorComponent {
 		return buffer.toList();
 	}
 	
-	
-	
-	
-	
 	private void HandleChange(List<ASTNode> changeList) {
 		final ASTNode after = changeList.head();
 		changeList.splitAt(1)._2().map(new F<ASTNode, ASTNodePair>(){
@@ -113,5 +109,11 @@ public class HistorySavingComponent implements IFactorComponent {
 			logger.fatal(e);
 			return null;
 		}
+	}
+
+	@Override
+	public Void registerListener(Object listener) {
+		this.bus.register(listener);
+		return null;
 	}
 }

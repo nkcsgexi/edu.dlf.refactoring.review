@@ -17,7 +17,6 @@ import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.processors.ExtractMethodProcessor;
 import edu.dlf.refactoring.processors.RenameMethodProcessor;
 import edu.dlf.refactoring.processors.RenameTypeProcessor;
-import edu.dlf.refactoring.ui.CodeReviewContext;
 import edu.dlf.refactoring.utils.WorkQueue;
 
 public class DependencyInjectionTests extends TestSuite{
@@ -36,7 +35,6 @@ public class DependencyInjectionTests extends TestSuite{
 		Assert.isNotNull(ServiceLocator.ResolveType(StatementChangeCalculator.class));
 		Assert.isNotNull(ServiceLocator.ResolveType(ExpressionChangeCalculator.class));
 		Assert.isNotNull(ServiceLocator.ResolveType(WorkQueue.class));
-		Assert.isNotNull(ServiceLocator.ResolveType(CodeReviewContext.class));
 	}
 	
 	@Test

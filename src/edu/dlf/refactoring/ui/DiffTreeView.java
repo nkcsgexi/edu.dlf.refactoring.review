@@ -1,15 +1,22 @@
 package edu.dlf.refactoring.ui;
 
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
+
+import com.google.common.eventbus.Subscribe;
+
+import edu.dlf.refactoring.change.ChangeComponent;
+import edu.dlf.refactoring.design.IFactorComponent;
+import edu.dlf.refactoring.design.JavaElementPair;
+import edu.dlf.refactoring.design.ServiceLocator;
 
 public class DiffTreeView extends ViewPart {
 
@@ -22,94 +29,40 @@ public class DiffTreeView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		this.treeViewer = new TreeViewer(parent);
 		this.treeViewer.isExpandable(true);
-		this.treeViewer.setContentProvider(new ContentProvider());
-		this.treeViewer.setLabelProvider(new LabelProvider());
-		this.treeViewer.addDoubleClickListener(new DoubleClickListener());
-		this.treeViewer.setInput(new Object());
+		this.treeViewer.setContentProvider((IContentProvider) ServiceLocator.
+			ResolveType(ITreeContentProvider.class));
+		this.treeViewer.setLabelProvider((IBaseLabelProvider) ServiceLocator.
+			ResolveType(ILabelProvider.class));
+		this.treeViewer.addDoubleClickListener((IDoubleClickListener) 
+			ServiceLocator.ResolveType(IDoubleClickListener.class));
 	}
 	
+	private interface IListener
+	{
+		@Subscribe
+		void listen(Object input);
+	}
 
+	public void InputChange(IJavaElement before, IJavaElement after)
+	{
+		JavaElementPair pair = new JavaElementPair(before, after);
+		((IFactorComponent)ServiceLocator.ResolveType(ChangeComponent.class)).
+			registerListener(new IListener(){
+				@Override
+				public void listen(Object input) {
+					treeViewer.setInput(input);
+					treeViewer.refresh();
+				}});
+		CodeReviewUIComponent context = ServiceLocator.ResolveType(
+			CodeReviewUIComponent.class);
+		context.clearContext();
+		((IFactorComponent)ServiceLocator.ResolveType(ChangeComponent.class)).
+			listen(pair);
+	}
+	
+	
 	@Override
 	public void setFocus() {
 		
 	}
-	
-	private class ContentProvider implements ITreeContentProvider
-	{
-		@Override
-		public void dispose() {
-				
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		
-		}
-
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return new String[] {"a"};
-		}
-
-		@Override
-		public Object[] getChildren(Object parentElement) {
-			return null;
-		}
-
-		@Override
-		public Object getParent(Object element) {
-			return null;
-		}
-
-		@Override
-		public boolean hasChildren(Object element) {
-			return false;
-		}
-	}
-	
-	
-	private class LabelProvider implements ILabelProvider
-	{
-		@Override
-		public void addListener(ILabelProviderListener listener) {
-
-		}
-
-		@Override
-		public void dispose() {
-			
-		}
-
-		@Override
-		public boolean isLabelProperty(Object element, String property) {
-			return false;
-		}
-
-		@Override
-		public void removeListener(ILabelProviderListener listener) {
-			
-		}
-
-		@Override
-		public Image getImage(Object element) {
-			return null;
-		}
-
-		@Override
-		public String getText(Object element) {
-			return "Item";
-		}	
-	}
-	
-	private class DoubleClickListener implements IDoubleClickListener
-	{
-		@Override
-		public void doubleClick(DoubleClickEvent event) {
-		
-	
-
-		}	
-	}
-	
-
 }

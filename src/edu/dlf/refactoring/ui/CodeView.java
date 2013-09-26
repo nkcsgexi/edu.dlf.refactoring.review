@@ -8,28 +8,27 @@ import org.eclipse.ui.part.ViewPart;
 
 import com.google.common.eventbus.Subscribe;
 
+import edu.dlf.refactoring.design.IFactorComponent;
+import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.UIUtils;
 
 public abstract class CodeView extends ViewPart {
 
 	private StyledText styledText;
+	private final IFactorComponent component;
 	
 	protected CodeView() {
 		super();
+		this.component = ServiceLocator.ResolveType(CodeReviewUIComponent.class);
 	}
 	
 	@Override
 	public final void createPartControl(Composite parent) {    
 		this.styledText = new StyledText(parent, SWT.BORDER | SWT.SCROLL_LINE);
 		this.styledText.setEditable(false);
-		this.styledText.setBackground(new Color(UIUtils.getDisplay(),
+		this.styledText.setBackground(new Color(UIUtils.getDisplay(), 
 				255,255,255));
-		
-		StyledTextUpdater updator = new StyledTextUpdater();
-		updator.addText("This is first line\n", UIUtils.Green, UIUtils.CodeFont);
-		updator.addText("This is second line\n", UIUtils.Blue, UIUtils.CodeFont);
-		updator.addText("This is third line\n", UIUtils.Red, UIUtils.CodeFont);
-		updator.UpdateStyledText(this.styledText);
+		this.component.registerListener(this);
 	}
 	
 	protected void UpdateCodeInternal(StyledTextUpdater updater)

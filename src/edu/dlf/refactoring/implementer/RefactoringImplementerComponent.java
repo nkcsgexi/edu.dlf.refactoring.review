@@ -69,4 +69,11 @@ public class RefactoringImplementerComponent implements IFactorComponent{
 		}
 		return null;
 	}
+
+
+	@Override
+	public Void registerListener(Object listener) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

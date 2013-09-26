@@ -6,4 +6,5 @@ public interface IFactorComponent {
 	
 	@Subscribe
 	Void listen(Object event);
+	Void registerListener(Object listener);
 }

@@ -59,4 +59,10 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 		}
 		return null;
 	}
+
+	@Override
+	public Void registerListener(Object listener) {
+		this.bus.register(listener);
+		return null;
+	}
 }
