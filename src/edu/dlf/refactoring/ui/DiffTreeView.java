@@ -1,7 +1,6 @@
 package edu.dlf.refactoring.ui;
 
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -17,6 +16,7 @@ import edu.dlf.refactoring.change.ChangeComponent;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator;
+import edu.dlf.refactoring.utils.WorkQueue;
 
 public class DiffTreeView extends ViewPart {
 
@@ -43,21 +43,26 @@ public class DiffTreeView extends ViewPart {
 		void listen(Object input);
 	}
 
-	public void InputChange(IJavaElement before, IJavaElement after)
+	public void InputChange(final IJavaElement before, final IJavaElement after)
 	{
-		JavaElementPair pair = new JavaElementPair(before, after);
-		((IFactorComponent)ServiceLocator.ResolveType(ChangeComponent.class)).
-			registerListener(new IListener(){
-				@Override
-				public void listen(Object input) {
-					treeViewer.setInput(input);
-					treeViewer.refresh();
-				}});
-		CodeReviewUIComponent context = ServiceLocator.ResolveType(
-			CodeReviewUIComponent.class);
-		context.clearContext();
-		((IFactorComponent)ServiceLocator.ResolveType(ChangeComponent.class)).
-			listen(pair);
+		WorkQueue queue = ServiceLocator.ResolveType(WorkQueue.class);
+		queue.execute(new Runnable(){
+			@Override
+			public void run() {
+				JavaElementPair pair = new JavaElementPair(before, after);
+				((IFactorComponent)ServiceLocator.ResolveType(ChangeComponent.class)).
+					registerListener(new IListener(){
+						@Override
+						public void listen(Object input) {
+							treeViewer.setInput(input);
+							treeViewer.refresh();
+						}});
+				CodeReviewUIComponent context = ServiceLocator.ResolveType(
+					CodeReviewUIComponent.class);
+				context.clearContext();
+				((IFactorComponent)ServiceLocator.ResolveType(ChangeComponent.class)).
+					listen(pair);
+			}});
 	}
 	
 	
