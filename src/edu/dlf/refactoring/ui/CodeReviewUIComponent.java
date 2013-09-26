@@ -5,6 +5,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.checkers.ICheckingResult;
@@ -12,6 +13,7 @@ import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IDetectedRefactoring.NodeListDescriptor;
 import edu.dlf.refactoring.design.IDetectedRefactoring.SingleNodeDescriptor;
 import edu.dlf.refactoring.design.IFactorComponent;
+import edu.dlf.refactoring.utils.UIUtils;
 import fj.Effect;
 import fj.F;
 import fj.data.List;
@@ -21,10 +23,17 @@ public class CodeReviewUIComponent implements IFactorComponent{
 	private final Multimap<String, ICheckingResult> allResults = 
 			ArrayListMultimap.create();
 	private final EventBus bus = new EventBus();
+	
 	private ASTNode rootAfter;
 	private ASTNode rootBefore;
 	
-	public void updateViewedCode(ASTNode rootBefore, ASTNode rootAfter)
+	@Inject
+	public CodeReviewUIComponent()
+	{
+	}
+	
+	
+	public synchronized void updateViewedCode(ASTNode rootBefore, ASTNode rootAfter)
 	{
 		this.rootBefore = rootBefore;
 		this.rootAfter = rootAfter;
@@ -37,21 +46,21 @@ public class CodeReviewUIComponent implements IFactorComponent{
 		this.bus.post(updators);
 	}
 	
-	private StyledTextUpdater createStyledTextUpdatorAfter(ASTNode rootBefore2, 
+	private StyledTextUpdater createStyledTextUpdatorAfter(ASTNode root, 
 			List<ICheckingResult> collection) {
-		
-		
-		return null;
+		StyledTextUpdater updater = new StyledTextUpdater();
+		updater.addText(root.toString(), UIUtils.Black, UIUtils.CodeFont);
+		return updater;
 	}
 
-	private StyledTextUpdater createStyledTextUpdatorBefore(ASTNode rootBefore2, 
+	private StyledTextUpdater createStyledTextUpdatorBefore(ASTNode root, 
 			List<ICheckingResult> collection) {
-		
-		
-		return null;
+		StyledTextUpdater updater = new StyledTextUpdater();
+		updater.addText(root.toString(), UIUtils.Black, UIUtils.CodeFont);
+		return updater;
 	}
 
-	public void clearContext()
+	public synchronized void clearContext()
 	{
 		this.allResults.clear();
 		this.rootBefore = null;
@@ -59,7 +68,8 @@ public class CodeReviewUIComponent implements IFactorComponent{
 	}
 
 	@Override
-	public Void listen(Object event) {		
+	public synchronized Void listen(Object event) {
+		
 		if(event instanceof ICheckingResult) {
 			final ICheckingResult result = (ICheckingResult) event;
 			final IDetectedRefactoring refactoring = result.getDetectedRefactoring();
@@ -89,7 +99,7 @@ public class CodeReviewUIComponent implements IFactorComponent{
 	}
 
 	@Override
-	public Void registerListener(Object listener) {
+	public synchronized Void registerListener(Object listener) {
 		bus.register(listener);
 		return null;
 	}

@@ -1,14 +1,17 @@
 package edu.dlf.refactoring.ui;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.JavaProjectAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SourcePackageAnnotation;
+import edu.dlf.refactoring.design.ISourceChange;
 
 public class TreeViewLabelProvider implements ILabelProvider
 {
@@ -54,7 +57,17 @@ public class TreeViewLabelProvider implements ILabelProvider
 
 	@Override
 	public String getText(Object element) {
-		return "Item";
+		if(element instanceof ISourceChange){
+			ISourceChange change = (ISourceChange) element;
+			if(change.getSourceChangeLevel().equals(this.cuLevel))
+			{
+				ASTNode root = change.getNodeBefore();
+				String fullName = ASTAnalyzer.getMainTypeName(root);
+				String[] names = fullName.split(".");
+				return names[names.length - 1];
+			}
+		}
+		return "";
 	}	
 }
 

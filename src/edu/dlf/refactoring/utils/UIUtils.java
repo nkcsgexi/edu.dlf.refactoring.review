@@ -10,6 +10,7 @@ public class UIUtils {
 	public static final Color Blue = new Color(getDisplay(), 0, 0, 255);
 	public static final Color Green = new Color(getDisplay(), 0, 255, 0);
 	public static final Color Red = new Color(getDisplay(), 255, 0, 0);
+	public static final Color Black = new Color(getDisplay(), 0, 0, 0);
 	public static final Font CodeFont = new Font(getDisplay(), "Courier", 12, 
 			SWT.BOLD);
 

@@ -17,6 +17,7 @@ public class UICompInjector extends AbstractModule{
 		bind(ILabelProvider.class).to(TreeViewLabelProvider.class).in(Singleton.class);
 		bind(ITreeContentProvider.class).to(TreeViewContentProvider.class).in(Singleton.class);
 		bind(IDoubleClickListener.class).to(TreeViewItemDoubleClickListener.class).in(Singleton.class);
+		bind(ICodeReviewInput.class).to(FakeCodeReviewInput.class).in(Singleton.class);
 	}
 	
 	@Provides

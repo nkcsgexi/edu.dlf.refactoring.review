@@ -4,7 +4,7 @@ import com.google.common.eventbus.Subscribe;
 
 public interface IFactorComponent {
 	
-	@Subscribe
+	@Subscribe 
 	Void listen(Object event);
 	Void registerListener(Object listener);
 }
