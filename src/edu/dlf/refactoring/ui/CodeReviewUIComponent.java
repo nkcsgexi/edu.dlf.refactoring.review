@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.checkers.ICheckingResult;
+import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IDetectedRefactoring.NodeListDescriptor;
 import edu.dlf.refactoring.design.IDetectedRefactoring.SingleNodeDescriptor;
@@ -24,24 +25,18 @@ public class CodeReviewUIComponent implements IFactorComponent{
 			ArrayListMultimap.create();
 	private final EventBus bus = new EventBus();
 	
-	private ASTNode rootAfter;
-	private ASTNode rootBefore;
-	
 	@Inject
 	public CodeReviewUIComponent()
 	{
 	}
 	
-	
 	public synchronized void updateViewedCode(ASTNode rootBefore, ASTNode rootAfter)
 	{
-		this.rootBefore = rootBefore;
-		this.rootAfter = rootAfter;
 		String mainTypeName = ASTAnalyzer.getMainTypeName(rootBefore);
 		StyledTextUpdater[] updators = new StyledTextUpdater[]{ 
-			createStyledTextUpdatorBefore(this.rootBefore, 
+			createStyledTextUpdatorBefore(rootBefore, 
 				List.iterableList(allResults.get(mainTypeName))),
-			createStyledTextUpdatorAfter(this.rootAfter, List.iterableList
+			createStyledTextUpdatorAfter(rootAfter, List.iterableList
 				(allResults.get(mainTypeName)))};
 		this.bus.post(updators);
 	}
@@ -63,8 +58,6 @@ public class CodeReviewUIComponent implements IFactorComponent{
 	public synchronized void clearContext()
 	{
 		this.allResults.clear();
-		this.rootBefore = null;
-		this.rootAfter = null;
 	}
 
 	@Override
@@ -99,7 +92,7 @@ public class CodeReviewUIComponent implements IFactorComponent{
 	}
 
 	@Override
-	public synchronized Void registerListener(Object listener) {
+	public synchronized Void registerListener(ICompListener listener) {
 		bus.register(listener);
 		return null;
 	}

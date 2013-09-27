@@ -6,6 +6,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringDetector;
@@ -61,7 +62,7 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 	}
 
 	@Override
-	public Void registerListener(Object listener) {
+	public Void registerListener(ICompListener listener) {
 		this.bus.register(listener);
 		return null;
 	}

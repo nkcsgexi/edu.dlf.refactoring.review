@@ -64,7 +64,7 @@ public class TreeViewLabelProvider implements ILabelProvider
 				ASTNode root = change.getNodeBefore();
 				String fullName = ASTAnalyzer.getMainTypeName(root);
 				String[] names = fullName.split(".");
-				return names[names.length - 1];
+				return fullName;
 			}
 		}
 		return "";

@@ -13,7 +13,7 @@ public class AfterChangeCodeView extends CodeView {
 	}
 
 	@Override
-	public void updateCodeViews(StyledTextUpdater[] updaters) {
-		this.UpdateCodeInternal(updaters[1]);
+	public void callBack(Object output) {
+		UpdateCodeInternal(((StyledTextUpdater[])output)[1]);
 	}
 }

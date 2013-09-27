@@ -14,7 +14,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.ReturnStatementAnnotat
 import edu.dlf.refactoring.change.ChangeComponentInjector.ThrowStatementAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
-import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
+import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 
 public class ReturnAndThrowStatementChangeCalculator implements IASTNodeChangeCalculator {

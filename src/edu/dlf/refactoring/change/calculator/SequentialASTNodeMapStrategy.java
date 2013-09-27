@@ -4,7 +4,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 
 import com.google.common.base.Function;
 
-import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
+import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.utils.XList;
 
 public class SequentialASTNodeMapStrategy implements IASTNodeMapStrategy{

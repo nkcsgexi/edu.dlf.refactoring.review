@@ -14,7 +14,7 @@ public class BeforeChangeCodeView extends CodeView {
 	}
 
 	@Override
-	public void updateCodeViews(StyledTextUpdater[] updaters) {
-		UpdateCodeInternal(updaters[0]);
+	public void callBack(Object output) {
+		UpdateCodeInternal(((StyledTextUpdater[])output)[0]);
 	}
 }

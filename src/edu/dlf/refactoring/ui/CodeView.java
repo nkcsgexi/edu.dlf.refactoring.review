@@ -6,20 +6,21 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-import com.google.common.eventbus.Subscribe;
-
+import edu.dlf.refactoring.design.ComponentsRepository;
+import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.UIUtils;
 
-public abstract class CodeView extends ViewPart {
+public abstract class CodeView extends ViewPart implements ICompListener {
 
 	private StyledText styledText;
 	private final IFactorComponent component;
 	
 	protected CodeView() {
 		super();
-		this.component = ServiceLocator.ResolveType(CodeReviewUIComponent.class);
+		this.component = ((ComponentsRepository)ServiceLocator.ResolveType
+			(ComponentsRepository.class)).getUIComponent();
 	}
 	
 	@Override
@@ -35,8 +36,4 @@ public abstract class CodeView extends ViewPart {
 	{
 		updater.UpdateStyledText(styledText);
 	}
-	
-	@Subscribe
-	public abstract void updateCodeViews(StyledTextUpdater[] updaters); 
-
 }

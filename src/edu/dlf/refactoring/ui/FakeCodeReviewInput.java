@@ -16,7 +16,7 @@ public class FakeCodeReviewInput implements ICodeReviewInput{
 	@Inject
 	public FakeCodeReviewInput() throws Exception
 	{
-		this.directory = System.getProperty("user.dir") + "/TestFiles/";
+		this.directory = "/home/xige/eclipse_workspace/RefReview/TestFiles/";
 		this.rootBefore = ASTAnalyzer.parseICompilationUnit(FileUtils.readAll(
 				this.directory + "TestCUBefore1.java"));
 		this.rootAfter = ASTAnalyzer.parseICompilationUnit(FileUtils.readAll(

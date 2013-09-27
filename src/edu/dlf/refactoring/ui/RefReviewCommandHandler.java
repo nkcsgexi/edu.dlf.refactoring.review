@@ -6,8 +6,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.ASTNode;
 
-import edu.dlf.refactoring.change.ChangeComponent;
-import edu.dlf.refactoring.design.IASTNodePair;
+import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.ComponentsRepository;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator;
@@ -17,10 +17,12 @@ import edu.dlf.refactoring.utils.WorkQueue;
 public class RefReviewCommandHandler extends AbstractHandler {
 
 	private final WorkQueue queue = ServiceLocator.ResolveType(WorkQueue.class);
-	private final IFactorComponent changeComp = ServiceLocator.ResolveType
-			(ChangeComponent.class);
-	private final CodeReviewUIComponent context = ServiceLocator.ResolveType
-			(CodeReviewUIComponent.class); 
+	private final IFactorComponent changeComp = ((ComponentsRepository)
+		ServiceLocator.ResolveType(ComponentsRepository.class)).
+			getChangeComponent();
+	private final CodeReviewUIComponent context = (CodeReviewUIComponent) 
+		((ComponentsRepository)ServiceLocator.ResolveType(
+			ComponentsRepository.class)).getUIComponent();
 	private final ICodeReviewInput input = ServiceLocator.ResolveType
 			(ICodeReviewInput.class);
 	
@@ -34,16 +36,8 @@ public class RefReviewCommandHandler extends AbstractHandler {
 					context.clearContext();
 					if(input.getInputType() == InputType.ASTNode)
 					{
-						changeComp.listen(new IASTNodePair() {
-							@Override
-							public ASTNode getNodeBefore() {
-								return (ASTNode) input.getInputBefore();
-							}
-							@Override
-							public ASTNode getNodeAfter() {
-								return (ASTNode) input.getInputAfter();
-							}
-						});
+						changeComp.listen(new ASTNodePair((ASTNode) input.getInputBefore(),
+							(ASTNode) input.getInputAfter()));
 					}
 					else{
 						JavaElementPair pair = new JavaElementPair((IJavaElement)

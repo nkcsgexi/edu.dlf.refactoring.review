@@ -7,8 +7,7 @@ public class RenameTypeChecker implements IRefactoringChecker{
 
 	@Override
 	public ICheckingResult checkRefactoring(IDetectedRefactoring refactoring) {
-		// TODO Auto-generated method stub
-		return null;
+		return new DefaultCheckingResult(true, refactoring);
 	}
 
 }

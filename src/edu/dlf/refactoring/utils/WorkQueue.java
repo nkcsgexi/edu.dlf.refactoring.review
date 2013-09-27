@@ -2,11 +2,16 @@ package edu.dlf.refactoring.utils;
 
 import java.util.LinkedList;
 
+import org.apache.log4j.Logger;
+
+import edu.dlf.refactoring.design.ServiceLocator;
+
 public class WorkQueue
 {
     private final int nThreads;
     private final PoolWorker[] threads;
     private final LinkedList queue;
+    private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 
     public WorkQueue(int nThreads)
     {
@@ -52,7 +57,7 @@ public class WorkQueue
                     r.run();
                 }
                 catch (RuntimeException e) {
-                    // You might want to log something here
+                   logger.fatal(e);
                 }
             }
         }

@@ -36,7 +36,7 @@ import edu.dlf.refactoring.ui.UICompInjector;
 public class ServiceLocator extends AbstractModule
 {
 	private final static AbstractModule _instance = new ServiceLocator();
-	
+	private final static Injector injector = Guice.createInjector(_instance);
 	
 	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 	public @interface HistorySavingCompAnnotation {}
@@ -67,23 +67,18 @@ public class ServiceLocator extends AbstractModule
 		this.install(new ImplementerCompInjector());
 		this.install(new UICompInjector());
 		
-		bind(HistorySavingComponent.class).in(Singleton.class);
-		bind(ChangeComponent.class).in(Singleton.class);
-		bind(RefactoringDetectionComponent.class).in(Singleton.class);
-		bind(RefactoringCheckerComponent.class).in(Singleton.class);
+		bind(ComponentsRepository.class).in(Singleton.class);
 		
-		bind(IFactorComponent.class).annotatedWith(HistorySavingCompAnnotation.class).to(HistorySavingComponent.class);
-		bind(IFactorComponent.class).annotatedWith(ChangeCompAnnotation.class).to(ChangeComponent.class);
-		bind(IFactorComponent.class).annotatedWith(RefactoringDetectionCompAnnotation.class).to(RefactoringDetectionComponent.class);
-		bind(IFactorComponent.class).annotatedWith(RefactoringCheckerCompAnnotation.class).to(RefactoringCheckerComponent.class);
-		bind(IFactorComponent.class).annotatedWith(UICompAnnotation.class).to(CodeReviewUIComponent.class);
-		
+		bind(IFactorComponent.class).annotatedWith(HistorySavingCompAnnotation.class).to(HistorySavingComponent.class).in(Singleton.class);;
+		bind(IFactorComponent.class).annotatedWith(ChangeCompAnnotation.class).to(ChangeComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(RefactoringDetectionCompAnnotation.class).to(RefactoringDetectionComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(RefactoringCheckerCompAnnotation.class).to(RefactoringCheckerComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(UICompAnnotation.class).to(CodeReviewUIComponent.class).in(Singleton.class);
 	}
 
 
 	public static <T> T ResolveType (Class T)
 	{		
-		Injector injector = Guice.createInjector(_instance);
 		return (T) injector.getInstance(T);
 	}
 	

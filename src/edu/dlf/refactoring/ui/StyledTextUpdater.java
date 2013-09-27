@@ -5,6 +5,7 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Display;
 
 import fj.Effect;
 import fj.data.List.Buffer;
@@ -28,12 +29,16 @@ public class StyledTextUpdater {
 	
 	public void UpdateStyledText(final StyledText st)
 	{
-		st.setText(sb.toString());
-		styles.toList().foreach(new Effect<StyleRange>(){
-			@Override
-			public void e(StyleRange range) {
-				st.setStyleRange(range);
-			}});
+		Display.getDefault().syncExec(new Runnable() {
+		    public void run() {
+				st.setText(sb.toString());
+				styles.toList().foreach(new Effect<StyleRange>(){
+					@Override
+					public void e(StyleRange range) {
+						st.setStyleRange(range);
+					}});
+		    }
+		});
 	}
 	
 }

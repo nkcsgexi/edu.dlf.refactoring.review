@@ -7,16 +7,21 @@ import org.eclipse.jdt.core.IJavaProject;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.JavaProjectAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SourcePackageAnnotation;
+import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.IASTNodePair;
-import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
+import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.design.ServiceLocator.RefactoringDetectionCompAnnotation;
+import fj.Effect;
+import fj.data.List;
+
 
 public class ChangeComponent implements IFactorComponent{
 	
@@ -26,6 +31,7 @@ public class ChangeComponent implements IFactorComponent{
 	private final IASTNodeChangeCalculator cuCalculator;
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	private final EventBus bus;
+	private List<ICompListener> listeners;
 	
 	@Inject
 	public ChangeComponent(
@@ -41,6 +47,7 @@ public class ChangeComponent implements IFactorComponent{
 		this.cuCalculator = cuCalculator;
 		this.bus = new EventBus();
 		this.bus.register(component);
+		this.listeners = List.nil();
 	}
 
 	@Subscribe
@@ -50,10 +57,10 @@ public class ChangeComponent implements IFactorComponent{
 			logger.info("Get event.");
 			JavaElementPair change = (JavaElementPair) event;
 			if(change.GetBeforeElement() instanceof IJavaProject)
-				bus.post(SourceChangeUtils.pruneSourceChange(
+				this.bus.post(SourceChangeUtils.pruneSourceChange(
 					projectCalculator.CalculateJavaModelChange(change)));
 			if(change.GetBeforeElement() instanceof ICompilationUnit)
-				bus.post(SourceChangeUtils.pruneSourceChange(
+				this.bus.post(SourceChangeUtils.pruneSourceChange(
 					icuCalculator.CalculateJavaModelChange(change)));
 			logger.info("Handled event.");
 		}
@@ -61,8 +68,9 @@ public class ChangeComponent implements IFactorComponent{
 		if(event instanceof IASTNodePair)
 		{
 			logger.info("Get event.");
-			bus.post(SourceChangeUtils.pruneSourceChange(cuCalculator.
-				CalculateASTNodeChange((ASTNodePair) event)));
+			event = SourceChangeUtils.pruneSourceChange(cuCalculator.
+					CalculateASTNodeChange((ASTNodePair) event));
+			this.bus.post(event);
 			logger.info("Handled event.");
 		}
 		
@@ -70,9 +78,9 @@ public class ChangeComponent implements IFactorComponent{
 	}
 
 	@Override
-	public Void registerListener(Object listener) {
-		this.bus.register(listener);
+	public Void registerListener(ICompListener listener) {
+		bus.register(listener);
 		return null;
 	}
-
+	
 }

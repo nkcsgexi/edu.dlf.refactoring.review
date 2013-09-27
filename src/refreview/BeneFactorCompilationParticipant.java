@@ -8,7 +8,7 @@ import org.eclipse.jdt.core.compiler.ReconcileContext;
 
 import com.google.common.eventbus.EventBus;
 
-import edu.dlf.refactoring.change.HistorySavingComponent;
+import edu.dlf.refactoring.design.ComponentsRepository;
 import edu.dlf.refactoring.design.ServiceLocator;
 
 public class BeneFactorCompilationParticipant extends CompilationParticipant {
@@ -18,7 +18,8 @@ public class BeneFactorCompilationParticipant extends CompilationParticipant {
 	
 	public BeneFactorCompilationParticipant() {
 		super();
-		bus.register(ServiceLocator.ResolveType(HistorySavingComponent.class));
+		bus.register(((ComponentsRepository)ServiceLocator.ResolveType
+				(ComponentsRepository.class)).getHistoryComp());
 	}
 	
 	@Override

@@ -1,6 +1,6 @@
 package edu.dlf.refactoring.ui;
 
-import org.eclipse.jdt.core.IJavaElement;
+import org.apache.log4j.Logger;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -8,21 +8,22 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ViewPart;
 
-import com.google.common.eventbus.Subscribe;
-
-import edu.dlf.refactoring.change.ChangeComponent;
-import edu.dlf.refactoring.design.IFactorComponent;
-import edu.dlf.refactoring.design.JavaElementPair;
+import edu.dlf.refactoring.design.ComponentsRepository;
+import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.ServiceLocator;
-import edu.dlf.refactoring.utils.WorkQueue;
 
-public class DiffTreeView extends ViewPart {
+public class DiffTreeView extends ViewPart implements ICompListener{
 
 	private TreeViewer treeViewer;
+	private final Logger logger;
 
 	public DiffTreeView() {
+		logger = ServiceLocator.ResolveType(Logger.class);
+		((ComponentsRepository)ServiceLocator.ResolveType(ComponentsRepository.
+			class)).getChangeComponent().registerListener(this);
 	}
 
 	@Override
@@ -36,38 +37,20 @@ public class DiffTreeView extends ViewPart {
 		this.treeViewer.addDoubleClickListener((IDoubleClickListener) 
 			ServiceLocator.ResolveType(IDoubleClickListener.class));
 	}
-	
-	private interface IListener
-	{
-		@Subscribe
-		void listen(Object input);
-	}
 
-	public void InputChange(final IJavaElement before, final IJavaElement after)
-	{
-		WorkQueue queue = ServiceLocator.ResolveType(WorkQueue.class);
-		queue.execute(new Runnable(){
-			@Override
-			public void run() {
-				JavaElementPair pair = new JavaElementPair(before, after);
-				((IFactorComponent)ServiceLocator.ResolveType(ChangeComponent.class)).
-					registerListener(new IListener(){
-						@Override
-						public void listen(Object input) {
-							treeViewer.setInput(input);
-							treeViewer.refresh();
-						}});
-				CodeReviewUIComponent context = ServiceLocator.ResolveType(
-					CodeReviewUIComponent.class);
-				context.clearContext();
-				((IFactorComponent)ServiceLocator.ResolveType(ChangeComponent.class)).
-					listen(pair);
-			}});
-	}
-	
-	
 	@Override
 	public void setFocus() {
 		
+	}
+
+	@Override
+	public void callBack(final Object change) {
+		logger.info("Get change.");
+		Display.getDefault().asyncExec(new Runnable() {
+		    public void run() {
+				treeViewer.setInput(change);
+				treeViewer.refresh();
+		    }
+		});
 	}
 }

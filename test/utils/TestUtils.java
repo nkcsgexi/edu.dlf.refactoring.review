@@ -4,7 +4,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.FileUtils;
-import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
+import edu.dlf.refactoring.design.ASTNodePair;
 
 
 public class TestUtils {

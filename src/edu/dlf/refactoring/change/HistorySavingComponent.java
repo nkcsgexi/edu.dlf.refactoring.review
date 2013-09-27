@@ -14,7 +14,8 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
-import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
+import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.design.ServiceLocator.ChangeCompAnnotation;
@@ -31,7 +32,8 @@ public class HistorySavingComponent implements IFactorComponent {
 	private final EventBus bus;
 	
 	@Inject
-	public HistorySavingComponent(@ChangeCompAnnotation IFactorComponent component)
+	public HistorySavingComponent(
+			@ChangeCompAnnotation IFactorComponent component)
 	{
 		this.bus = new EventBus();
 		this.bus.register(component);
@@ -112,7 +114,7 @@ public class HistorySavingComponent implements IFactorComponent {
 	}
 
 	@Override
-	public Void registerListener(Object listener) {
+	public Void registerListener(ICompListener listener) {
 		this.bus.register(listener);
 		return null;
 	}

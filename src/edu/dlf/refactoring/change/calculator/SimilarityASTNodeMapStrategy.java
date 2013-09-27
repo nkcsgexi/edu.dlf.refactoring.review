@@ -7,7 +7,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
-import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
+import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.utils.XList;
 
 public class SimilarityASTNodeMapStrategy implements IASTNodeMapStrategy{

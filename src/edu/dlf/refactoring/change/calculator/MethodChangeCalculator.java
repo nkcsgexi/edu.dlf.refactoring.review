@@ -16,7 +16,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnn
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDistanceCalculator;
-import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
+import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.XList;
@@ -88,5 +88,4 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 				return XStringUtils.distance(nb, na);
 			}});
 	}
-
 }

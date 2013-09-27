@@ -12,7 +12,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationFragmentAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
-import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
+import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 
 public class VariableDeclarationFragmentChangeCalculator implements IASTNodeChangeCalculator{

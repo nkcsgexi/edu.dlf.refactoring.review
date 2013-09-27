@@ -6,6 +6,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
@@ -72,7 +73,7 @@ public class RefactoringImplementerComponent implements IFactorComponent{
 
 
 	@Override
-	public Void registerListener(Object listener) {
+	public Void registerListener(ICompListener listener) {
 		// TODO Auto-generated method stub
 		return null;
 	}

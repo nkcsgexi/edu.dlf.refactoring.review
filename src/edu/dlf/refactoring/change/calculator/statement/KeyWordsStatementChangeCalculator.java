@@ -10,7 +10,7 @@ import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BreakStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ContinueStatementAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
-import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
+import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 
 public class KeyWordsStatementChangeCalculator implements IASTNodeChangeCalculator{

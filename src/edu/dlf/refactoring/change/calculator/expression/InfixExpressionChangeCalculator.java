@@ -10,7 +10,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.InfixExpressionAnnotat
 import edu.dlf.refactoring.change.ChangeComponentInjector.InfixExpressionOperatorAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
-import edu.dlf.refactoring.design.IASTNodePair.ASTNodePair;
+import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 
 public class InfixExpressionChangeCalculator implements IASTNodeChangeCalculator {
