@@ -8,31 +8,35 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 
 import fj.Effect;
-import fj.data.List.Buffer;
+import fj.data.List;
 
 public class StyledTextUpdater {
 
-	private final StringBuilder sb = new StringBuilder();
-	private final Buffer<StyleRange> styles = Buffer.empty();
+	private List<StyleRange> styles = List.nil();
+	private String text;
 	
-	public void addText(String text, Color color, Font font)
+	public void addStyle(Color color, Font font, int start, int length)
 	{
 		StyleRange style = new StyleRange();
-		style.start = sb.length();
-		style.length = text.length();
+		style.start = start;
+		style.length = length;
 		style.foreground = color;
 		style.font = font;
 		style.fontStyle = SWT.NORMAL;
-		styles.snoc(style);
-		sb.append(text);
+		styles = styles.snoc(style);
+	}
+	
+	public void setText(String text)
+	{
+		this.text = text;
 	}
 	
 	public void UpdateStyledText(final StyledText st)
 	{
 		Display.getDefault().syncExec(new Runnable() {
 		    public void run() {
-				st.setText(sb.toString());
-				styles.toList().foreach(new Effect<StyleRange>(){
+				st.setText(text);
+				styles.foreach(new Effect<StyleRange>(){
 					@Override
 					public void e(StyleRange range) {
 						st.setStyleRange(range);
