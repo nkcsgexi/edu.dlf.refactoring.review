@@ -1,5 +1,6 @@
 package edu.dlf.refactoring.ui;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -15,6 +16,7 @@ import edu.dlf.refactoring.design.IDetectedRefactoring.NodeListDescriptor;
 import edu.dlf.refactoring.design.IDetectedRefactoring.SingleNodeDescriptor;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.RefactoringType;
+import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.UIUtils;
 import fj.Effect;
 import fj.F;
@@ -23,6 +25,7 @@ import fj.data.List;
 
 public class CodeReviewUIComponent implements IFactorComponent{
 	
+	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	private final Multimap<String, ICheckingResult> allResults = 
 			ArrayListMultimap.create();
 	private final EventBus bus = new EventBus();
@@ -46,7 +49,7 @@ public class CodeReviewUIComponent implements IFactorComponent{
 	private StyledTextUpdater createStyledTextUpdatorAfter(ASTNode root, 
 			List<ICheckingResult> results) {
 		StyledTextUpdater updater = new StyledTextUpdater();
-		updater.setText(root.toString());
+		updater.setText(ASTAnalyzer.getOriginalSourceFromRoot(root));
 		colorCorrectRefactoredNode(results, root).e(updater);
 		return updater;
 	}
@@ -54,7 +57,7 @@ public class CodeReviewUIComponent implements IFactorComponent{
 	private StyledTextUpdater createStyledTextUpdatorBefore(ASTNode root, 
 			List<ICheckingResult> results) {
 		StyledTextUpdater updater = new StyledTextUpdater();
-		updater.setText(root.toString());
+		updater.setText(ASTAnalyzer.getOriginalSourceFromRoot(root));
 		colorCorrectRefactoredNode(results, root).e(updater);
 		return updater;
 	}
@@ -76,10 +79,8 @@ public class CodeReviewUIComponent implements IFactorComponent{
 					}
 				});
 			}
-		};
-		
+		};	
 	}
-	
 	
 	private F<P2<ASTNode, RefactoringType>, P2<Integer, Integer>> 
 		getExtractStartLengthOperation()

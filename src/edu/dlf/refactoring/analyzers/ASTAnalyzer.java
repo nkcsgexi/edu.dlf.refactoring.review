@@ -2,7 +2,10 @@ package edu.dlf.refactoring.analyzers;
 
 
 
+import java.util.HashMap;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.AST;
@@ -16,6 +19,7 @@ import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDistanceCalculator;
+import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.IEqualityComparer;
 import edu.dlf.refactoring.utils.XList;
 import fj.F;
@@ -23,18 +27,37 @@ import fj.data.Option;
 
 
 public class ASTAnalyzer {
+	
+	private static HashMap<ASTNode, String> sourceCodeRepo =
+			new HashMap<ASTNode, String>();
 
+	private static Logger logger = ServiceLocator.ResolveType(Logger.class);
+	
 	private ASTAnalyzer() throws Exception {
 		throw new Exception();
 	}
 
 	public static ASTNode parseICompilationUnit(IJavaElement icu) {
-		ASTParser parser = ASTParser.newParser(AST.JLS4);
-		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		parser.setSource((ICompilationUnit) icu);
-		parser.setResolveBindings(true);
-		parser.setBindingsRecovery(true);
-		return parser.createAST(null);
+		try {
+			ASTParser parser = ASTParser.newParser(AST.JLS4);
+			parser.setKind(ASTParser.K_COMPILATION_UNIT);
+			String source;
+			source = ((ICompilationUnit) icu).getSource();
+			parser.setSource((ICompilationUnit) icu);
+			parser.setResolveBindings(true);
+			parser.setBindingsRecovery(true);
+			ASTNode root = parser.createAST(null);
+			sourceCodeRepo.put(root, source);
+			return root;
+		} catch (Exception e) {
+			ASTParser parser = ASTParser.newParser(AST.JLS4);
+			parser.setKind(ASTParser.K_COMPILATION_UNIT);
+			parser.setSource((ICompilationUnit) icu);
+			parser.setResolveBindings(true);
+			parser.setBindingsRecovery(true);
+			ASTNode root = parser.createAST(null);
+			return root;
+		}
 	}
 
 	
@@ -44,7 +67,9 @@ public class ASTAnalyzer {
 		parser.setSource(code.toCharArray());
 		parser.setResolveBindings(true);
 		parser.setBindingsRecovery(true);
-		return parser.createAST(null);
+		ASTNode root = parser.createAST(null);
+		sourceCodeRepo.put(root, code);
+		return root;
 	}
 	
 	
@@ -54,7 +79,9 @@ public class ASTAnalyzer {
 		parser.setSource(source.toCharArray());
 		parser.setResolveBindings(true);
 		parser.setBindingsRecovery(true);
-		return parser.createAST(null);
+		ASTNode root = parser.createAST(null);
+		sourceCodeRepo.put(root, source);
+		return root;
 	}
 
 	public static ASTNode parseExpression(String source) {
@@ -63,8 +90,16 @@ public class ASTAnalyzer {
 		parser.setSource(source.toCharArray());
 		parser.setResolveBindings(true);
 		parser.setBindingsRecovery(true);
-		return parser.createAST(null);
+		ASTNode root = parser.createAST(null);
+		sourceCodeRepo.put(root, source);
+		return root;
 	}
+	
+	public static String getOriginalSourceFromRoot(ASTNode root)
+	{
+		return sourceCodeRepo.get(root);
+	}
+	
 	
 	public static XList<ASTNode> getAncestors(ASTNode node)
 	{
