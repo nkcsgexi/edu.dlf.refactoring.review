@@ -11,6 +11,7 @@ import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.XList;
 import edu.dlf.refactoring.utils.XList.IAggregator;
+import fj.F;
 import fj.data.List;
 import fj.data.List.Buffer;
 
@@ -52,6 +53,16 @@ public class SourceChangeUtils {
 		return results.toList();
 	}
 	
+
+	public static List<ISourceChange> getChildren(ISourceChange parent)
+	{
+		Buffer<ISourceChange> buffer = Buffer.empty();
+		for(ISourceChange sub : parent.getSubSourceChanges())
+		{
+			buffer.snoc(sub);
+		}
+		return buffer.toList();
+	}
 	
 	private static boolean pruneSubChanges(ISourceChange change)
 	{

@@ -15,6 +15,7 @@ import edu.dlf.refactoring.design.ServiceLocator;
 import fj.Equal;
 import fj.F;
 import fj.F2;
+import fj.Ord;
 import fj.P2;
 import fj.data.List;
 import fj.data.List.Buffer;
@@ -63,7 +64,12 @@ public class JavaModelAnalyzer {
 		    	  list = list.snoc(pac);
 		      }
 		    }
-		    return list;
+		    return list.filter(new F<IJavaElement, Boolean>() {
+				@Override
+				public Boolean f(IJavaElement pack) {
+					return getICompilationUnit(pack).isNotEmpty();
+				}
+			});
 	    }catch(Exception e) {
 			logger.fatal(e);
 			return List.nil();
@@ -107,14 +113,21 @@ public class JavaModelAnalyzer {
 			}
 		});
 		
+		Ord<P2<P2<IJavaElement, IJavaElement>, Integer>> ord = Ord.intOrd.comap
+				(new F<P2<P2<IJavaElement, IJavaElement>, Integer>, Integer>(){
+			@Override
+			public Integer f(P2<P2<IJavaElement, IJavaElement>, Integer> p) {
+				return p._2();
+			}});
+		
 		List<P2<IJavaElement, IJavaElement>> matchedTuples = allTuples.zip(allScores).
 			filter(new F<P2<P2<IJavaElement,IJavaElement>, Integer>, Boolean>() {
 			@Override
 			public Boolean f(P2<P2<IJavaElement, IJavaElement>, Integer> arg0) {
 				return arg0._2() >= minimumScore;
 			}
-		}).map(new F<P2<P2<IJavaElement,IJavaElement>,Integer>, P2<IJavaElement, 
-				IJavaElement>>() {
+		}).sort(ord).reverse().map(new F<P2<P2<IJavaElement,IJavaElement>,Integer>, 
+				P2<IJavaElement, IJavaElement>>() {
 			@Override
 			public P2<IJavaElement, IJavaElement> f(
 					P2<P2<IJavaElement, IJavaElement>, Integer> arg0) {
@@ -185,12 +198,9 @@ public class JavaModelAnalyzer {
 						return list1.forall(new F<IJavaElement, Boolean>() {
 							@Override
 							public Boolean f(IJavaElement arg0) {
-								return element.getElementName().equals(arg0);
-							}
-						});
-					}});
-			}
-		};
+								return !element.getElementName().equals(arg0);
+							}});
+					}});}};
 	}
 	
 	public static F2<List<IJavaElement>, List<IJavaElement>, List<IJavaElement>>
@@ -206,14 +216,10 @@ public class JavaModelAnalyzer {
 						return list2.forall(new F<IJavaElement, Boolean>() {
 							@Override
 							public Boolean f(IJavaElement arg1) {
-								return arg0.getElementName().equals(arg1.
-										getElementName());
-							}
-						});
-					}
-				});
-			}
-		};
+								return !arg0.getElementName().equals(arg1.
+									getElementName());
+							}});}
+				});}};
 	}
 }
 

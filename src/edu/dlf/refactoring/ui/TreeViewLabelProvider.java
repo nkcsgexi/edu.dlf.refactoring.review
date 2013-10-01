@@ -1,6 +1,5 @@
 package edu.dlf.refactoring.ui;
 
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -59,12 +58,15 @@ public class TreeViewLabelProvider implements ILabelProvider
 	public String getText(Object element) {
 		if(element instanceof ISourceChange){
 			ISourceChange change = (ISourceChange) element;
-			if(change.getSourceChangeLevel().equals(this.cuLevel))
+			if(change.getElementBefore() != null){
+				String before = change.getElementBefore().getElementName();
+				String after = change.getElementAfter().getElementName();
+				return before + "=>" + after;
+			}else
 			{
-				ASTNode root = change.getNodeBefore();
-				String fullName = ASTAnalyzer.getMainTypeName(root);
-				String[] names = fullName.split(".");
-				return fullName;
+				String before = ASTAnalyzer.getJavaElement(change.getNodeBefore()).getElementName();
+				String after = ASTAnalyzer.getJavaElement(change.getNodeAfter()).getElementName();
+				return before + "=>" + after;
 			}
 		}
 		return "";

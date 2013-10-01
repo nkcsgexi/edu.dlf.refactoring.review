@@ -13,7 +13,9 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.dlf.refactoring.design.ComponentsRepository;
 import edu.dlf.refactoring.design.ICompListener;
+import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
+import fj.data.List;
 
 public class DiffTreeView extends ViewPart implements ICompListener{
 
@@ -48,8 +50,10 @@ public class DiffTreeView extends ViewPart implements ICompListener{
 		logger.info("Get change.");
 		Display.getDefault().asyncExec(new Runnable() {
 		    public void run() {
-				treeViewer.setInput(change);
-				treeViewer.refresh();
+		    	if(change instanceof ISourceChange){
+		    		treeViewer.setInput(List.single(change));
+		    		treeViewer.refresh();
+		    	}
 		    }
 		});
 	}

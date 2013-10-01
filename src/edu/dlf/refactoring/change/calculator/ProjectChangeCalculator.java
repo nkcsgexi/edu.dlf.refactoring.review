@@ -1,5 +1,6 @@
 package edu.dlf.refactoring.change.calculator;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.IJavaElement;
 
 import com.google.inject.Inject;
@@ -18,18 +19,23 @@ public class ProjectChangeCalculator implements IJavaModelChangeCalculator{
 	
 	private final IJavaModelChangeCalculator pChangeCalculator;
 	private final String projectLevel;
+	private final Logger logger;
 
 	@Inject
 	public ProjectChangeCalculator(
 		@JavaProjectAnnotation String projectLevel,
-		@SourcePackageAnnotation IJavaModelChangeCalculator pChangeCalculator)
+		@SourcePackageAnnotation IJavaModelChangeCalculator pChangeCalculator,
+		Logger logger)
 	{
 		this.projectLevel = projectLevel;
 		this.pChangeCalculator = pChangeCalculator;
+		this.logger = logger;
 	}
 	
 	@Override
 	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
+		logger.info("Compare projects: " + pair.getElementBefore().getElementName() + " " 
+				+ pair.getElementAfter().getElementName());
 		final SubChangeContainer container = new SubChangeContainer
 				(this.projectLevel, pair);
 		JavaModelAnalyzer.getSameNameElementPairsFunction().

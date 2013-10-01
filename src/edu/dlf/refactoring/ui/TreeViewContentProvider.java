@@ -48,11 +48,7 @@ public class TreeViewContentProvider implements ITreeContentProvider
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if(inputElement instanceof ISourceChange)
-		{
-			return new Object[] {inputElement};
-		}
-		return new Object[0];
+		return new Object[] {((List)inputElement).head()};
 	}
 
 	@Override
@@ -60,15 +56,9 @@ public class TreeViewContentProvider implements ITreeContentProvider
 		final ISourceChange change = (ISourceChange) parentElement;
 		if(change.getSourceChangeLevel().equals(this.cuLevel))
 		{
-			return new Object[0];
+			return null;
 		}
-		List<ISourceChange> subChanges = SourceChangeUtils.getSelfAndDescendent
-				(change).filter(new F<ISourceChange, Boolean>(){
-			@Override
-			public Boolean f(ISourceChange c) {
-				return c != change;
-			}});
-		
+		List<ISourceChange> subChanges = SourceChangeUtils.getChildren(change);
 		if(change.getSourceChangeLevel().equals(this.projectLevel))
 		{
 			return subChanges.filter(new F<ISourceChange, Boolean>(){
@@ -85,7 +75,7 @@ public class TreeViewContentProvider implements ITreeContentProvider
 					return c.getSourceChangeLevel().equals(cuLevel);
 				}}).toCollection().toArray();
 		}
-		return new Object[0];
+		return null;
 	}
 
 	@Override
@@ -106,7 +96,7 @@ public class TreeViewContentProvider implements ITreeContentProvider
 	@Override
 	public boolean hasChildren(Object element) {
 		return !((ISourceChange)element).getSourceChangeLevel().equals
-				(this.cuLevel);
+			(this.cuLevel);
 	}
 	
 }

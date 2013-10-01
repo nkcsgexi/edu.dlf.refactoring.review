@@ -37,6 +37,13 @@ public class ASTAnalyzer {
 		throw new Exception();
 	}
 
+	public static IJavaElement getJavaElement(ASTNode node) 
+	{
+		CompilationUnit cu = ((CompilationUnit)node.getRoot());
+		return cu.getJavaElement();
+	}
+	
+	
 	public static ASTNode parseICompilationUnit(IJavaElement icu) {
 		try {
 			ASTParser parser = ASTParser.newParser(AST.JLS4);
@@ -59,6 +66,7 @@ public class ASTAnalyzer {
 			return root;
 		}
 	}
+	
 
 	
 	public static ASTNode parseICompilationUnit(String code) {
