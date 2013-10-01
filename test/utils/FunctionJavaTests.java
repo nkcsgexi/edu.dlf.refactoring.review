@@ -51,5 +51,22 @@ public class FunctionJavaTests extends TestSuite{
 			System.out.println(i);
 		}
 	}
+	
+	@Test
+	public void listSpanTest()
+	{
+		Buffer<Integer> buffer = new Buffer<Integer>();
+		buffer = buffer.snoc(1);
+		buffer.snoc(2);
+		buffer.snoc(3);
+		buffer.snoc(4);
+		List<Integer> list = buffer.toList();
+		list = List.nil();
+		list.span(new F<Integer, Boolean>(){
+			@Override
+			public Boolean f(Integer arg0) {
+				return true;
+			}});
+	}
 
 }

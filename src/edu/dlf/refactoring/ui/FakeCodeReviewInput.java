@@ -1,41 +1,50 @@
 package edu.dlf.refactoring.ui;
 
-import org.eclipse.jdt.core.dom.ASTNode;
+import org.apache.log4j.Logger;
+import org.eclipse.jdt.core.IJavaElement;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.analyzers.ASTAnalyzer;
-import edu.dlf.refactoring.analyzers.FileUtils;
+import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
+import edu.dlf.refactoring.design.ServiceLocator;
+import fj.F;
+import fj.data.List;
 
 public class FakeCodeReviewInput implements ICodeReviewInput{
 
-	private final String directory;
-	private final ASTNode rootBefore;
-	private final ASTNode rootAfter;
-
+	private final Logger logger;
+	private final List<IJavaElement> allProjects;
+	
 	@Inject
 	public FakeCodeReviewInput() throws Exception
 	{
-		this.directory = "/home/xige/eclipse_workspace/RefReview/TestFiles/";
-		this.rootBefore = ASTAnalyzer.parseICompilationUnit(FileUtils.readAll(
-				this.directory + "TestCUBefore1.java"));
-		this.rootAfter = ASTAnalyzer.parseICompilationUnit(FileUtils.readAll(
-				this.directory + "TestCUAfter1.java"));
+		this.logger = ServiceLocator.ResolveType(Logger.class);
+		this.allProjects = JavaModelAnalyzer.getJavaProjectsInWorkSpace();
 	}
 
 	@Override
 	public InputType getInputType() {
-		return InputType.ASTNode;
+		return InputType.JavaElement;
 	}
 
 	@Override
 	public Object getInputBefore() {
-		return this.rootBefore;
+		return this.allProjects.find(new F<IJavaElement, Boolean>(){
+			@Override
+			public Boolean f(IJavaElement element) {
+				return element.getElementName().equals("FakeBefore");
+			}}).some();
 	}
 
 	@Override
 	public Object getInputAfter() {
-		return this.rootAfter;
+		return this.allProjects.find(new F<IJavaElement, Boolean>(){
+			@Override
+			public Boolean f(IJavaElement element) {
+				return element.getElementName().equals("FakeAfter");
+			}}).some();
 	}
+	
+
 
 }

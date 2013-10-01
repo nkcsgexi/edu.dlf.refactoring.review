@@ -17,8 +17,8 @@ public class ExtractMethodChecker implements IRefactoringChecker{
 	private final IRefactoringImplementer implementer;
 	
 	@Inject
-	public ExtractMethodChecker(@ExtractMethod IRefactoringImplementer 
-			emImplementer)
+	public ExtractMethodChecker(
+			@ExtractMethod IRefactoringImplementer emImplementer)
 	{
 		this.implementer = emImplementer;
 	}
@@ -26,7 +26,7 @@ public class ExtractMethodChecker implements IRefactoringChecker{
 	@Override
 	public ICheckingResult checkRefactoring(IDetectedRefactoring 
 			detectedRefactoring) {
-/*		Option<IImplementedRefactoring> op = implementer.
+		Option<IImplementedRefactoring> op = implementer.
 			implementRefactoring(detectedRefactoring);
 		if(op.isSome())
 		{
@@ -35,7 +35,7 @@ public class ExtractMethodChecker implements IRefactoringChecker{
 			{
 				return new DefaultCheckingResult(true, detectedRefactoring);
 			}
-		}*/
+		}
 		return new DefaultCheckingResult(true, detectedRefactoring);
 	}
 

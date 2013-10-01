@@ -36,7 +36,7 @@ public class BeneFactorCompilationParticipant extends CompilationParticipant {
 	@Override
 	public boolean isActive(IJavaProject project)
 	{
-		return true;
+		return false;
 	}
 
 }

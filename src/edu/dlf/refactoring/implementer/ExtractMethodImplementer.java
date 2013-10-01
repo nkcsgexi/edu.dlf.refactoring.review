@@ -5,6 +5,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.corext.refactoring.code.ExtractMethodRefactoring;
 import org.eclipse.ltk.core.refactoring.Change;
 
+import com.google.inject.Inject;
+
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
@@ -20,6 +22,13 @@ import fj.data.Option;
 
 public class ExtractMethodImplementer implements IRefactoringImplementer{
 
+	
+	@Inject
+	public ExtractMethodImplementer()
+	{
+		
+	}
+	
 	@Override
 	public Option<IImplementedRefactoring> implementRefactoring(IDetectedRefactoring 
 			detectedRefactoring) {
@@ -45,21 +54,23 @@ public class ExtractMethodImplementer implements IRefactoringImplementer{
 				ImplementedRefactoring(RefactoringType.ExtractMethod, 
 					change.some()));
 		}
-		return Option.some(null);
+		return Option.none();
 	}
 	
 	
 	private List<ASTNode> getLongestSequentialNodes(List<ASTNode> statements) {
-		return statements.zip(statements.drop(1).snoc(null)).span(new 
-				F<P2<ASTNode, ASTNode>, Boolean>(){
+		final ASTNode head = statements.head();
+		List<ASTNode> statements2 = statements.drop(1).snoc(head);
+		return statements.zip(statements2).span(new F<P2<ASTNode, ASTNode>, 
+				Boolean>(){
 			@Override
 			public Boolean f(P2<ASTNode, ASTNode> pair) {
-				if(pair._2() == null) return true;
+				if(pair._2() == head) return true;
 				return ASTAnalyzer.areNodesNeighbors(pair._1(), pair._2());
-			}})._1().map(new F<P2<ASTNode, ASTNode>, ASTNode>(){
+			}})._1().map(new F<P2<ASTNode,ASTNode>, ASTNode>(){
 				@Override
-				public ASTNode f(P2<ASTNode, ASTNode> arg0) {
-					return arg0._1();
+				public ASTNode f(P2<ASTNode, ASTNode> pair) {
+					return pair._1();
 				}});
 	}
 

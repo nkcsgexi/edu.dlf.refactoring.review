@@ -28,10 +28,10 @@ import fj.data.Option;
 
 public class ASTAnalyzer {
 	
-	private static HashMap<ASTNode, String> sourceCodeRepo =
+	private final static HashMap<ASTNode, String> sourceCodeRepo =
 			new HashMap<ASTNode, String>();
 
-	private static Logger logger = ServiceLocator.ResolveType(Logger.class);
+	private final static Logger logger = ServiceLocator.ResolveType(Logger.class);
 	
 	private ASTAnalyzer() throws Exception {
 		throw new Exception();
@@ -220,10 +220,10 @@ public class ASTAnalyzer {
 		return node instanceof Statement;
 	}
 
-	public static Boolean areNodesNeighbors(ASTNode node1, ASTNode node2) {
+	public static boolean areNodesNeighbors(ASTNode node1, ASTNode node2) {
 		
 		
-		return null;
+		return true;
 	}
 
 }

@@ -165,7 +165,6 @@ public class CodeReviewUIComponent implements IFactorComponent{
 
 	@Override
 	public synchronized Void listen(Object event) {
-		
 		if(event instanceof ICheckingResult) {
 			final ICheckingResult result = (ICheckingResult) event;
 			final IDetectedRefactoring refactoring = result.getDetectedRefactoring();
