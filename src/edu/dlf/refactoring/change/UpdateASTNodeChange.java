@@ -6,7 +6,6 @@ import edu.dlf.refactoring.design.ISourceChange.AbstractSourceChange;
 
 public class UpdateASTNodeChange extends AbstractSourceChange
 {
-
 	public UpdateASTNodeChange(ASTNodePair pair, String changeLevel)
 	{
 		super(changeLevel, pair.getNodeBefore(), pair.getNodeAfter());

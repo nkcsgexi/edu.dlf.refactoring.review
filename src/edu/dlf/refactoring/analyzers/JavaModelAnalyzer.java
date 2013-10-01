@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 
 import edu.dlf.refactoring.design.ServiceLocator;
+import fj.Equal;
 import fj.F;
 import fj.F2;
 import fj.P2;
@@ -83,6 +84,54 @@ public class JavaModelAnalyzer {
 			logger.fatal(e);
 			return List.nil();
 		}
+	}
+	
+	
+	public static List<P2<IJavaElement, IJavaElement>> getSimilaryJavaElement(
+			List<IJavaElement> list1, List<IJavaElement> list2, final int minimumScore,
+			final F2<IJavaElement, IJavaElement, Integer> similarScoreCalculator)
+	{
+		List<P2<IJavaElement, IJavaElement>> allTuples = list1.bind(list2, 
+			new F2<IJavaElement, IJavaElement, P2<IJavaElement, IJavaElement>>(){
+			@Override
+			public P2<IJavaElement, IJavaElement> f(IJavaElement arg0,
+					IJavaElement arg1) {
+				return List.single(arg0).zip(List.single(arg1)).head();
+			}});
+		
+		List<Integer> allScores = allTuples.map(new F<P2<IJavaElement,
+				IJavaElement>, Integer>() {
+			@Override
+			public Integer f(P2<IJavaElement, IJavaElement> p) {
+				return similarScoreCalculator.f(p._1(), p._2());
+			}
+		});
+		
+		List<P2<IJavaElement, IJavaElement>> matchedTuples = allTuples.zip(allScores).
+			filter(new F<P2<P2<IJavaElement,IJavaElement>, Integer>, Boolean>() {
+			@Override
+			public Boolean f(P2<P2<IJavaElement, IJavaElement>, Integer> arg0) {
+				return arg0._2() >= minimumScore;
+			}
+		}).map(new F<P2<P2<IJavaElement,IJavaElement>,Integer>, P2<IJavaElement, 
+				IJavaElement>>() {
+			@Override
+			public P2<IJavaElement, IJavaElement> f(
+					P2<P2<IJavaElement, IJavaElement>, Integer> arg0) {
+				return arg0._1();
+			}});
+		
+		return matchedTuples.nub(Equal.equal(new F<P2<IJavaElement, IJavaElement>, 
+				F<P2<IJavaElement, IJavaElement>, Boolean>>(){
+			@Override
+			public F<P2<IJavaElement, IJavaElement>, Boolean> f(final P2<IJavaElement, 
+				IJavaElement> p1) {
+				return new F<P2<IJavaElement,IJavaElement>, Boolean>() {
+					@Override
+					public Boolean f(P2<IJavaElement, IJavaElement> p2) {
+						return p1._1() == p2._1() || p1._2() == p2._2();
+					}
+				};}}));
 	}
 	
 	public static F2<List<IJavaElement>, List<IJavaElement>, 
