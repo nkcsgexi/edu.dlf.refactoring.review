@@ -56,10 +56,10 @@ public class ChangeComponent implements IFactorComponent{
 		if(event instanceof JavaElementPair){
 			logger.info("Get event.");
 			JavaElementPair change = (JavaElementPair) event;
-			if(change.GetBeforeElement() instanceof IJavaProject)
+			if(change.getElementBefore() instanceof IJavaProject)
 				this.bus.post(SourceChangeUtils.pruneSourceChange(
 					projectCalculator.CalculateJavaModelChange(change)));
-			if(change.GetBeforeElement() instanceof ICompilationUnit)
+			if(change.getElementBefore() instanceof ICompilationUnit)
 				this.bus.post(SourceChangeUtils.pruneSourceChange(
 					icuCalculator.CalculateJavaModelChange(change)));
 			logger.info("Handled event.");

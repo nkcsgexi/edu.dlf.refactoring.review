@@ -5,10 +5,9 @@ import edu.dlf.refactoring.design.ISourceChange.AbstractSourceChange;
 
 public class NullSourceChange extends AbstractSourceChange{
 
-	
 	public NullSourceChange(String changeLevel)
 	{
-		super(changeLevel, null, null);
+		super(changeLevel);
 	}
 	
 	@Override

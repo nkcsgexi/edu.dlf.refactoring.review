@@ -45,8 +45,8 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	@Override
 	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
 		
-		ASTNode cuBefore = ASTAnalyzer.parseICompilationUnit(pair.GetBeforeElement());
-		ASTNode cuAfter = ASTAnalyzer.parseICompilationUnit(pair.GetAfterElement());
+		ASTNode cuBefore = ASTAnalyzer.parseICompilationUnit(pair.getElementBefore());
+		ASTNode cuAfter = ASTAnalyzer.parseICompilationUnit(pair.getElementAfter());
 		return CalculateASTNodeChange(new ASTNodePair(cuBefore, cuAfter));
 	}
 

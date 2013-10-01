@@ -2,7 +2,7 @@ package edu.dlf.refactoring.design;
 
 import org.eclipse.jdt.core.IJavaElement;
 
-public class JavaElementPair {
+public class JavaElementPair implements IJavaElementPair{
 	
 	private final IJavaElement beforeElement;
 	private final IJavaElement afterElement;
@@ -13,12 +13,12 @@ public class JavaElementPair {
 		this.afterElement = afterElement;
 	};
 	
-	public IJavaElement GetBeforeElement()
+	public IJavaElement getElementBefore()
 	{
 		return this.beforeElement;
 	}
 	
-	public IJavaElement GetAfterElement()
+	public IJavaElement getElementAfter()
 	{
 		return this.afterElement;
 	}

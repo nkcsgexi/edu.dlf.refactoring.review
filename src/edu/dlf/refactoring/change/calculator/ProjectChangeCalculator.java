@@ -2,6 +2,7 @@ package edu.dlf.refactoring.change.calculator;
 
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SourcePackageAnnotation;
 import edu.dlf.refactoring.change.IJavaModelChangeCalculator;
 import edu.dlf.refactoring.design.ISourceChange;
@@ -21,7 +22,9 @@ public class ProjectChangeCalculator implements IJavaModelChangeCalculator{
 	
 	@Override
 	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
-		
+		JavaModelAnalyzer.getSameNameElementPairsFunction().
+			f(JavaModelAnalyzer.getSourcePackages(pair.getElementBefore()), 
+				JavaModelAnalyzer.getSourcePackages(pair.getElementAfter()));
 		
 		
 		return null;

@@ -3,6 +3,7 @@ package edu.dlf.refactoring.change;
 import java.util.Collection;
 
 import edu.dlf.refactoring.design.IASTNodePair;
+import edu.dlf.refactoring.design.IJavaElementPair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.AbstractSourceChange;
 import edu.dlf.refactoring.utils.XList;
@@ -14,6 +15,11 @@ public class SubChangeContainer extends AbstractSourceChange{
 	public SubChangeContainer(String changeLevel, IASTNodePair pair)
 	{
 		super(changeLevel, pair.getNodeBefore(), pair.getNodeAfter());
+	}
+	
+	public SubChangeContainer(String changeLevel, IJavaElementPair pair)
+	{
+		super(changeLevel, pair.getElementBefore(), pair.getElementAfter());
 	}
 	
 	public void addSubChange(ISourceChange subChange)
