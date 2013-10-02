@@ -1,10 +1,6 @@
 package edu.dlf.refactoring.implementer;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jdt.core.ElementChangedEvent;
-import org.eclipse.jdt.core.IElementChangedListener;
-import org.eclipse.jdt.core.IJavaElementDelta;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.corext.refactoring.code.ExtractMethodRefactoring;
@@ -13,10 +9,13 @@ import org.eclipse.ltk.core.refactoring.Change;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
+import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
+import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringImplementer;
+import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.refactorings.DetectedExtractMethodRefactoring;
 import edu.dlf.refactoring.utils.RefactoringUtils;
@@ -27,14 +26,17 @@ import fj.data.List;
 import fj.data.Option;
 
 public class ExtractMethodImplementer implements IRefactoringImplementer{
-
 	
 	private final Logger logger;
+	private final IASTNodeChangeCalculator cuCalculator;
 
 	@Inject
-	public ExtractMethodImplementer(Logger logger)
+	public ExtractMethodImplementer(
+			Logger logger,
+			@CompilationUnitAnnotation IASTNodeChangeCalculator cuCalculator)
 	{
 		this.logger = logger;
+		this.cuCalculator = cuCalculator;
 	}
 	
 	@Override
@@ -58,17 +60,19 @@ public class ExtractMethodImplementer implements IRefactoringImplementer{
 		Option<Change> change = RefactoringUtils.createChange(refactoring);
 		if(change.isSome())
 		{
-			List<ASTNodePair> unitPairs = RefactoringUtils.
-					collectChangedCompilationUnits(change.some());
-			
-			return Option.some((IImplementedRefactoring)new 
+			List<ISourceChange> sourceChanges = RefactoringUtils.
+				collectChangedCompilationUnits(change.some()).map(
+					new F<ASTNodePair, ISourceChange>(){
+					@Override
+					public ISourceChange f(ASTNodePair pair) {
+						return cuCalculator.CalculateASTNodeChange(pair);
+					}});
+			return Option.some((IImplementedRefactoring) new 
 				ImplementedRefactoring(RefactoringType.ExtractMethod, 
-					change.some()));
+					sourceChanges));
 		}
 		return Option.none();
 	}	
-	
-
 	
 	
 	private List<ASTNode> getLongestSequentialNodes(List<ASTNode> statements) {

@@ -7,19 +7,20 @@ import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringChecker;
 import edu.dlf.refactoring.design.IRefactoringImplementer;
-import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import fj.data.Option;
 
 public class ExtractMethodChecker implements IRefactoringChecker{
 
-	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
+	private final Logger logger;
 	private final IRefactoringImplementer implementer;
 	
 	@Inject
 	public ExtractMethodChecker(
+			Logger logger,
 			@ExtractMethod IRefactoringImplementer emImplementer)
 	{
+		this.logger = logger;
 		this.implementer = emImplementer;
 	}
 	

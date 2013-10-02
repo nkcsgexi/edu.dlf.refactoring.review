@@ -1,20 +1,20 @@
 package edu.dlf.refactoring.implementer;
 
-import org.eclipse.ltk.core.refactoring.Change;
-
 import edu.dlf.refactoring.design.IImplementedRefactoring;
+import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.RefactoringType;
+import fj.data.List;
 
-public class ImplementedRefactoring implements 
-	IImplementedRefactoring{
+public class ImplementedRefactoring implements IImplementedRefactoring{
 
 	private final RefactoringType type;
-	private final Change change;
+	private final List<ISourceChange> changes;
 	
-	protected ImplementedRefactoring(RefactoringType type, Change change)
+	protected ImplementedRefactoring(RefactoringType type, List<ISourceChange> 
+		changes)
 	{
 		this.type = type;
-		this.change = change;
+		this.changes = changes;
 	}
 	
 	
@@ -26,7 +26,7 @@ public class ImplementedRefactoring implements
 
 
 	@Override
-	public Change getChange() {
-		return change;
+	public List<ISourceChange> getSourceChanges() {
+		return this.changes;
 	}
 }
