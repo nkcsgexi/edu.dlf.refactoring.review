@@ -1,8 +1,14 @@
 package edu.dlf.refactoring.ui;
 
+import java.util.HashMap;
+
+import org.apache.log4j.Logger;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import refreview.Activator;
 
 import com.google.inject.Inject;
 
@@ -14,19 +20,26 @@ import edu.dlf.refactoring.design.ISourceChange;
 
 public class TreeViewLabelProvider implements ILabelProvider
 {
-	private final String projectLevel;
-	private final String packageLevel;
-	private final String cuLevel;
+	private final HashMap<String, Image> map;
+	private final Logger logger;
 
 	@Inject
 	public TreeViewLabelProvider(
+			Logger logger,
 			@JavaProjectAnnotation String projectLevel,
 			@SourcePackageAnnotation String packageLevel,
 			@CompilationUnitAnnotation String cuLevel)
 	{
-		this.projectLevel = projectLevel;
-		this.packageLevel = packageLevel;
-		this.cuLevel = cuLevel;
+		this.logger = logger;
+		this.map = new HashMap<String, Image>();
+		this.map.put(cuLevel, createImage("file.gif"));
+		this.map.put(packageLevel, createImage("package.gif"));
+		this.map.put(projectLevel, createImage("project.gif"));
+	}
+	
+	private Image createImage(String path) {
+		return AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID, 
+				"/img/" + path).createImage();
 	}
 	
 	@Override
@@ -51,7 +64,7 @@ public class TreeViewLabelProvider implements ILabelProvider
 
 	@Override
 	public Image getImage(Object element) {
-		return null;
+		return this.map.get(((ISourceChange)element).getSourceChangeLevel());
 	}
 
 	@Override

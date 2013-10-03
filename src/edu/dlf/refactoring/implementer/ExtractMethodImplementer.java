@@ -11,6 +11,7 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
+import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
@@ -65,7 +66,8 @@ public class ExtractMethodImplementer implements IRefactoringImplementer{
 					new F<ASTNodePair, ISourceChange>(){
 					@Override
 					public ISourceChange f(ASTNodePair pair) {
-						return cuCalculator.CalculateASTNodeChange(pair);
+						return SourceChangeUtils.pruneSourceChange(
+							cuCalculator.CalculateASTNodeChange(pair));
 					}});
 			return Option.some((IImplementedRefactoring) new 
 				ImplementedRefactoring(RefactoringType.ExtractMethod, 
