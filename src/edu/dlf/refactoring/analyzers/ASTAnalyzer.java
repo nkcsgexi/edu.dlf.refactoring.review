@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -22,6 +23,7 @@ import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDista
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.IEqualityComparer;
 import edu.dlf.refactoring.utils.XList;
+import fj.Equal;
 import fj.F;
 import fj.data.Option;
 
@@ -227,6 +229,21 @@ public class ASTAnalyzer {
 	public static boolean isStatement(ASTNode node) {
 		return node instanceof Statement;
 	}
+	
+	public static Equal<ASTNode> getASTNodeEQ()
+	{
+		return Equal.equal(new F<ASTNode, F<ASTNode, Boolean>>(){
+			@Override
+			public F<ASTNode, Boolean> f(final ASTNode n1) {
+				return new F<ASTNode, Boolean>() {
+					@Override
+					public Boolean f(ASTNode n2) {
+						return n1 == n2;
+					}
+				};
+			}});
+	}
+	
 
 	public static boolean areNodesNeighbors(ASTNode node1, ASTNode node2) {
 		

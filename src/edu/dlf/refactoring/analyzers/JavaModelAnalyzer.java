@@ -52,6 +52,21 @@ public class JavaModelAnalyzer {
 	    return buffer.toList();
 	}
 	
+	public static Equal<IJavaElement> getJavaElementEQ()
+	{
+		 return Equal.equal(new F<IJavaElement, F<IJavaElement, 
+			Boolean>>(){
+			@Override
+			public F<IJavaElement, Boolean> f(final IJavaElement ele1) {
+				return new F<IJavaElement, Boolean>() {
+					@Override
+					public Boolean f(final IJavaElement ele2) {
+						return ele1 == ele2;
+					}
+				};
+			}});
+	}
+	
 	
 	public static List<IJavaElement> getSourcePackages(IJavaElement project)
 	{
