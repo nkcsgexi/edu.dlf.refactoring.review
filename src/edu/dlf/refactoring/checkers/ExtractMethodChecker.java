@@ -3,9 +3,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Type;
-
 import com.google.inject.Inject;
-
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;

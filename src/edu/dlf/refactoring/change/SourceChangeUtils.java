@@ -22,6 +22,16 @@ public class SourceChangeUtils {
 		throw new Exception();
 	}
 	
+	public static F<ISourceChange, ISourceChange> getPruneSourceChangeFunc()
+	{
+		return new F<ISourceChange, ISourceChange>() {
+			@Override
+			public ISourceChange f(ISourceChange change) {
+				return pruneSourceChange(change);
+			}
+		};
+	}
+	
 	public static ISourceChange pruneSourceChange(ISourceChange change)
 	{
 		pruneSubChanges(change);
