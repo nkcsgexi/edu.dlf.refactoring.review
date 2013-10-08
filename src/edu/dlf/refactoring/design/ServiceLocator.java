@@ -32,6 +32,7 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector;
 import edu.dlf.refactoring.implementer.ImplementerCompInjector;
 import edu.dlf.refactoring.ui.CodeReviewUIComponent;
 import edu.dlf.refactoring.ui.UICompInjector;
+import edu.dlf.refactoring.utils.WorkQueue;
 
 public class ServiceLocator extends AbstractModule
 {
@@ -108,6 +109,13 @@ public class ServiceLocator extends AbstractModule
 		  
 		  return Logger.getRootLogger();
 	  }
+	  
+		@Provides
+		@Singleton
+		private WorkQueue getSingleThreadQueue()
+		{
+			return new WorkQueue(1);
+		}
 }
 
 

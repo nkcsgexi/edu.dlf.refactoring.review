@@ -5,10 +5,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
-
-import edu.dlf.refactoring.utils.WorkQueue;
 
 public class UICompInjector extends AbstractModule{
 
@@ -20,10 +17,5 @@ public class UICompInjector extends AbstractModule{
 		bind(ICodeReviewInput.class).to(FakeCodeReviewInput.class).in(Singleton.class);
 	}
 	
-	@Provides
-	@Singleton
-	private WorkQueue getSingleThreadQueue()
-	{
-		return new WorkQueue(1);
-	}
+
 }
