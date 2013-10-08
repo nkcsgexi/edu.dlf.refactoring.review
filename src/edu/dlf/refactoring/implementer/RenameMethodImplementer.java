@@ -42,7 +42,7 @@ public class RenameMethodImplementer extends AbstractRenameImplementer{
 
 	@Override
 	public Option<IImplementedRefactoring> implementRefactoring
-		(IDetectedRefactoring refactoring) {
+			(IDetectedRefactoring refactoring) {
 		List<ASTNode> names = refactoring.getEffectedNodeList(RenameMethodRefactoring.
 			SimpleNamesBefore);
 		F<ASTNode, IJavaElement> getElement = new F<ASTNode, IJavaElement>() {
@@ -54,23 +54,22 @@ public class RenameMethodImplementer extends AbstractRenameImplementer{
 		};
 		List<IJavaElement> elements = names.map(getElement).nub(JavaModelAnalyzer.
 			getJavaElementEQ());
-		if(elements.length() > 1) logger.fatal("Renamed methods are multiple.");
 		IJavaElement declaration = elements.head();
 		JavaRenameProcessor processor = this.getRenameProcessor(declaration);
 		processor.setNewElementName(getNewName(refactoring));
 		RenameRefactoring autoRefactoring = this.getRenameRefactoring(processor);
 		Option<Change> op = RefactoringUtils.createChange(autoRefactoring);
 		if(op.isNone()) return Option.none();
-		List<ISourceChange> sourceChanges = RefactoringUtils.
-			collectChangedCompilationUnits(op.some()).map(
-				new F<ASTNodePair, ISourceChange>() {
-					@Override
-					public ISourceChange f(ASTNodePair pair) {
-						return cuCalculator.CalculateASTNodeChange(pair);
-					}
-				}).map(SourceChangeUtils.getPruneSourceChangeFunc());
+		List<ASTNodePair> pairs = RefactoringUtils.collectChangedCompilationUnits
+			(op.some());		
+		List<ISourceChange> sourceChanges = pairs.map(
+			new F<ASTNodePair, ISourceChange>() {
+				@Override
+				public ISourceChange f(ASTNodePair pair) {
+					return cuCalculator.CalculateASTNodeChange(pair);
+				}}).map(SourceChangeUtils.getPruneSourceChangeFunc());
 		return Option.some((IImplementedRefactoring)new ImplementedRefactoring
-				(RefactoringType.RenameMethod, sourceChanges));
+			(RefactoringType.RenameMethod, sourceChanges));
 	}
 	
 	private String getNewName(IDetectedRefactoring refactoring)

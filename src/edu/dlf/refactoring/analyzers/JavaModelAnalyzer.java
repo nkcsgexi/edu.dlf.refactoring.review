@@ -68,6 +68,8 @@ public class JavaModelAnalyzer {
 	}
 	
 	
+	
+	
 	public static List<IJavaElement> getSourcePackages(IJavaElement project)
 	{
 		try{
@@ -235,6 +237,12 @@ public class JavaModelAnalyzer {
 									getElementName());
 							}});}
 				});}};
+	}
+
+	public static Boolean arePathsSame(IJavaElement unit1, IJavaElement unit2) {
+		String p1 = unit1.getPath().toOSString();
+		String p2 = unit2.getPath().toOSString();
+		return p1.equals(p2);
 	}
 }
 

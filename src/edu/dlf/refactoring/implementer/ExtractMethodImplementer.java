@@ -41,8 +41,8 @@ public class ExtractMethodImplementer implements IRefactoringImplementer{
 	}
 	
 	@Override
-	public Option<IImplementedRefactoring> implementRefactoring(IDetectedRefactoring 
-			detectedRefactoring) {
+	public synchronized Option<IImplementedRefactoring> implementRefactoring
+		(IDetectedRefactoring detectedRefactoring) {
 		List<ASTNode> statements = detectedRefactoring.getEffectedNodeList
 				(DetectedExtractMethodRefactoring.ExtractedStatements);
 		statements = getLongestSequentialNodes(statements);

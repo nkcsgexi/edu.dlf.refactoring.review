@@ -14,6 +14,7 @@ import edu.dlf.refactoring.design.ServiceLocator.UICompAnnotation;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
+import edu.dlf.refactoring.utils.WorkQueue;
 import fj.data.HashMap;
 
 public class RefactoringCheckerComponent implements 
@@ -21,14 +22,17 @@ public class RefactoringCheckerComponent implements
 
 	private final HashMap<RefactoringType, IRefactoringChecker> map;
 	private final EventBus bus;
+	private final WorkQueue queue;
 	
 	@Inject
 	public RefactoringCheckerComponent(
+			WorkQueue queue,
 			@ExtractMethod IRefactoringChecker emChecker,
 			@RenameMethod IRefactoringChecker rmChecker,
 			@RenameType IRefactoringChecker rtChecker,
 			@UICompAnnotation IFactorComponent uiComponent)
 	{
+		this.queue = queue;
 		this.map = HashMap.hashMap();
 		this.map.set(RefactoringType.ExtractMethod, emChecker);
 		this.map.set(RefactoringType.RenameMethod, rmChecker);
@@ -39,12 +43,16 @@ public class RefactoringCheckerComponent implements
 	
 	@Subscribe
 	@Override
-	public Void listen(Object event) {
-		IDetectedRefactoring refactoring = (IDetectedRefactoring)event;
-		IRefactoringChecker checker = this.map.get(refactoring.
-				getRefactoringType()).some();
-		ICheckingResult result = checker.checkRefactoring(refactoring);
-		this.bus.post(result);
+	public Void listen(final Object event) {
+		queue.execute(new Runnable(){
+			@Override
+			public void run() {
+				IDetectedRefactoring refactoring = (IDetectedRefactoring)event;
+				IRefactoringChecker checker = map.get(refactoring.
+						getRefactoringType()).some();
+				ICheckingResult result = checker.checkRefactoring(refactoring);
+				bus.post(result);
+			}});
 		return null;
 	}
 

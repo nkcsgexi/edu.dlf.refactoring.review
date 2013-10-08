@@ -15,6 +15,7 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
+import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.F;
@@ -32,11 +33,13 @@ public class RefactoringUtils {
 	{
 		try{
 			RefactoringStatus status = ref.checkAllConditions(new 
-					NullProgressMonitor());
+				NullProgressMonitor());
 			if(status.isOK()){
 				return Option.some(ref.createChange(new NullProgressMonitor()));
 			} else
 			{
+				logger.fatal(ref.getName() + ":" + status.getEntries()[0].
+					getMessage());
 				throw new Exception();
 			}
 		}catch(Exception e)
@@ -56,8 +59,9 @@ public class RefactoringUtils {
 		}
 	}
 	
-	public static List<ASTNodePair> collectChangedCompilationUnits(Change change)
-	{
+	public synchronized static List<ASTNodePair> collectChangedCompilationUnits
+		(Change change)
+	{	
 		try{
 			AutoRefactoringListener listener = new AutoRefactoringListener();
 			JavaCore.addElementChangedListener(listener);
@@ -76,7 +80,6 @@ public class RefactoringUtils {
 			logger.fatal(e);
 			return List.nil();
 		}
-		
 	}
 	
 	private static List<ASTNodePair> mapCompilationUnit(List<ASTNode> list1, 
@@ -89,16 +92,16 @@ public class RefactoringUtils {
 			}}).filter(new F<P2<ASTNode,ASTNode>, Boolean>() {
 				@Override
 				public Boolean f(P2<ASTNode, ASTNode> arg0) {
-					IJavaElement element1 = ((CompilationUnit)arg0._1()).
+					IJavaElement unit1 = ((CompilationUnit)arg0._1()).
 						getJavaElement();
-					IJavaElement element2 = ((CompilationUnit)arg0._2()).
+					IJavaElement unit2 = ((CompilationUnit)arg0._2()).
 						getJavaElement();
-					return element1 == element2;
+					return JavaModelAnalyzer.arePathsSame(unit1, unit2);
 				}
 			}).map(new F<P2<ASTNode,ASTNode>, ASTNodePair>() {
 				@Override
-				public ASTNodePair f(P2<ASTNode, ASTNode> arg0) {
-					return new ASTNodePair(arg0._1(), arg0._2());
+				public ASTNodePair f(P2<ASTNode, ASTNode> p) {
+					return new ASTNodePair(p._1(), p._2());
 				}
 			});
 	}
@@ -110,6 +113,8 @@ public class RefactoringUtils {
 		
 		@Override
 		public void elementChanged(ElementChangedEvent event) {
+			if(event.getType() != ElementChangedEvent.POST_CHANGE)
+				return;
 			List<IJavaElement> changedIU = List.nil();
 			IJavaElementDelta delta = event.getDelta();
 			if(delta.getElement().getElementType() == IJavaElement.
@@ -126,13 +131,14 @@ public class RefactoringUtils {
 			{
 				changedIU = searchEffectedICompilationUnit(delta);
 			}
+			
 			F<IJavaElement, ASTNode> parser = new F<IJavaElement, ASTNode>() {
 				@Override
 				public ASTNode f(IJavaElement unit) {	
 					return ASTAnalyzer.parseICompilationUnit(unit);
 				}
 			};
-			this.units = changedIU.map(parser);
+			this.units = changedIU.map(parser);		
 			this.isReady = true;
 		}
 		

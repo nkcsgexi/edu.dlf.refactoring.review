@@ -16,6 +16,7 @@ import edu.dlf.refactoring.design.ServiceLocator.RefactoringCheckerCompAnnotatio
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
+import edu.dlf.refactoring.utils.WorkQueue;
 import fj.Effect;
 import fj.F;
 import fj.data.List;
@@ -26,14 +27,17 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	private final List<IRefactoringDetector> detectorsList;
 	private final EventBus bus;
+	private final WorkQueue queue;
 
 	@Inject
 	public RefactoringDetectionComponent(
+			WorkQueue queue,
 			@RenameMethod IRefactoringDetector rmDetector,
 			@ExtractMethod IRefactoringDetector emDetector,
 			@RenameType IRefactoringDetector rtDetector,
 			@RefactoringCheckerCompAnnotation IFactorComponent component)
 	{
+		this.queue = queue;
 		this.detectorsList = list(rmDetector, emDetector, rtDetector);
 		this.bus = new EventBus();
 		bus.register(component);
@@ -41,23 +45,27 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 	
 	@Subscribe
 	@Override
-	public Void listen(Object event) {
-		if(event instanceof ISourceChange)
-		{
-			logger.info("get event.");
-			final ISourceChange change = (ISourceChange) event;
-			this.detectorsList.bind(new F<IRefactoringDetector, 
-					List<IDetectedRefactoring>>(){
-				@Override
-				public List<IDetectedRefactoring> f(IRefactoringDetector d) {
-					return d.detectRefactoring(change);
-				}}).foreach(new Effect<IDetectedRefactoring>(){
-					@Override
-					public void e(IDetectedRefactoring arg0) {
-						bus.post(arg0);
-					}});
-			logger.info("Handled event.");
-		}
+	public Void listen(final Object event) {
+		queue.execute(new Runnable(){
+			@Override
+			public void run() {
+				if(event instanceof ISourceChange)
+				{
+					logger.info("get event.");
+					final ISourceChange change = (ISourceChange) event;
+					detectorsList.bind(new F<IRefactoringDetector, 
+							List<IDetectedRefactoring>>(){
+						@Override
+						public List<IDetectedRefactoring> f(IRefactoringDetector d) {
+							return d.detectRefactoring(change);
+						}}).foreach(new Effect<IDetectedRefactoring>(){
+							@Override
+							public void e(IDetectedRefactoring arg0) {
+								bus.post(arg0);
+							}});
+					logger.info("Handled event.");
+				}
+			}});
 		return null;
 	}
 

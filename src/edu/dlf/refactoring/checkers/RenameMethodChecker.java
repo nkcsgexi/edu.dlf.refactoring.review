@@ -28,7 +28,8 @@ public class RenameMethodChecker implements IRefactoringChecker{
 	
 	
 	@Override
-	public ICheckingResult checkRefactoring(IDetectedRefactoring refactoring) {
+	public synchronized ICheckingResult checkRefactoring(IDetectedRefactoring 
+		refactoring) {
 		Option<IImplementedRefactoring> implemented = this.implementer.
 			implementRefactoring(refactoring);
 		if(implemented.isSome())
