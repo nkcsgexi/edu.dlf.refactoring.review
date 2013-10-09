@@ -12,6 +12,8 @@ import org.eclipse.jdt.core.dom.ASTMatcher;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Statement;
@@ -239,6 +241,25 @@ public class ASTAnalyzer {
 					return areSame.f(pair._1(), pair._2());
 				}
 			});
+	}
+	
+	
+	public static F2<ASTNode, ASTNode, Boolean> getMethodDeclarationNamesEqualFunc()
+	{
+		final F<ASTNode, String> getMDNameFunc = new F<ASTNode, String>() {
+			@Override
+			public String f(ASTNode md) {
+				SimpleName name = (SimpleName) md.getStructuralProperty(
+					MethodDeclaration.NAME_PROPERTY);
+				return name.getIdentifier();
+			}
+		};
+		return new F2<ASTNode, ASTNode, Boolean>() {
+			@Override
+			public Boolean f(ASTNode md1, ASTNode md2) {
+				return getMDNameFunc.f(md1).equals(getMDNameFunc.f(md2));
+			}
+		};
 	}
 	
 	

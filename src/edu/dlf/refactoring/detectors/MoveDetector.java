@@ -5,16 +5,21 @@ import org.eclipse.jdt.core.dom.ASTNode;
 
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
+import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
+import edu.dlf.refactoring.refactorings.DetectedMoveRefactoring;
 import fj.F;
+import fj.P2;
 import fj.data.List;
+import fj.data.List.Buffer;
 
 public class MoveDetector extends AbstractRefactoringDetector{
 
@@ -90,15 +95,21 @@ public class MoveDetector extends AbstractRefactoringDetector{
 				return change.getNodeBefore();
 			}
 		};
-		
+		Buffer<IDetectedRefactoring> allRefactorings = Buffer.empty();
 		List<ASTNode> addedMethods = getLowestChanges.f(getAddCriteria.f(mdLevel)).
 			map(getAfterNode);
 		List<ASTNode> removedMethods = getLowestChanges.f(getRemoveCriteria.f(mdLevel)).
 			map(getBeforeNode);
-		
-		
-		
-		return null;
+		allRefactorings.append(ASTAnalyzer.getSameNodePairs(removedMethods, 
+			addedMethods, ASTAnalyzer.getMethodDeclarationNamesEqualFunc()).map
+				(new F<P2<ASTNode, ASTNode>, IDetectedRefactoring>() {
+				@Override
+				public IDetectedRefactoring f(P2<ASTNode, ASTNode> p) {
+					return new DetectedMoveRefactoring(RefactoringType.
+						MoveMethod, p._1(), p._2());
+				}
+			}));
+		return allRefactorings.toList();
 	}
 
 }
