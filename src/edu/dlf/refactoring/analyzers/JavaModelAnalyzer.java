@@ -179,7 +179,7 @@ public class JavaModelAnalyzer {
 							@Override
 							public Boolean f(IJavaElement arg1) {
 								return arg0.getElementName().equals(arg1.
-										getElementName());
+									getElementName());
 							}
 						});
 					}

@@ -4,12 +4,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+
+import com.google.inject.Inject;
 
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
-import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeCriteriaBuilder;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
@@ -19,8 +19,18 @@ import fj.data.List.Buffer;
 
 public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 	
-	private final Buffer<String> criteriaChain = Buffer.empty();
-	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
+	private Buffer<String> criteriaChain;
+	
+	@Inject
+	public CascadeChangeCriteriaBuilder()
+	{
+		this.reset();
+	}
+	
+	public void reset()
+	{
+		this.criteriaChain = Buffer.empty();
+	}
 	
 	public CascadeChangeCriteriaBuilder addSingleChangeCriteria(final String c,
 			final SourceChangeType t) {
@@ -87,7 +97,8 @@ public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 			}}, new StringBuilder()).toString();
 	}
 	
-	private List<IChangeSearchResult> getMatchedChangeChain(final String patternString, final ISourceChange leaf)
+	private List<IChangeSearchResult> getMatchedChangeChain(final String 
+		patternString, final ISourceChange leaf)
 	{
 		final List<ISourceChange> changeList = getChangesFromRootToLeaf(leaf);
 		Buffer<String> matches = Buffer.empty();
@@ -101,7 +112,8 @@ public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 		return matches.toList().map(new F<String, List<ISourceChange>>(){
 			@Override
 			public List<ISourceChange> f(String s) {
-				int start = StringUtils.countMatches(leafString.substring(0, leafString.indexOf(s)), "@");
+				int start = StringUtils.countMatches(leafString.substring(0, 
+					leafString.indexOf(s)), "@");
 				int length = StringUtils.countMatches(s, "@");
 				return changeList.splitAt(start)._2().splitAt(length)._1();
 			}}).map(new F<List<ISourceChange>, IChangeSearchResult>(){
@@ -123,7 +135,8 @@ public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 		return new IChangeSearchCriteria() {
 			@Override
 			public List<IChangeSearchResult> search(ISourceChange root) {
-				return SourceChangeUtils.getSelfAndDescendent(root).filter(new F<ISourceChange, Boolean>(){
+				return SourceChangeUtils.getSelfAndDescendent(root).filter(
+					new F<ISourceChange, Boolean>(){
 					@Override
 					public Boolean f(ISourceChange change) {
 						return !change.hasSubChanges();
