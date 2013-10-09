@@ -27,9 +27,11 @@ import edu.dlf.refactoring.utils.XList;
 import fj.Equal;
 import fj.F;
 import fj.F2;
+import fj.Ord;
 import fj.P2;
 import fj.data.List;
 import fj.data.Option;
+import fj.data.List.Buffer;
 
 
 public class ASTAnalyzer {
@@ -196,6 +198,22 @@ public class ASTAnalyzer {
 			}};
 	}
 	
+	public static List<ASTNode> getStructuralNodeList(ASTNode node, 
+		StructuralPropertyDescriptor descriptor)
+	{
+		java.util.List<ASTNode> nodes = (java.util.List<ASTNode>) node.
+			getStructuralProperty(descriptor);
+		return List.iterableList(nodes);
+	}
+	
+	public static ASTNode getStructuralNode(ASTNode node, 
+		StructuralPropertyDescriptor descriptor)
+	{
+		return (ASTNode) node.getStructuralProperty(descriptor);
+	}
+	
+	
+	
 	public static String getMainTypeName(ASTNode node)
 	{
 		String pack = "";
@@ -228,6 +246,84 @@ public class ASTAnalyzer {
 				return areASTNodesSame(a, b);
 			}};
 	}
+	
+	public static F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>>
+		getASTNodeMapper(final F2<ASTNode, ASTNode, Integer> similarityScoreFunc)
+	{
+		return new F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>>(){
+			@Override
+			public List<P2<ASTNode, ASTNode>> f(final List<ASTNode> list1, 
+				final List<ASTNode> list2) {
+				
+				List<P2<ASTNode, ASTNode>> multiplied = list1.bind(list2, 
+					new F2<ASTNode, ASTNode, P2<ASTNode, ASTNode>>(){
+					@Override
+					public P2<ASTNode, ASTNode> f(ASTNode n1, ASTNode n2) {
+						return List.single(n1).zip(List.single(n2)).head();
+					}});
+				
+				List<P2<ASTNode, ASTNode>> sorted = multiplied.sort(Ord.intOrd.
+					comap(new F<P2<ASTNode, ASTNode>, Integer>() {
+					@Override
+					public Integer f(P2<ASTNode, ASTNode> p) {
+						return similarityScoreFunc.f(p._1(), p._2());
+					}
+				})).reverse();
+				
+				final Buffer<P2<ASTNode, ASTNode>> results = Buffer.empty();
+				for(;sorted.isNotEmpty();sorted = sorted.drop(1)) {
+					final P2<ASTNode, ASTNode> head = sorted.head();
+					if(results.toList().find(new F<P2<ASTNode,ASTNode>, Boolean>() {
+						@Override
+						public Boolean f(P2<ASTNode, ASTNode> p) {
+							return p._1() == head._1() || p._2() == head._2();
+						}
+					}).isNone()){
+						results.snoc(head);
+					}
+				}
+	
+				results.append(list1.filter(new F<ASTNode, Boolean>() {
+					@Override
+					public Boolean f(final ASTNode node) {
+						return results.toList().find(new F<P2<ASTNode,ASTNode>, 
+								Boolean>() {
+							@Override
+							public Boolean f(P2<ASTNode, ASTNode> p) {
+								return p._1() == node;
+							}
+						}).isNone();
+					}
+				}).map(new F<ASTNode, P2<ASTNode, ASTNode>>() {
+					@Override
+					public P2<ASTNode, ASTNode> f(ASTNode p) {
+						return List.single(p).zip(List.single((ASTNode)null)).
+							head();
+					}
+				}));
+				
+				results.append(list2.filter(new F<ASTNode, Boolean>() {
+					@Override
+					public Boolean f(final ASTNode node) {
+						return results.toList().find(new F<P2<ASTNode,ASTNode>, 
+								Boolean>() {
+							@Override
+							public Boolean f(P2<ASTNode, ASTNode> p) {
+								return p._2() == node;
+							}
+						}).isNone();
+					}}).map(new F<ASTNode, P2<ASTNode, ASTNode>>() {
+					@Override
+					public P2<ASTNode, ASTNode> f(ASTNode p) {
+						return List.single((ASTNode)null).zip(List.single(p)).head();
+					}
+				}));
+				
+				return results.toList();
+			}};
+	}
+	
+	
 	
 	public static List<P2<ASTNode, ASTNode>> getSameNodePairs(List<ASTNode> list1, 
 		List<ASTNode> list2, final F2<ASTNode, ASTNode, Boolean> areSame) {
@@ -287,6 +383,15 @@ public class ASTAnalyzer {
 		
 		
 		return true;
+	}
+
+	public static F2<ASTNode, ASTNode, Integer> getASTNodeDefaultSimilarityScoreCalculator() {
+		return new F2<ASTNode, ASTNode, Integer>() {
+			@Override
+			public Integer f(ASTNode n1, ASTNode n2) {
+				return 0 - XStringUtils.distance(n1.toString(), n2.toString());
+			}
+		};
 	}
 
 }
