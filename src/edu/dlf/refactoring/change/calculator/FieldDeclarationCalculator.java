@@ -29,7 +29,8 @@ public class FieldDeclarationCalculator implements IASTNodeChangeCalculator{
 	private final ChangeBuilder changeBuilder;
 
 	@Inject
-	public FieldDeclarationCalculator(Logger logger,
+	public FieldDeclarationCalculator(
+			Logger logger,
 			@FieldDeclarationAnnotation String changeLevel,
 			@TypeAnnotation IASTNodeChangeCalculator typeCalculator,
 			@VariableDeclarationFragmentAnnotation IASTNodeChangeCalculator 
@@ -58,7 +59,8 @@ public class FieldDeclarationCalculator implements IASTNodeChangeCalculator{
 			}
 		};
 		F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> mapper = 
-			ASTAnalyzer.getASTNodeMapper(new F2<ASTNode, ASTNode, Integer>() {
+			ASTAnalyzer.getASTNodeMapper(Integer.MIN_VALUE, 
+				new F2<ASTNode, ASTNode, Integer>() {
 			@Override
 			public Integer f(ASTNode n1, ASTNode n2) {
 				return 0 - XStringUtils.distance(n1.toString(), n2.toString());

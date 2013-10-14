@@ -12,6 +12,7 @@ import edu.dlf.refactoring.design.IRefactoringChecker;
 import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator.UICompAnnotation;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import edu.dlf.refactoring.utils.WorkQueue;
@@ -30,6 +31,7 @@ public class RefactoringCheckerComponent implements
 			@ExtractMethod IRefactoringChecker emChecker,
 			@RenameMethod IRefactoringChecker rmChecker,
 			@RenameType IRefactoringChecker rtChecker,
+			@MoveResource IRefactoringChecker mChecker,
 			@UICompAnnotation IFactorComponent uiComponent)
 	{
 		this.queue = queue;
@@ -37,6 +39,7 @@ public class RefactoringCheckerComponent implements
 		this.map.set(RefactoringType.ExtractMethod, emChecker);
 		this.map.set(RefactoringType.RenameMethod, rmChecker);
 		this.map.set(RefactoringType.RenameType, rtChecker);
+		this.map.set(RefactoringType.Move, mChecker);
 		this.bus = new EventBus();
 		this.bus.register(uiComponent);
 	}

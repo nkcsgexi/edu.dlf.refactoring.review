@@ -258,7 +258,8 @@ public class ASTAnalyzer {
 	}
 	
 	public static F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>>
-		getASTNodeMapper(final F2<ASTNode, ASTNode, Integer> similarityScoreFunc)
+		getASTNodeMapper(final int minimumScore, final F2<ASTNode, ASTNode, 
+			Integer> similarityScoreFunc)
 	{
 		return new F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>>(){
 			@Override
@@ -272,7 +273,14 @@ public class ASTAnalyzer {
 						return List.single(n1).zip(List.single(n2)).head();
 					}});
 				
-				List<P2<ASTNode, ASTNode>> sorted = multiplied.sort(Ord.intOrd.
+				List<P2<ASTNode, ASTNode>> sorted = multiplied.filter(
+					new F<P2<ASTNode,ASTNode>, Boolean>() {
+					@Override
+					public Boolean f(P2<ASTNode, ASTNode> pair) {
+						return similarityScoreFunc.f(pair._1(), pair._2()) > 
+							minimumScore;
+					}
+				}).sort(Ord.intOrd.
 					comap(new F<P2<ASTNode, ASTNode>, Integer>() {
 					@Override
 					public Integer f(P2<ASTNode, ASTNode> p) {
