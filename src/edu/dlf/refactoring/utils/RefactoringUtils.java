@@ -63,15 +63,17 @@ public class RefactoringUtils {
 		(Change change)
 	{	
 		try{
-			AutoRefactoringListener listener = new AutoRefactoringListener();
+			WaiterNotifier waiter = new WaiterNotifier();
+			AutoRefactoringListener listener = new AutoRefactoringListener(waiter);
 			JavaCore.addElementChangedListener(listener);
 			Change undo = change.perform(new NullProgressMonitor());
-			while(!listener.isReady()) Thread.sleep(50);
+			waiter.doWait();
 			JavaCore.removeElementChangedListener(listener);
-			AutoRefactoringListener fListener = new AutoRefactoringListener();
+			waiter = new WaiterNotifier();
+			AutoRefactoringListener fListener = new AutoRefactoringListener(waiter);
 			JavaCore.addElementChangedListener(fListener);
 			undo.perform(new NullProgressMonitor());
-			while(!fListener.isReady()) Thread.sleep(50);
+			waiter.doWait();
 			JavaCore.removeElementChangedListener(fListener);
 			return mapCompilationUnit(fListener.getAffectedCompilationUnits(), 
 				listener.getAffectedCompilationUnits());
@@ -81,6 +83,8 @@ public class RefactoringUtils {
 			return List.nil();
 		}
 	}
+	
+
 	
 	private static List<ASTNodePair> mapCompilationUnit(List<ASTNode> list1, 
 		List<ASTNode> list2)
@@ -108,9 +112,13 @@ public class RefactoringUtils {
 	
 	private static class AutoRefactoringListener implements IElementChangedListener
 	{
-		private boolean isReady = false;
 		private List<ASTNode> units;
+		private final WaiterNotifier waiter;
 		
+		public AutoRefactoringListener(WaiterNotifier waiter) {
+			this.waiter = waiter;
+		}
+
 		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			if(event.getType() != ElementChangedEvent.POST_CHANGE)
@@ -139,7 +147,7 @@ public class RefactoringUtils {
 				}
 			};
 			this.units = changedIU.map(parser);		
-			this.isReady = true;
+			this.waiter.doNotify();
 		}
 		
 		private List<IJavaElement> searchEffectedICompilationUnit(IJavaElementDelta 
@@ -178,12 +186,6 @@ public class RefactoringUtils {
 				public IJavaElement f(IJavaElementDelta d) {
 					return d.getElement();
 				}});
-		}
-		
-		
-		public boolean isReady()
-		{
-			return this.isReady;
 		}
 		
 		public List<ASTNode> getAffectedCompilationUnits()

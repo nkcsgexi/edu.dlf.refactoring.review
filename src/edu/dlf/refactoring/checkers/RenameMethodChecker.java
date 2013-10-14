@@ -48,7 +48,7 @@ public class RenameMethodChecker implements IRefactoringChecker{
 		IDetectedRefactoring detected) {
 	
 	
-		return false;
+		return true;
 	}
 
 }

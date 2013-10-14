@@ -69,6 +69,7 @@ public class ExtractMethodImplementer implements IRefactoringImplementer{
 						return SourceChangeUtils.pruneSourceChange(
 							cuCalculator.CalculateASTNodeChange(pair));
 					}});
+			logger.info("Automatic change collected.");
 			return Option.some((IImplementedRefactoring) new 
 				ImplementedRefactoring(RefactoringType.ExtractMethod, 
 					sourceChanges));

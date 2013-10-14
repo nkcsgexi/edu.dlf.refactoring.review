@@ -63,8 +63,8 @@ public class ExtractMethodChecker implements IRefactoringChecker{
 		return results.toList().isEmpty();
 	}
 
-	private List<P2<Boolean,String>> checkDeclaredMethods(IImplementedRefactoring implemented,
-			IDetectedRefactoring detectedRefactoring) {
+	private List<P2<Boolean,String>> checkDeclaredMethods(IImplementedRefactoring 
+			implemented, IDetectedRefactoring detectedRefactoring) {
 		Option<ASTNode> op = getAddedMethod(implemented);
 		if(op.isSome())
 		{
@@ -99,8 +99,7 @@ public class ExtractMethodChecker implements IRefactoringChecker{
 									public Boolean f(ISourceChange change) {
 										return change.getSourceChangeLevel().
 											equals(methodLevel);
-									}
-								});}});}});
+									}});}});}});
 		if(addedMethods.isNotEmpty())
 		{
 			return Option.some(addedMethods.head().getNodeAfter());

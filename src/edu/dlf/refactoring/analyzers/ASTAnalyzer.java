@@ -188,6 +188,16 @@ public class ASTAnalyzer {
 	}
 	
 	
+	public static F2<ASTNode, ASTNode, Boolean> getASTNodeSameFunc()
+	{
+		return new F2<ASTNode, ASTNode, Boolean>() {
+			@Override
+			public Boolean f(ASTNode n1, ASTNode n2) {
+				return areASTNodeSame(n1, n2);
+			}
+		};
+	}
+	
 	public static IDistanceCalculator getASTNodeCompleteDistanceCalculator()
 	{
 		return new IDistanceCalculator(){

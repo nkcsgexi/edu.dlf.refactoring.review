@@ -9,7 +9,12 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.core.ISourceReference;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.Equal;
@@ -106,6 +111,102 @@ public class JavaModelAnalyzer {
 		{
 			logger.fatal(e);
 			return List.nil();
+		}
+	}
+	
+	public static IJavaElement getAssociatedICompilationUnit(ASTNode node)
+	{
+		CompilationUnit unit = (CompilationUnit)node.getRoot();
+		return unit.getJavaElement();
+	}
+	
+	
+	public static List<IJavaElement> getTypes(IJavaElement iu)
+	{
+		try{
+			ICompilationUnit unit = (ICompilationUnit)iu;
+			List<IJavaElement> results = List.nil();
+			for(IJavaElement t : unit.getTypes())
+			{
+				results = results.snoc(t);
+			}
+			return results;
+		}catch(Exception e )
+		{
+			logger.fatal(e);
+			return List.nil();
+		}
+	}
+	
+	public static List<IJavaElement> getMethods(IJavaElement t)
+	{
+		try{
+			List<IJavaElement> methods = List.nil();
+			IType type = (IType) t;
+			for(IJavaElement m : type.getMethods())
+			{
+				methods = methods.snoc(m);
+			}
+			return methods;
+		}catch(Exception e )
+		{
+			logger.fatal(e);
+			return List.nil();
+		}
+	}
+	
+	public static List<IJavaElement> getFields(IJavaElement t)
+	{
+		try{
+			List<IJavaElement> fields = List.nil();
+			IType type = (IType) t;
+			for(IJavaElement f : type.getFields())
+			{
+				fields = fields.snoc(f);
+			}
+			return fields;
+		}catch(Exception e )
+		{
+			logger.fatal(e);
+			return List.nil();
+		}
+	}
+	
+	public static List<IJavaElement> getOverlapElements(ASTNode node)
+	{
+		final int start = node.getStartPosition();
+		final int length = node.getLength();
+		CompilationUnit cu = (CompilationUnit) node.getRoot();
+		IJavaElement unit = cu.getJavaElement();
+		return getMethods(unit).append(getFields(unit)).filter(
+				new F<IJavaElement, Boolean>() {
+			@Override
+			public Boolean f(IJavaElement element) {
+				ISourceRange range = getJavaElementSourceRange(element);
+				if(range != null)
+				{
+					return !(range.getOffset() + range.getLength() < start || 
+						start + length < range.getOffset());
+				}
+				return false;
+			}
+		});
+	}
+	
+	
+	public static ISourceRange getJavaElementSourceRange(IJavaElement element)
+	{
+		try{
+			if(element instanceof ISourceReference)
+			{
+				ISourceReference reference = (ISourceReference) element;
+				return reference.getSourceRange();
+			}
+			return null;
+		}catch(Exception e)
+		{
+			logger.fatal(e);
+			return null;
 		}
 	}
 	

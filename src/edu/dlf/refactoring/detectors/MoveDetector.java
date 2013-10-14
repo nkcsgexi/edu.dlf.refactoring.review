@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.FieldDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
@@ -27,17 +28,20 @@ public class MoveDetector extends AbstractRefactoringDetector{
 	private final String cuLevel;
 	private final CascadeChangeCriteriaBuilder builder;
 	private final String mdLevel;
+	private final String fLevel;
 
 	@Inject
 	public MoveDetector(Logger logger,
 			CascadeChangeCriteriaBuilder builder,
 			@CompilationUnitAnnotation String cuLevel,
-			@MethodDeclarationAnnotation String mdLevel)
+			@MethodDeclarationAnnotation String mdLevel,
+			@FieldDeclarationAnnotation String fLevel)
 	{
 		this.logger = logger;
 		this.cuLevel = cuLevel;
 		this.mdLevel = mdLevel;
 		this.builder = builder;
+		this.fLevel = fLevel;
 	}
 	
 	@Override
@@ -107,8 +111,21 @@ public class MoveDetector extends AbstractRefactoringDetector{
 				public IDetectedRefactoring f(P2<ASTNode, ASTNode> p) {
 					return new DetectedMoveRefactoring(RefactoringType.
 						MoveMethod, p._1(), p._2());
-				}
-			}));
+				}}));
+		
+		List<ASTNode> addedFields = getLowestChanges.f(getAddCriteria.f(fLevel)).
+			map(getBeforeNode);
+		List<ASTNode> removedFields = getLowestChanges.f(getRemoveCriteria.
+			f(fLevel)).map(getAfterNode);
+		
+		allRefactorings.append(ASTAnalyzer.getSameNodePairs(removedFields, 
+			addedFields, ASTAnalyzer.getASTNodeSameFunc()).map
+				(new F<P2<ASTNode,ASTNode>, IDetectedRefactoring>() {
+					@Override
+					public IDetectedRefactoring f(P2<ASTNode, ASTNode> p) {
+						return new DetectedMoveRefactoring(RefactoringType.
+							MoveField, p._1(), p._2());
+					}}));
 		return allRefactorings.toList();
 	}
 
