@@ -17,6 +17,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.F;
 import fj.F2;
@@ -45,7 +46,7 @@ public class RefactoringUtils {
 		}catch(Exception e)
 		{
 			logger.fatal("Check refactoring condition fails:" + e);
-			return Option.some(null);
+			return Option.none();
 		}
 	}
 	
@@ -58,6 +59,9 @@ public class RefactoringUtils {
 			return null;
 		}
 	}
+	
+	
+	
 	
 	public synchronized static List<ASTNodePair> collectChangedCompilationUnits
 		(Change change)
@@ -84,7 +88,7 @@ public class RefactoringUtils {
 		}
 	}
 	
-
+	
 	
 	private static List<ASTNodePair> mapCompilationUnit(List<ASTNode> list1, 
 		List<ASTNode> list2)

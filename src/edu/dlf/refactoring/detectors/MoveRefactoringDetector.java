@@ -22,7 +22,7 @@ import fj.P2;
 import fj.data.List;
 import fj.data.List.Buffer;
 
-public class MoveDetector extends AbstractRefactoringDetector{
+public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 
 	private final Logger logger;
 	private final String cuLevel;
@@ -31,7 +31,7 @@ public class MoveDetector extends AbstractRefactoringDetector{
 	private final String fLevel;
 
 	@Inject
-	public MoveDetector(Logger logger,
+	public MoveRefactoringDetector(Logger logger,
 			CascadeChangeCriteriaBuilder builder,
 			@CompilationUnitAnnotation String cuLevel,
 			@MethodDeclarationAnnotation String mdLevel,
@@ -110,7 +110,7 @@ public class MoveDetector extends AbstractRefactoringDetector{
 				@Override
 				public IDetectedRefactoring f(P2<ASTNode, ASTNode> p) {
 					return new DetectedMoveRefactoring(RefactoringType.
-						MoveMethod, p._1(), p._2());
+						Move, p._1(), p._2());
 				}}));
 		
 		List<ASTNode> addedFields = getLowestChanges.f(getAddCriteria.f(fLevel)).
@@ -124,9 +124,11 @@ public class MoveDetector extends AbstractRefactoringDetector{
 					@Override
 					public IDetectedRefactoring f(P2<ASTNode, ASTNode> p) {
 						return new DetectedMoveRefactoring(RefactoringType.
-							MoveField, p._1(), p._2());
+							Move, p._1(), p._2());
 					}}));
-		return allRefactorings.toList();
+		List<IDetectedRefactoring> results = allRefactorings.toList();
+		if(results.isNotEmpty()) logger.info("Move detected.");
+		return results;
 	}
 
 }

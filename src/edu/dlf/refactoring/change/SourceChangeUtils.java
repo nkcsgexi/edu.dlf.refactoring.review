@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import com.google.common.base.Function;
 
+import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.design.ServiceLocator;
@@ -52,6 +53,17 @@ public class SourceChangeUtils {
 		return buffer.toList();
 	}
 	
+	public static List<ISourceChange> calculateASTNodeChanges(final List<ASTNodePair> 
+		pairs, final IASTNodeChangeCalculator calculator)
+	{
+		return pairs.map(new F<ASTNodePair, ISourceChange>() {
+			@Override
+			public ISourceChange f(ASTNodePair pair) {
+				return calculator.CalculateASTNodeChange(pair);
+			}
+		});
+	}
+
 	public static List<ISourceChange> getAncestors(ISourceChange child)
 	{
 		Buffer<ISourceChange> results = Buffer.empty();

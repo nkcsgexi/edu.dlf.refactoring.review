@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.detectors;
 
+import static fj.data.List.list;
+
 import org.apache.log4j.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -7,24 +9,23 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.design.ICompListener;
-import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
+import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.IRefactoringDetector;
 import edu.dlf.refactoring.design.ISourceChange;
-import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.design.ServiceLocator.RefactoringCheckerCompAnnotation;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import edu.dlf.refactoring.utils.WorkQueue;
 import fj.Effect;
 import fj.F;
 import fj.data.List;
-import static fj.data.List.list;  
 
 public class RefactoringDetectionComponent implements IFactorComponent{
 	
-	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
+	private final Logger logger;
 	private final List<IRefactoringDetector> detectorsList;
 	private final EventBus bus;
 	private final WorkQueue queue;
@@ -32,13 +33,16 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 	@Inject
 	public RefactoringDetectionComponent(
 			WorkQueue queue,
+			Logger logger,
 			@RenameMethod IRefactoringDetector rmDetector,
 			@ExtractMethod IRefactoringDetector emDetector,
 			@RenameType IRefactoringDetector rtDetector,
+			@MoveResource IRefactoringDetector mDetector,
 			@RefactoringCheckerCompAnnotation IFactorComponent component)
 	{
 		this.queue = queue;
-		this.detectorsList = list(rmDetector, emDetector, rtDetector);
+		this.logger = logger;
+		this.detectorsList = list(rmDetector, emDetector, rtDetector, mDetector);
 		this.bus = new EventBus();
 		bus.register(component);
 	}
