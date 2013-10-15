@@ -178,8 +178,16 @@ public class JavaModelAnalyzer {
 		final int length = node.getLength();
 		CompilationUnit cu = (CompilationUnit) node.getRoot();
 		IJavaElement unit = cu.getJavaElement();
-		return getMethods(unit).append(getFields(unit)).filter(
-				new F<IJavaElement, Boolean>() {
+		
+		List<IJavaElement> allElements = getTypes(unit).bind(
+			new F<IJavaElement, List<IJavaElement>>() {
+			@Override
+			public List<IJavaElement> f(IJavaElement type) {
+				return getMethods(type).append(getFields(type));
+			}
+		});
+		
+		return allElements.filter(new F<IJavaElement, Boolean>() {
 			@Override
 			public Boolean f(IJavaElement element) {
 				ISourceRange range = getJavaElementSourceRange(element);

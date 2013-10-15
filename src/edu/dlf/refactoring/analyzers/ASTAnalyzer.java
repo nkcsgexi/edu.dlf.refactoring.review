@@ -347,7 +347,7 @@ public class ASTAnalyzer {
 	
 	public static List<P2<ASTNode, ASTNode>> getSameNodePairs(List<ASTNode> list1, 
 		List<ASTNode> list2, final F2<ASTNode, ASTNode, Boolean> areSame) {
-		return list1.bind(list1, new F2<ASTNode, ASTNode, P2<ASTNode, ASTNode>>(){
+		return list1.bind(list2, new F2<ASTNode, ASTNode, P2<ASTNode, ASTNode>>(){
 			@Override
 			public P2<ASTNode, ASTNode> f(ASTNode n1, ASTNode n2) {
 				return List.single(n1).zip(List.single(n2)).head();

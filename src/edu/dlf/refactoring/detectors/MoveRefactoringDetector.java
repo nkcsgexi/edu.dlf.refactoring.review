@@ -12,15 +12,15 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnot
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
-import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
+import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
 import edu.dlf.refactoring.refactorings.DetectedMoveRefactoring;
 import fj.F;
+import fj.F2;
 import fj.P2;
 import fj.data.List;
-import fj.data.List.Buffer;
 
 public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 
@@ -29,10 +29,16 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 	private final CascadeChangeCriteriaBuilder builder;
 	private final String mdLevel;
 	private final String fLevel;
+	private final F<ISourceChange, ASTNode> getBeforeNode;
+	private final F<ISourceChange, ASTNode> getAfterNode;
+	private final F<String, IChangeSearchCriteria> getAddCriteria;
+	private final F<String, IChangeSearchCriteria> getRemoveCriteria;
+	private final F2<List<ISourceChange>,IChangeSearchCriteria,List<ISourceChange>> 
+		getLowestChanges;
 
 	@Inject
 	public MoveRefactoringDetector(Logger logger,
-			CascadeChangeCriteriaBuilder builder,
+			CascadeChangeCriteriaBuilder exbuilder,
 			@CompilationUnitAnnotation String cuLevel,
 			@MethodDeclarationAnnotation String mdLevel,
 			@FieldDeclarationAnnotation String fLevel)
@@ -40,8 +46,54 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 		this.logger = logger;
 		this.cuLevel = cuLevel;
 		this.mdLevel = mdLevel;
-		this.builder = builder;
+		this.builder = exbuilder;
 		this.fLevel = fLevel;
+		
+		this.getAddCriteria = new F<String, IChangeSearchCriteria>(){
+				@Override
+				public IChangeSearchCriteria f(String level) {
+					builder.reset();
+					return builder.addSingleChangeCriteria
+						(level, SourceChangeType.ADD).getSearchCriteria();
+				}};
+
+		this.getRemoveCriteria = new F<String, IChangeSearchCriteria>(){
+				@Override
+				public IChangeSearchCriteria f(String level) {
+					builder.reset();
+					return builder.addSingleChangeCriteria
+						(level, SourceChangeType.REMOVE).getSearchCriteria();
+				}};
+				
+		this.getLowestChanges = new F2<List<ISourceChange>, 
+				IChangeSearchCriteria, List<ISourceChange>>(){
+			@Override
+			public List<ISourceChange> f(final List<ISourceChange> cuChanges, 
+				final IChangeSearchCriteria criteria) {
+				return cuChanges.bind(new F<ISourceChange, List<ISourceChange>>() {
+					@Override
+					public List<ISourceChange> f(ISourceChange change) {
+						List<IChangeSearchResult> results = criteria.search(change);
+						return results.map(new F<IChangeSearchResult, ISourceChange>() {
+							@Override
+							public ISourceChange f(IChangeSearchResult result) {
+								return result.getSourceChanges().reverse().head();
+							}});}});}};
+		
+		this.getBeforeNode = new F<ISourceChange, ASTNode>() {
+				@Override
+				public ASTNode f(ISourceChange change) {
+					return change.getNodeBefore();
+				}
+			};
+			
+		this.getAfterNode = new F<ISourceChange, ASTNode>() {
+				@Override
+				public ASTNode f(ISourceChange change) {
+					return change.getNodeAfter();
+				}
+			};
+		
 	}
 	
 	@Override
@@ -53,82 +105,31 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 				return child.getSourceChangeLevel() == cuLevel;
 			}
 		});
-	
-		final F<String, IChangeSearchCriteria> getAddCriteria = new F<String, 
-			IChangeSearchCriteria>(){
-			@Override
-			public IChangeSearchCriteria f(String level) {
-				builder.reset();
-				return builder.addSingleChangeCriteria
-					(level, SourceChangeType.ADD).getSearchCriteria();
-			}};
+		return detectMoveRefactoring(cuChanges, mdLevel, ASTAnalyzer.
+			getMethodDeclarationNamesEqualFunc());
+	}
 
-		final F<String, IChangeSearchCriteria> getRemoveCriteria = new F<String, 
-			IChangeSearchCriteria>(){
-			@Override
-			public IChangeSearchCriteria f(String level) {
-				builder.reset();
-				return builder.addSingleChangeCriteria
-					(level, SourceChangeType.REMOVE).getSearchCriteria();
-			}};
-			
-		final F<IChangeSearchCriteria, List<ISourceChange>> getLowestChanges = 
-			new F<IChangeSearchCriteria, List<ISourceChange>>(){
-			@Override
-			public List<ISourceChange> f(final IChangeSearchCriteria criteria) {
-				return cuChanges.bind(new F<ISourceChange, List<ISourceChange>>() {
-					@Override
-					public List<ISourceChange> f(ISourceChange change) {
-						List<IChangeSearchResult> results = criteria.search(change);
-						return results.map(new F<IChangeSearchResult, ISourceChange>() {
-							@Override
-							public ISourceChange f(IChangeSearchResult result) {
-								return result.getSourceChanges().reverse().head();
-							}});}});}};
-	
-		final F<ISourceChange, ASTNode> getBeforeNode = new F<ISourceChange, ASTNode>() {
-			@Override
-			public ASTNode f(ISourceChange change) {
-				return change.getNodeBefore();
-			}
-		};
-		
-		final F<ISourceChange, ASTNode> getAfterNode = new F<ISourceChange, ASTNode>() {
-			@Override
-			public ASTNode f(ISourceChange change) {
-				return change.getNodeBefore();
-			}
-		};
-		Buffer<IDetectedRefactoring> allRefactorings = Buffer.empty();
-		List<ASTNode> addedMethods = getLowestChanges.f(getAddCriteria.f(mdLevel)).
-			map(getAfterNode);
-		List<ASTNode> removedMethods = getLowestChanges.f(getRemoveCriteria.f(mdLevel)).
-			map(getBeforeNode);
-		allRefactorings.append(ASTAnalyzer.getSameNodePairs(removedMethods, 
-			addedMethods, ASTAnalyzer.getMethodDeclarationNamesEqualFunc()).map
-				(new F<P2<ASTNode, ASTNode>, IDetectedRefactoring>() {
+	private List<IDetectedRefactoring> detectMoveRefactoring(
+			final List<ISourceChange> cuChanges,
+			final String changeLevel,
+			final F2<ASTNode, ASTNode, Boolean> areNodesSame) {
+		try{
+		List<ASTNode> addedDec = getLowestChanges.f(cuChanges, getAddCriteria.
+			f(changeLevel)).map(getAfterNode);
+		List<ASTNode> removedDec = getLowestChanges.f(cuChanges, getRemoveCriteria.
+			f(changeLevel)).map(getBeforeNode);
+		return ASTAnalyzer.getSameNodePairs(removedDec, addedDec, 
+			areNodesSame).map(new F<P2<ASTNode, ASTNode>, IDetectedRefactoring>() {
 				@Override
 				public IDetectedRefactoring f(P2<ASTNode, ASTNode> p) {
 					return new DetectedMoveRefactoring(RefactoringType.
 						Move, p._1(), p._2());
-				}}));
-		
-		List<ASTNode> addedFields = getLowestChanges.f(getAddCriteria.f(fLevel)).
-			map(getBeforeNode);
-		List<ASTNode> removedFields = getLowestChanges.f(getRemoveCriteria.
-			f(fLevel)).map(getAfterNode);
-		
-		allRefactorings.append(ASTAnalyzer.getSameNodePairs(removedFields, 
-			addedFields, ASTAnalyzer.getASTNodeSameFunc()).map
-				(new F<P2<ASTNode,ASTNode>, IDetectedRefactoring>() {
-					@Override
-					public IDetectedRefactoring f(P2<ASTNode, ASTNode> p) {
-						return new DetectedMoveRefactoring(RefactoringType.
-							Move, p._1(), p._2());
-					}}));
-		List<IDetectedRefactoring> results = allRefactorings.toList();
-		if(results.isNotEmpty()) logger.info("Move detected.");
-		return results;
+				}});
+		}catch(Exception e)
+		{
+			logger.fatal(e);
+			return List.nil();
+		}
 	}
 
 }

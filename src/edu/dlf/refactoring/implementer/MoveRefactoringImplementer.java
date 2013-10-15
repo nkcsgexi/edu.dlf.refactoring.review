@@ -53,7 +53,7 @@ public class MoveRefactoringImplementer implements IRefactoringImplementer{
 		List<IJavaElement> elements = JavaModelAnalyzer.getOverlapElements(removedDec);
 		IJavaElement dest = JavaModelAnalyzer.getAssociatedICompilationUnit(addedDec);
 		try{
-			if(elements.length() != 1)
+			if(elements.length() == 1)
 			{
 				Refactoring ref = createMoveRefactoring(elements.head(), dest);
 				Option<Change> change = RefactoringUtils.createChange(ref);
@@ -68,26 +68,38 @@ public class MoveRefactoringImplementer implements IRefactoringImplementer{
 						ImplementedRefactoring(RefactoringType.Move, changes));
 				}
 			}
-			throw new Exception();
+			else
+				logger.fatal("Elements count is " + elements.length());
 		}catch (Exception e)
 		{
 			logger.fatal(e);
-			return Option.none();
 		}
+		return Option.none();
 	}
 		
 	
 	private Refactoring createMoveRefactoring(final IJavaElement element, final 
-		IJavaElement destination) throws Exception
-	{
-		IResource[] resources = ReorgUtils.getResources(new IJavaElement
-			[]{element});
-		IMovePolicy policy = ReorgPolicyFactory.createMovePolicy(resources, 
-			new IJavaElement[]{element});
-		policy.setDestinationCheck(true);
-		policy.setUpdateReferences(true);
-		policy.setUpdateReferences(true);
-		policy.setDestination(ReorgDestinationFactory.createDestination(destination));
-		return new MoveRefactoring(new JavaMoveProcessor(policy));	
+		IJavaElement destination)
+	{  
+		try{
+			if(element == null)
+				throw new Exception("Element to move is null.");
+			if(destination == null)
+				throw new Exception("Destination is null.");
+			IResource[] resources = ReorgUtils.getResources(new IJavaElement
+				[]{element});
+			IMovePolicy policy = ReorgPolicyFactory.createMovePolicy(resources, 
+				new IJavaElement[]{element});
+			policy.setDestinationCheck(true);
+			policy.setUpdateReferences(true);
+			policy.setUpdateReferences(true);
+			policy.setDestination(ReorgDestinationFactory.createDestination
+				(destination));
+			return new MoveRefactoring(new JavaMoveProcessor(policy));
+		}catch(Exception e)
+		{
+			logger.fatal("Cannot create refactoring: " + e);
+			return null;
+		}
 	}
 }

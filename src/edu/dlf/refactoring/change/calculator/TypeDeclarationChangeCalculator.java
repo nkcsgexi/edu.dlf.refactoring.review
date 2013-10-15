@@ -108,7 +108,7 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			}};
 		
 		final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> mapper = 
-			ASTAnalyzer.getASTNodeMapper(0, new F2<ASTNode, ASTNode, Integer>() {
+			ASTAnalyzer.getASTNodeMapper(8, new F2<ASTNode, ASTNode, Integer>() {
 			@Override
 			public Integer f(ASTNode before, ASTNode after) {
 				String name1 = getNameFunc.f(before);
