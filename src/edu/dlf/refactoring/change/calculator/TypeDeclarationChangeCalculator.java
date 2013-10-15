@@ -60,12 +60,11 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 		try{
 			SubChangeContainer container = changeBuilder.createSubchangeContainer(pair);
 			container.addSubChange(snChangeCalculator.CalculateASTNodeChange(pair.select
-					(new Function<ASTNode, ASTNode>(){
+				(new Function<ASTNode, ASTNode>(){
 				@Override
 				public ASTNode apply(ASTNode n) {
 					return (ASTNode) n.getStructuralProperty(TypeDeclaration.NAME_PROPERTY);
-				}})));
-			
+				}})));	
 			TypeDeclaration typeB = (TypeDeclaration) pair.getNodeBefore();
 			TypeDeclaration typeA = (TypeDeclaration) pair.getNodeAfter();
 			container.addMultiSubChanges(calculateFieldChanges(typeB, typeA));
@@ -94,8 +93,7 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 				public ISourceChange f(P2<ASTNode, ASTNode> p) {
 					return fCalculator.CalculateASTNodeChange(new ASTNodePair
 						(p._1(), p._2()));
-				}
-		}).toCollection();
+				}}).toCollection();
 	}
 	
 	
@@ -110,7 +108,7 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			}};
 		
 		final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> mapper = 
-			ASTAnalyzer.getASTNodeMapper(5, new F2<ASTNode, ASTNode, Integer>() {
+			ASTAnalyzer.getASTNodeMapper(0, new F2<ASTNode, ASTNode, Integer>() {
 			@Override
 			public Integer f(ASTNode before, ASTNode after) {
 				String name1 = getNameFunc.f(before);
@@ -118,7 +116,8 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 				int dis = XStringUtils.distance(name1, name2);
 				int base = Math.max(name1.length(), name2.length());
 				double score = 1d - (double)dis/(double)base;
-				return (int)score * 10;
+				score = score * 10;
+				return (int)(score * 10);
 			}
 		});
 		
@@ -127,13 +126,14 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 		final List<ASTNode> methodsAfter = FunctionalJavaUtil.createListFromArray
 			((ASTNode[])typeA.getMethods());
 		
-		return mapper.f(methodsBefore, methodsAfter).map(new F<P2<ASTNode, ASTNode>, 
-			ISourceChange>(){
+		List<ISourceChange> changes = mapper.f(methodsBefore, methodsAfter).
+			map(new F<P2<ASTNode, ASTNode>, ISourceChange>(){
 			@Override
 			public ISourceChange f(P2<ASTNode, ASTNode> pair) {
 				return mChangeCalculator.CalculateASTNodeChange(new ASTNodePair
 					(pair._1(), pair._2()));
-			}}).toCollection();
+			}});
+		return changes.toCollection();
 	}
 
 }

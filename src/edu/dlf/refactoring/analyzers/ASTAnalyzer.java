@@ -272,7 +272,7 @@ public class ASTAnalyzer {
 					public P2<ASTNode, ASTNode> f(ASTNode n1, ASTNode n2) {
 						return List.single(n1).zip(List.single(n2)).head();
 					}});
-				
+
 				List<P2<ASTNode, ASTNode>> sorted = multiplied.filter(
 					new F<P2<ASTNode,ASTNode>, Boolean>() {
 					@Override
@@ -280,31 +280,32 @@ public class ASTAnalyzer {
 						return similarityScoreFunc.f(pair._1(), pair._2()) > 
 							minimumScore;
 					}
-				}).sort(Ord.intOrd.
-					comap(new F<P2<ASTNode, ASTNode>, Integer>() {
+				}).sort(Ord.intOrd.comap(new F<P2<ASTNode, ASTNode>, Integer>() {
 					@Override
 					public Integer f(P2<ASTNode, ASTNode> p) {
 						return similarityScoreFunc.f(p._1(), p._2());
 					}
 				})).reverse();
 				
-				final Buffer<P2<ASTNode, ASTNode>> results = Buffer.empty();
-				for(;sorted.isNotEmpty();sorted = sorted.drop(1)) {
+				List<P2<ASTNode, ASTNode>> result = List.nil();
+				for(;sorted.isNotEmpty();sorted = sorted.tail()) {
 					final P2<ASTNode, ASTNode> head = sorted.head();
-					if(results.toList().find(new F<P2<ASTNode,ASTNode>, Boolean>() {
+					if(result.find(new F<P2<ASTNode,ASTNode>, Boolean>() {
 						@Override
 						public Boolean f(P2<ASTNode, ASTNode> p) {
 							return p._1() == head._1() || p._2() == head._2();
 						}
 					}).isNone()){
-						results.snoc(head);
+						result = result.snoc(head);
 					}
 				}
-	
-				results.append(list1.filter(new F<ASTNode, Boolean>() {
+				
+				final List<P2<ASTNode, ASTNode>> currentResult = result;
+				List<P2<ASTNode, ASTNode>> remain1 = list1.filter
+					(new F<ASTNode, Boolean>() {
 					@Override
 					public Boolean f(final ASTNode node) {
-						return results.toList().find(new F<P2<ASTNode,ASTNode>, 
+						return currentResult.find(new F<P2<ASTNode,ASTNode>, 
 								Boolean>() {
 							@Override
 							public Boolean f(P2<ASTNode, ASTNode> p) {
@@ -318,12 +319,13 @@ public class ASTAnalyzer {
 						return List.single(p).zip(List.single((ASTNode)null)).
 							head();
 					}
-				}));
+				});
 				
-				results.append(list2.filter(new F<ASTNode, Boolean>() {
+				List<P2<ASTNode, ASTNode>> remain2 = list2.filter
+					(new F<ASTNode, Boolean>() {
 					@Override
 					public Boolean f(final ASTNode node) {
-						return results.toList().find(new F<P2<ASTNode,ASTNode>, 
+						return currentResult.find(new F<P2<ASTNode,ASTNode>, 
 								Boolean>() {
 							@Override
 							public Boolean f(P2<ASTNode, ASTNode> p) {
@@ -335,9 +337,9 @@ public class ASTAnalyzer {
 					public P2<ASTNode, ASTNode> f(ASTNode p) {
 						return List.single((ASTNode)null).zip(List.single(p)).head();
 					}
-				}));
-				
-				return results.toList();
+				});
+				result = result.append(remain1).append(remain2);
+				return result;
 			}};
 	}
 	

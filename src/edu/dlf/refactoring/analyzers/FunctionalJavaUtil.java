@@ -21,6 +21,12 @@ public class FunctionalJavaUtil {
 		return buffer.toList();
 	}
 	
+	
+	public static int getBufferLength(Buffer buffer)
+	{
+		return buffer.toList().length();
+	}
+	
 	public static <T, S> P2<T, S> createPair(T t, S s)
 	{
 		return List.single(t).zip(List.single(s)).head();
