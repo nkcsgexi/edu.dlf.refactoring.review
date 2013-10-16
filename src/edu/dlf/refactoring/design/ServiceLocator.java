@@ -1,6 +1,5 @@
 package edu.dlf.refactoring.design;
 
-
 import static java.lang.annotation.ElementType.CONSTRUCTOR;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -34,104 +33,104 @@ import edu.dlf.refactoring.ui.CodeReviewUIComponent;
 import edu.dlf.refactoring.ui.UICompInjector;
 import edu.dlf.refactoring.utils.WorkQueue;
 
-public class ServiceLocator extends AbstractModule
-{
+public class ServiceLocator extends AbstractModule {
 	private final static AbstractModule _instance = new ServiceLocator();
 	private final static Injector injector = Guice.createInjector(_instance);
-	
-	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
-	public @interface HistorySavingCompAnnotation {}
-	
-	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
-	public @interface ChangeCompAnnotation {}
-	
-	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
-	public @interface RefactoringDetectionCompAnnotation {}
 
-	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
-	public @interface RefactoringCheckerCompAnnotation {}
-	
-	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
-	public @interface UICompAnnotation {}
-	
-	
-	private ServiceLocator()
-	{
-		
+	@BindingAnnotation
+	@Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR })
+	@Retention(RUNTIME)
+	public @interface HistorySavingCompAnnotation {
 	}
-	
+
+	@BindingAnnotation
+	@Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR })
+	@Retention(RUNTIME)
+	public @interface ChangeCompAnnotation {
+	}
+
+	@BindingAnnotation
+	@Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR })
+	@Retention(RUNTIME)
+	public @interface RefactoringDetectionCompAnnotation {
+	}
+
+	@BindingAnnotation
+	@Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR })
+	@Retention(RUNTIME)
+	public @interface RefactoringCheckerCompAnnotation {
+	}
+
+	@BindingAnnotation
+	@Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR })
+	@Retention(RUNTIME)
+	public @interface UICompAnnotation {
+	}
+
+	private ServiceLocator() {
+
+	}
+
 	@Override
 	protected void configure() {
-		
+
 		this.install(new ChangeComponentInjector());
 		this.install(new RefactoringDetectionComponentInjector());
 		this.install(new ImplementerCompInjector());
 		this.install(new UICompInjector());
-		
+
 		bind(ComponentsRepository.class).in(Singleton.class);
-		
-		bind(IFactorComponent.class).annotatedWith(HistorySavingCompAnnotation.class).to(HistorySavingComponent.class).in(Singleton.class);;
-		bind(IFactorComponent.class).annotatedWith(ChangeCompAnnotation.class).to(ChangeComponent.class).in(Singleton.class);
-		bind(IFactorComponent.class).annotatedWith(RefactoringDetectionCompAnnotation.class).to(RefactoringDetectionComponent.class).in(Singleton.class);
-		bind(IFactorComponent.class).annotatedWith(RefactoringCheckerCompAnnotation.class).to(RefactoringCheckerComponent.class).in(Singleton.class);
-		bind(IFactorComponent.class).annotatedWith(UICompAnnotation.class).to(CodeReviewUIComponent.class).in(Singleton.class);
+
+		bind(IFactorComponent.class)
+				.annotatedWith(HistorySavingCompAnnotation.class)
+				.to(HistorySavingComponent.class).in(Singleton.class);
+		;
+		bind(IFactorComponent.class).annotatedWith(ChangeCompAnnotation.class)
+				.to(ChangeComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class)
+				.annotatedWith(RefactoringDetectionCompAnnotation.class)
+				.to(RefactoringDetectionComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class)
+				.annotatedWith(RefactoringCheckerCompAnnotation.class)
+				.to(RefactoringCheckerComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(UICompAnnotation.class)
+				.to(CodeReviewUIComponent.class).in(Singleton.class);
 	}
 
-
-	public static <T> T ResolveType (Class T)
-	{		
+	public static <T> T ResolveType(Class T) {
 		return (T) injector.getInstance(T);
 	}
-	
-	
-	  @Provides 
-	  @Singleton
-	  private Logger GetLogger() throws Exception
-	  {
-		  Logger.getRootLogger().getLoggerRepository().resetConfiguration();
-		  ConsoleAppender console = new ConsoleAppender(); //create appender
-		  String PATTERN = "%d [%p|%c|%C{1}] %m%n";
-		  console.setLayout(new PatternLayout(PATTERN)); 
-		  console.setThreshold(Level.INFO);
-		  console.activateOptions();
-		  Logger.getRootLogger().addAppender(console);
-		
-		  RollingFileAppender fa = new RollingFileAppender();
-		  fa.setImmediateFlush(true);
-		  fa.setMaximumFileSize(Integer.MAX_VALUE);
-		  fa.setName("FileLogger");
-		  fa.setFile("/home/xige/Desktop/RefReviewer.log", true, true, 1);
-		  fa.setLayout(new PatternLayout("%d %-5p [%c{1}] %m%n"));
-		  fa.setThreshold(Level.DEBUG);
-		  fa.setAppend(true);
-		  fa.activateOptions();
-		  Logger.getRootLogger().addAppender(fa);
-		  
-		  return Logger.getRootLogger();
-	  }
-	  
-		@Provides
-		@Singleton
-		private WorkQueue getSingleThreadQueue()
-		{
-			return new WorkQueue(1);
-		}
+
+	private Level threshHold = Level.INFO;
+
+	@Provides
+	@Singleton
+	private Logger GetLogger() throws Exception {
+		Logger.getRootLogger().getLoggerRepository().resetConfiguration();
+		ConsoleAppender console = new ConsoleAppender(); // create appender
+		String PATTERN = "%d [%p|%c|%C{1}] %m%n";
+		console.setLayout(new PatternLayout(PATTERN));
+		console.setThreshold(threshHold);
+		console.activateOptions();
+		Logger.getRootLogger().addAppender(console);
+
+		RollingFileAppender fa = new RollingFileAppender();
+		fa.setImmediateFlush(true);
+		fa.setMaximumFileSize(Integer.MAX_VALUE);
+		fa.setName("FileLogger");
+		fa.setFile("/home/xige/Desktop/RefReviewer.log", true, true, 1);
+		fa.setLayout(new PatternLayout("%d %-5p [%c{1}] %m%n"));
+		fa.setThreshold(threshHold);
+		fa.setAppend(true);
+		fa.activateOptions();
+		Logger.getRootLogger().addAppender(fa);
+
+		return Logger.getRootLogger();
+	}
+
+	@Provides
+	@Singleton
+	private WorkQueue getSingleThreadQueue() {
+		return new WorkQueue(1);
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

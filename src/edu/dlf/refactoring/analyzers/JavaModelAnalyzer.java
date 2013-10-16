@@ -130,7 +130,10 @@ public class JavaModelAnalyzer {
 				if(range.getOffset() <= node.getStartPosition() && 
 					range.getOffset() + range.getLength() >= node.
 						getStartPosition() + node.getLength())
+				{
+					logger.debug(type.getElementName() + ":" + range.getLength());
 					return true;
+				}
 				else
 					return false;
 			}});
@@ -141,7 +144,9 @@ public class JavaModelAnalyzer {
 		return Ord.intOrd.comap(new F<IJavaElement, Integer>() {
 			@Override
 			public Integer f(IJavaElement element) {
-				return getJavaElementSourceRange(element).getLength();
+				int length = getJavaElementSourceRange(element).getLength();
+				logger.debug(element.getElementName() + ":" + length); 
+				return length;
 			}
 		});
 	}

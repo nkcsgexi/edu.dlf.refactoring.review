@@ -66,7 +66,7 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 				double dis = XStringUtils.distance(n1, n2);
 				double base = Math.max(n1.length(), n2.length());
 				int score = (int) ((1.0 - dis/base) * 10);
-				logger.info("Name similarity score: " + score);
+				logger.debug("Name similarity score: " + score);
 				return score;
 			}
 		}).foreach(new Effect<P2<IJavaElement, IJavaElement>>() {
