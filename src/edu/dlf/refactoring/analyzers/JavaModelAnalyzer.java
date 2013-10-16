@@ -71,10 +71,6 @@ public class JavaModelAnalyzer {
 				};
 			}});
 	}
-	
-	
-	
-	
 	public static List<IJavaElement> getSourcePackages(IJavaElement project)
 	{
 		try{
@@ -118,6 +114,24 @@ public class JavaModelAnalyzer {
 	{
 		CompilationUnit unit = (CompilationUnit)node.getRoot();
 		return unit.getJavaElement();
+	}
+	
+	
+	public static List<IJavaElement> getAssociatedIType(final ASTNode node)
+	{
+		List<IJavaElement> types = getTypes(((CompilationUnit)node.getRoot()).getJavaElement());
+		return types.filter(new F<IJavaElement, Boolean>() {
+			@Override
+			public Boolean f(IJavaElement type) {
+				ISourceRange range = getJavaElementSourceRange(type);
+				if(range.getOffset() <= node.getStartPosition() && 
+					range.getOffset() + range.getLength() >= node.
+						getStartPosition() + node.getLength())
+					return true;
+				else
+					return false;
+			}
+		});
 	}
 	
 	

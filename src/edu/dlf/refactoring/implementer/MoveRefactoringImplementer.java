@@ -2,9 +2,12 @@ package edu.dlf.refactoring.implementer;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.internal.corext.refactoring.reorg.IConfirmQuery;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.IReorgPolicy.IMovePolicy;
+import org.eclipse.jdt.internal.corext.refactoring.reorg.IReorgQueries;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.JavaMoveProcessor;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.ReorgDestinationFactory;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.ReorgPolicyFactory;
@@ -36,8 +39,9 @@ public class MoveRefactoringImplementer implements IRefactoringImplementer{
 	private final IASTNodeChangeCalculator cuCalculator;
 
 	@Inject
-	public MoveRefactoringImplementer(Logger logger,
-			@CompilationUnitAnnotation IASTNodeChangeCalculator cuCalculator)
+	public MoveRefactoringImplementer(
+		Logger logger,
+		@CompilationUnitAnnotation IASTNodeChangeCalculator cuCalculator)
 	{
 		this.logger = logger;
 		this.cuCalculator = cuCalculator;
@@ -45,18 +49,18 @@ public class MoveRefactoringImplementer implements IRefactoringImplementer{
 	
 	@Override
 	public Option<IImplementedRefactoring> implementRefactoring(
-			IDetectedRefactoring refactoring) {
-		ASTNode removedDec = refactoring.getEffectedNode(DetectedMoveRefactoring.
+			IDetectedRefactoring detectedRefactoring) {
+		ASTNode removedDec = detectedRefactoring.getEffectedNode(DetectedMoveRefactoring.
 			RemovedDeclarationDescriptor);
-		ASTNode addedDec = refactoring.getEffectedNode(DetectedMoveRefactoring.
+		ASTNode addedDec = detectedRefactoring.getEffectedNode(DetectedMoveRefactoring.
 			AddedDeclarationDescripter);		
 		List<IJavaElement> elements = JavaModelAnalyzer.getOverlapElements(removedDec);
-		IJavaElement dest = JavaModelAnalyzer.getAssociatedICompilationUnit(addedDec);
+		IJavaElement dest = JavaModelAnalyzer.getAssociatedIType(addedDec).head();
 		try{
 			if(elements.length() == 1)
 			{
-				Refactoring ref = createMoveRefactoring(elements.head(), dest);
-				Option<Change> change = RefactoringUtils.createChange(ref);
+				Refactoring refactoring = createMoveRefactoring(elements.head(), dest);
+				Option<Change> change = RefactoringUtils.createChange(refactoring);
 				if(change.isSome())
 				{
 					List<ASTNodePair> pairs = RefactoringUtils.
@@ -92,14 +96,52 @@ public class MoveRefactoringImplementer implements IRefactoringImplementer{
 				new IJavaElement[]{element});
 			policy.setDestinationCheck(true);
 			policy.setUpdateReferences(true);
-			policy.setUpdateReferences(true);
 			policy.setDestination(ReorgDestinationFactory.createDestination
 				(destination));
-			return new MoveRefactoring(new JavaMoveProcessor(policy));
+			JavaMoveProcessor processor = new JavaMoveProcessor(policy);
+			processor.setReorgQueries(new MockReorgQueries());
+			return new MoveRefactoring(processor);
 		}catch(Exception e)
 		{
 			logger.fatal("Cannot create refactoring: " + e);
 			return null;
+		}
+	}
+	
+	private class MockReorgQueries implements IReorgQueries {
+		private final java.util.List<Integer> fQueriesRun= new java.util.ArrayList<Integer>();
+
+		public IConfirmQuery createYesNoQuery(String queryTitle, boolean 
+			allowCancel, int queryID) {
+			run(queryID);
+			return yesQuery;
+		}
+
+		public IConfirmQuery createYesYesToAllNoNoToAllQuery(String queryTitle, 
+			boolean allowCancel, int queryID) {
+			run(queryID);
+			return yesQuery;
+		}
+
+		private void run(int queryID) {
+			fQueriesRun.add(new Integer(queryID));
+		}
+		
+		private final IConfirmQuery yesQuery= new IConfirmQuery() {
+			public boolean confirm(String question) throws 
+				OperationCanceledException {
+				return true;
+			}
+
+			public boolean confirm(String question, Object[] elements) throws 
+				OperationCanceledException {
+				return true;
+			}
+		};
+
+		public IConfirmQuery createSkipQuery(String queryTitle, int queryID) {
+			run(queryID);
+			return yesQuery;
 		}
 	}
 }
