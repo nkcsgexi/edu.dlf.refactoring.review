@@ -13,7 +13,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Statement;
@@ -31,7 +30,6 @@ import fj.Ord;
 import fj.P2;
 import fj.data.List;
 import fj.data.Option;
-import fj.data.List.Buffer;
 
 
 public class ASTAnalyzer {
@@ -344,7 +342,6 @@ public class ASTAnalyzer {
 	}
 	
 	
-	
 	public static List<P2<ASTNode, ASTNode>> getSameNodePairs(List<ASTNode> list1, 
 		List<ASTNode> list2, final F2<ASTNode, ASTNode, Boolean> areSame) {
 		return list1.bind(list2, new F2<ASTNode, ASTNode, P2<ASTNode, ASTNode>>(){
@@ -378,8 +375,6 @@ public class ASTAnalyzer {
 		};
 	}
 	
-	
-	
 	public static boolean isStatement(ASTNode node) {
 		return node instanceof Statement;
 	}
@@ -398,13 +393,6 @@ public class ASTAnalyzer {
 			}});
 	}
 	
-
-	public static boolean areNodesNeighbors(ASTNode node1, ASTNode node2) {
-		
-		
-		return true;
-	}
-
 	public static F2<ASTNode, ASTNode, Integer> getASTNodeDefaultSimilarityScoreCalculator() {
 		return new F2<ASTNode, ASTNode, Integer>() {
 			@Override
@@ -412,6 +400,19 @@ public class ASTAnalyzer {
 				return 0 - XStringUtils.distance(n1.toString(), n2.toString());
 			}
 		};
+	}
+
+	public static Boolean areNodesNeighbors(ASTNode node1, ASTNode node2) {
+	
+		return true;
+	}
+
+	public static boolean areTypesSame(ASTNode type1, ASTNode type2) {
+		IJavaElement t1 = JavaModelAnalyzer.getAssociatedITypes(type1).sort
+			(JavaModelAnalyzer.getJavaElementLengthOrd()).head();
+		IJavaElement t2 = JavaModelAnalyzer.getAssociatedITypes(type2).sort
+			(JavaModelAnalyzer.getJavaElementLengthOrd()).head();
+		return t1 == t2;
 	}
 
 }

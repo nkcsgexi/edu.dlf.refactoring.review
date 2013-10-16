@@ -50,7 +50,7 @@ public class ExtractMethodChecker implements IRefactoringChecker{
 			IImplementedRefactoring implemented = op.some();
 			if(isRefactoringSame(implemented, detectedRefactoring))
 			{
-				return new DefaultCheckingResult(false, detectedRefactoring);
+				return new DefaultCheckingResult(true, detectedRefactoring);
 			}
 		}
 		return new DefaultCheckingResult(true, detectedRefactoring);

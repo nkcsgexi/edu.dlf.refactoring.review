@@ -26,21 +26,26 @@ public class MoveRefactoringChecker implements IRefactoringChecker{
 	
 	
 	@Override
-	public ICheckingResult checkRefactoring(IDetectedRefactoring refactoring) {
+	public ICheckingResult checkRefactoring(final IDetectedRefactoring 
+			detectedRefactoring) {
 		Option<IImplementedRefactoring> im = this.implementer.implementRefactoring
-			(refactoring);
+			(detectedRefactoring);
 		if(im.isSome())
 		{
 			
 		}
-		
-		
-		
-		
-		
-		
-		
-		return null;
+		return new ICheckingResult() {
+			
+			@Override
+			public IDetectedRefactoring getDetectedRefactoring() {
+				return detectedRefactoring;
+			}
+			
+			@Override
+			public boolean IsBehaviorPreserving() {
+				return true;
+			}
+		};
 	}
 
 }

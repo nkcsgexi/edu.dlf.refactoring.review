@@ -7,6 +7,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.ISourceRange;
@@ -15,6 +16,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.Equal;
@@ -117,9 +119,10 @@ public class JavaModelAnalyzer {
 	}
 	
 	
-	public static List<IJavaElement> getAssociatedIType(final ASTNode node)
+	public static List<IJavaElement> getAssociatedITypes(final ASTNode node)
 	{
-		List<IJavaElement> types = getTypes(((CompilationUnit)node.getRoot()).getJavaElement());
+		List<IJavaElement> types = getTypes(((CompilationUnit)node.getRoot()).
+			getJavaElement());
 		return types.filter(new F<IJavaElement, Boolean>() {
 			@Override
 			public Boolean f(IJavaElement type) {
@@ -130,18 +133,27 @@ public class JavaModelAnalyzer {
 					return true;
 				else
 					return false;
+			}});
+	}
+	
+	public static Ord<IJavaElement> getJavaElementLengthOrd()
+	{
+		return Ord.intOrd.comap(new F<IJavaElement, Integer>() {
+			@Override
+			public Integer f(IJavaElement element) {
+				return getJavaElementSourceRange(element).getLength();
 			}
 		});
 	}
 	
 	
+	
 	public static List<IJavaElement> getTypes(IJavaElement iu)
 	{
-		try{
+		try {
 			ICompilationUnit unit = (ICompilationUnit)iu;
 			List<IJavaElement> results = List.nil();
-			for(IJavaElement t : unit.getTypes())
-			{
+			for(IJavaElement t : unit.getTypes()) {
 				results = results.snoc(t);
 			}
 			return results;
@@ -186,7 +198,7 @@ public class JavaModelAnalyzer {
 		}
 	}
 	
-	public static List<IJavaElement> getOverlapElements(ASTNode node)
+	public static List<IJavaElement> getOverlapMembers(ASTNode node)
 	{
 		final int start = node.getStartPosition();
 		final int length = node.getLength();
@@ -366,6 +378,10 @@ public class JavaModelAnalyzer {
 		String p1 = unit1.getPath().toOSString();
 		String p2 = unit2.getPath().toOSString();
 		return p1.equals(p2);
+	}
+
+	public static String getQualifiedTypeName(IJavaElement element) {
+		return ((IType)element).getFullyQualifiedName();
 	}
 }
 

@@ -103,8 +103,8 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 		final F<ASTNode, String> getNameFunc = new F<ASTNode, String>(){
 			@Override
 			public String f(ASTNode method) {
-				return ((SimpleName)method.getStructuralProperty(
-					MethodDeclaration.NAME_PROPERTY)).getIdentifier();
+				return method != null ? ((SimpleName)method.getStructuralProperty(
+					MethodDeclaration.NAME_PROPERTY)).getIdentifier() : "";
 			}};
 		
 		final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> mapper = 
@@ -130,6 +130,8 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			map(new F<P2<ASTNode, ASTNode>, ISourceChange>(){
 			@Override
 			public ISourceChange f(P2<ASTNode, ASTNode> pair) {
+				logger.debug(getNameFunc.f(pair._1()) + "->" + getNameFunc.
+					f(pair._2()));
 				return mChangeCalculator.CalculateASTNodeChange(new ASTNodePair
 					(pair._1(), pair._2()));
 			}});

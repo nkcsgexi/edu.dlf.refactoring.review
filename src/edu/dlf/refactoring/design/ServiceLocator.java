@@ -92,7 +92,7 @@ public class ServiceLocator extends AbstractModule
 		  ConsoleAppender console = new ConsoleAppender(); //create appender
 		  String PATTERN = "%d [%p|%c|%C{1}] %m%n";
 		  console.setLayout(new PatternLayout(PATTERN)); 
-		  console.setThreshold(Level.ALL);
+		  console.setThreshold(Level.INFO);
 		  console.activateOptions();
 		  Logger.getRootLogger().addAppender(console);
 		

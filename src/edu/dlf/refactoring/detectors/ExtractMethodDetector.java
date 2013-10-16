@@ -12,6 +12,7 @@ import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.StatementAnnotation;
+import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
@@ -22,7 +23,9 @@ import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
 import edu.dlf.refactoring.refactorings.DetectedExtractMethodRefactoring;
 import fj.Equal;
 import fj.F;
+import fj.F2;
 import fj.Ord;
+import fj.P2;
 import fj.data.List;
 
 public class ExtractMethodDetector extends AbstractRefactoringDetector {
@@ -45,11 +48,111 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
 		List<IChangeSearchResult> staChanges = this.statementSearchCriteria.search(change);
 		List<IChangeSearchResult> mdChanges = this.methodSearchCriteria.search(change);
-		if(staChanges.isEmpty() || mdChanges.isEmpty())
+
+		final F<IChangeSearchResult, ISourceChange> getLeafChange = 
+			new F<SourceChangeSearcher.IChangeSearchResult, ISourceChange>() {
+			@Override
+			public ISourceChange f(IChangeSearchResult result) {
+				return result.getSourceChanges().reverse().head();
+			}
+		};
+		
+		final F<ASTNode, Boolean> findType = new F<ASTNode, Boolean>() {
+			@Override
+			public Boolean f(ASTNode node) {
+				return node.getNodeType() == ASTNode.TYPE_DECLARATION;
+			}
+		};
+				
+		final F<P2<IChangeSearchResult, IChangeSearchResult>, Boolean> filter = 
+			new F<P2<IChangeSearchResult,IChangeSearchResult>, Boolean>() {
+			@Override
+			public Boolean f(P2<IChangeSearchResult, IChangeSearchResult> pair) {
+				ASTNode type1 = SourceChangeUtils.getEffectedASTNodes
+					(getLeafChange.f(pair._1())).find(findType).some();
+				ASTNode type2 = SourceChangeUtils.getEffectedASTNodes
+					(getLeafChange.f(pair._2())).find(findType).some();
+				return (type1 == null || type2 == null) ? false : ASTAnalyzer.
+					areTypesSame(type1, type2);
+			}
+		};
+		
+		final Equal<P2<IChangeSearchResult, IChangeSearchResult>> eq = 
+			Equal.equal(new F<P2<IChangeSearchResult, IChangeSearchResult>, 
+			F<P2<IChangeSearchResult, IChangeSearchResult>, Boolean>>() {
+				@Override
+				public F<P2<IChangeSearchResult, IChangeSearchResult>, Boolean> f(
+					final P2<IChangeSearchResult, IChangeSearchResult> pair1) {
+					return new F<P2<IChangeSearchResult,IChangeSearchResult>, Boolean>() {
+						@Override
+						public Boolean f(final P2<IChangeSearchResult, 
+							IChangeSearchResult> pair2) {
+							ASTNode type11 = SourceChangeUtils.getEffectedASTNodes
+								(getLeafChange.f(pair1._1())).find(findType).some();
+							ASTNode type22 = SourceChangeUtils.getEffectedASTNodes
+								(getLeafChange.f(pair2._2())).find(findType).some();
+							return ASTAnalyzer.areTypesSame(type11, type22);
+						}};}
+		});
+		
+		
+		final F<List<P2<IChangeSearchResult, IChangeSearchResult>>, P2<List<IChangeSearchResult>, 
+			List<IChangeSearchResult>>> grouper = new F<List<P2<IChangeSearchResult,
+			IChangeSearchResult>>, P2<List<IChangeSearchResult>,List<IChangeSearchResult>>>() {	
+				@Override
+				public P2<List<IChangeSearchResult>, List<IChangeSearchResult>> f(
+						List<P2<IChangeSearchResult, IChangeSearchResult>> list) {
+					List<IChangeSearchResult> subList1 = list.map(
+						new F<P2<IChangeSearchResult,IChangeSearchResult>, 
+					IChangeSearchResult>() {
+					@Override
+					public IChangeSearchResult f(P2<IChangeSearchResult, 
+						IChangeSearchResult> p) {
+						return p._1();
+					}});
+					List<IChangeSearchResult> subList2 = list.map(new F<P2
+						<IChangeSearchResult,IChangeSearchResult>, 
+						IChangeSearchResult>() {
+						@Override
+						public IChangeSearchResult f(P2<IChangeSearchResult, 
+								IChangeSearchResult> p) {
+							return p._2();
+						}
+					});	
+					return List.single(subList1).zip(List.single(subList2)).head();
+				}
+			};
+		
+		final List<P2<IChangeSearchResult, IChangeSearchResult>> multiplied = 
+			staChanges.bind(mdChanges, new F2<IChangeSearchResult, 
+			IChangeSearchResult, P2<IChangeSearchResult, 
+			IChangeSearchResult>>(){
+				@Override
+				public P2<IChangeSearchResult, IChangeSearchResult> f(
+						IChangeSearchResult result1, IChangeSearchResult result2) {
+					return List.single(result1).zip(List.single(result2)).head();
+				}});
+	
+		return multiplied.filter(filter).group(eq).map(grouper).bind(new
+				F<P2<List<IChangeSearchResult>,List<IChangeSearchResult>>, 
+				List<IDetectedRefactoring>>() {
+					@Override
+					public List<IDetectedRefactoring> f(
+							P2<List<IChangeSearchResult>, List<IChangeSearchResult>> pair) {
+						return detectExtractMethodInType(pair._1(), pair._2());
+					}
+		});
+	}
+	
+
+	private List<IDetectedRefactoring> detectExtractMethodInType(
+			List<IChangeSearchResult> statementRemoves,
+			List<IChangeSearchResult> methodDecAdds) {
+		if(statementRemoves.isEmpty() || methodDecAdds.isEmpty())
 			return List.nil();
-		 try {
+		try {
  			List<ASTNodePair> pairs = new StatementToMethodMapper().map(
-				 staChanges.bind(new F<IChangeSearchResult, List<ASTNode>>(){
+				 statementRemoves.bind(new F<IChangeSearchResult, List<ASTNode>>(){
 					@Override
 					public List<ASTNode> f(IChangeSearchResult result) {
 						return result.getSourceChanges().map(new F<ISourceChange, ASTNode>(){
@@ -58,7 +161,7 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 								return change.getNodeBefore();
 							}});
 					}}),
-				mdChanges.bind(new F<IChangeSearchResult, List<ASTNode>>(){
+				methodDecAdds.bind(new F<IChangeSearchResult, List<ASTNode>>(){
 					@Override
 					public List<ASTNode> f(IChangeSearchResult result) {
 						return result.getSourceChanges().map(new F<ISourceChange, ASTNode>(){
