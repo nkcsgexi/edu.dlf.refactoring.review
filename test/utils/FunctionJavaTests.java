@@ -1,5 +1,6 @@
 package utils;
 
+import static fj.data.Array.array;
 import junit.framework.TestSuite;
 
 import org.junit.Test;
@@ -10,7 +11,6 @@ import fj.F;
 import fj.F2;
 import fj.P2;
 import fj.data.Array;
-import static fj.data.Array.array;
 import fj.data.List;
 import fj.data.List.Buffer;
 

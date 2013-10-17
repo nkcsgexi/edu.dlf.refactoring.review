@@ -5,6 +5,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.ASTNode;
+
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ComponentsRepository;
 import edu.dlf.refactoring.design.IFactorComponent;

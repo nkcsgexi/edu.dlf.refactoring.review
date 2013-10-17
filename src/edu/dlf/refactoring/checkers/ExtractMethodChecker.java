@@ -3,7 +3,9 @@ import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+
 import com.google.inject.Inject;
+
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
@@ -20,8 +22,8 @@ import fj.F;
 import fj.F2;
 import fj.P2;
 import fj.data.List;
-import fj.data.Option;
 import fj.data.List.Buffer;
+import fj.data.Option;
 
 public class ExtractMethodChecker implements IRefactoringChecker{
 

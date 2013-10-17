@@ -25,8 +25,8 @@ import org.eclipse.jdt.internal.corext.refactoring.rename.RenameTypeParameterPro
 import org.eclipse.jdt.internal.corext.refactoring.rename.RenameTypeProcessor;
 import org.eclipse.jdt.internal.corext.refactoring.rename.RenameVirtualMethodProcessor;
 import org.eclipse.jdt.internal.corext.util.JdtFlags;
-import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 import org.eclipse.jdt.ui.refactoring.RenameSupport;
+import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 
 import edu.dlf.refactoring.design.IRefactoringImplementer;
 

@@ -17,7 +17,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import edu.dlf.refactoring.design.ASTNodePair;
-import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.F;
 import fj.F2;

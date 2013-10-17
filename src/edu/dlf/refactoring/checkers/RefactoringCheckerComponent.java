@@ -6,8 +6,8 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.design.ICompListener;
-import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
+import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.IRefactoringChecker;
 import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator.UICompAnnotation;

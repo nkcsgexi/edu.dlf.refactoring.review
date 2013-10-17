@@ -1,7 +1,10 @@
 package edu.dlf.refactoring.ui;
 
+import java.util.Hashtable;
+
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.swt.graphics.Color;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -15,12 +18,14 @@ import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IDetectedRefactoring.NodeListDescriptor;
 import edu.dlf.refactoring.design.IDetectedRefactoring.SingleNodeDescriptor;
 import edu.dlf.refactoring.design.IFactorComponent;
-import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.UIUtils;
 import fj.Effect;
 import fj.F;
+import fj.F2;
+import fj.P;
 import fj.P2;
+import fj.P3;
 import fj.data.List;
 
 public class CodeReviewUIComponent implements IFactorComponent{
@@ -28,7 +33,22 @@ public class CodeReviewUIComponent implements IFactorComponent{
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	private final Multimap<String, ICheckingResult> allResults = 
 			ArrayListMultimap.create();
+	private final Hashtable<ICheckingResult, Color> colorRepo = new 
+		Hashtable<ICheckingResult, Color>();
+	private final F<ICheckingResult, Color> getColorFunc = 
+		new F<ICheckingResult, Color>() {
+		@Override
+		public Color f(ICheckingResult result) {
+			if(!colorRepo.containsKey(result))
+			{
+				colorRepo.put(result, UIUtils.getNextColor());
+			}
+			return colorRepo.get(result);
+		}
+	};
+	
 	private final EventBus bus = new EventBus();
+
 	
 	@Inject
 	public CodeReviewUIComponent()
@@ -65,37 +85,36 @@ public class CodeReviewUIComponent implements IFactorComponent{
 	
 	private Effect<StyledTextUpdater> colorCorrectRefactoredNode(
 			List<ICheckingResult> results, ASTNode root)
-	{
-		final List<P2<Integer, Integer>> ranges = getCorrectRefactoredNode
+	{	
+		final List<P3<Integer, Integer, Color>> ranges = getCorrectRefactoredNode
 			(results, root).map(getExtractStartLengthOperation());
 		return new Effect<StyledTextUpdater>() {
 			@Override
 			public void e(final StyledTextUpdater updater) {
-				ranges.foreach(new Effect<P2<Integer, Integer>>() {	
+				ranges.foreach(new Effect<P3<Integer, Integer, Color>>() {	
 					@Override
-					public void e(P2<Integer, Integer> range) {
-						updater.addStyle(UIUtils.Blue, UIUtils.CodeFont,
+					public void e(P3<Integer, Integer, Color> range) {
+						updater.addStyle(range._3(), UIUtils.CodeFont,
 							range._1(), range._2());
 					}
-				});
-			}
-		};	
+				});}};	
 	}
 	
-	private F<P2<ASTNode, RefactoringType>, P2<Integer, Integer>> 
+	private F<P2<ICheckingResult,ASTNode>, P3<Integer,Integer, Color>> 
 		getExtractStartLengthOperation()
 	{
-		return new F<P2<ASTNode, RefactoringType>, P2<Integer,Integer>>() {
+		return new F<P2<ICheckingResult, ASTNode>, P3<Integer,Integer, Color>>() {
 			@Override
-			public P2<Integer, Integer> f(P2<ASTNode, RefactoringType> p) {
-				int start = p._1().getStartPosition();
-				int length = p._1().getLength();
-				return List.single(start).zip(List.single(length)).head();
+			public P3<Integer, Integer, Color> f(P2<ICheckingResult, ASTNode> p) {
+				int start = p._2().getStartPosition();
+				int length = p._2().getLength();
+				Color color = getColorFunc.f(p._1());
+				return P.p(start, length, color);
 			}
 		};
 	}
 	
-	private List<P2<ASTNode, RefactoringType>> getCorrectRefactoredNode(
+	private List<P2<ICheckingResult, ASTNode>> getCorrectRefactoredNode(
 			final List<ICheckingResult> results, 
 			final ASTNode root)
 	{
@@ -106,7 +125,7 @@ public class CodeReviewUIComponent implements IFactorComponent{
 			}});
 	}
 	
-	private List<P2<ASTNode, RefactoringType>> getIncorrectRefactoredNode(
+	private List<P2<ICheckingResult, ASTNode>> getIncorrectRefactoredNode(
 			final List<ICheckingResult> results, 
 			final ASTNode root)
 	{
@@ -117,27 +136,30 @@ public class CodeReviewUIComponent implements IFactorComponent{
 			}});
 	}
 	
-	private List<P2<ASTNode,RefactoringType>> getRefactoredASTNode(
+	private List<P2<ICheckingResult, ASTNode>> getRefactoredASTNode(
 			final List<ICheckingResult> results, 
 			final ASTNode root,
 			final F<ICheckingResult, Boolean> filter)
 	{
 		return results.filter(filter).bind(new F<ICheckingResult, 
-				List<P2<ASTNode, RefactoringType>>>(){
+				List<P2<ICheckingResult, ASTNode>>>(){
 				@Override
-				public List<P2<ASTNode, RefactoringType>> f(final ICheckingResult result) {
+				public List<P2<ICheckingResult, ASTNode>> 
+					f(final ICheckingResult result) {
 					List<ASTNode> nodes = getAllEffectedNodes(result.
 							getDetectedRefactoring()).filter(new F<ASTNode, Boolean>(){
 						@Override
 						public Boolean f(ASTNode node) {
 							return node.getRoot() == root;
 						}});
-					List<RefactoringType> types = nodes.map(new F<ASTNode, RefactoringType>(){
-						@Override
-						public RefactoringType f(ASTNode node) {
-							return result.getDetectedRefactoring().getRefactoringType();
-						}});
-					return nodes.zip(types);
+					return List.single(result).bind(nodes, new F2<ICheckingResult,
+						ASTNode, P2<ICheckingResult, ASTNode>>(){
+							@Override
+							public P2<ICheckingResult, ASTNode> f(
+									ICheckingResult result, ASTNode node) {
+								return List.single(result).zip(List.single(node)).head();
+							}
+						});
 				}});
 	}
 	

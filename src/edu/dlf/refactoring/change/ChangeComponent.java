@@ -7,7 +7,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.JavaProjectAnnotation;
@@ -21,8 +20,6 @@ import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.design.ServiceLocator.RefactoringDetectionCompAnnotation;
 import edu.dlf.refactoring.utils.WorkQueue;
-import fj.Effect;
-import fj.data.List;
 
 
 public class ChangeComponent implements IFactorComponent{

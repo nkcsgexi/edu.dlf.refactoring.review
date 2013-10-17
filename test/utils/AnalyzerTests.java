@@ -1,11 +1,12 @@
 package utils;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.junit.Test;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
-import junit.framework.TestSuite;
 
 public class AnalyzerTests extends TestSuite{
 
