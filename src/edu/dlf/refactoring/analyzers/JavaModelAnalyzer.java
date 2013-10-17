@@ -21,6 +21,7 @@ import fj.Equal;
 import fj.F;
 import fj.F2;
 import fj.Ord;
+import fj.P;
 import fj.P2;
 import fj.data.List;
 import fj.data.List.Buffer;
@@ -257,7 +258,7 @@ public class JavaModelAnalyzer {
 			@Override
 			public P2<IJavaElement, IJavaElement> f(IJavaElement arg0,
 					IJavaElement arg1) {
-				return List.single(arg0).zip(List.single(arg1)).head();
+				return P.p(arg0, arg1);
 			}});
 		
 		List<Integer> allScores = allTuples.map(new F<P2<IJavaElement,
@@ -331,8 +332,7 @@ public class JavaModelAnalyzer {
 					@Override
 					public P2<IJavaElement, IJavaElement> f(
 							P2<IJavaElement, Option<IJavaElement>> arg0) {
-						return List.single(arg0._1()).zip(List.single(arg0._2().
-							some())).head();
+						return P.p(arg0._1(), arg0._2().some());
 					}
 				});
 			}

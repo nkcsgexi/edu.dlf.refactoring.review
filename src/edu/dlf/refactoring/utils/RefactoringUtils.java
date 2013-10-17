@@ -20,6 +20,7 @@ import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.F;
 import fj.F2;
+import fj.P;
 import fj.P2;
 import fj.data.List;
 import fj.data.List.Buffer;
@@ -95,7 +96,7 @@ public class RefactoringUtils {
 		return list1.bind(list2, new F2<ASTNode, ASTNode, P2<ASTNode, ASTNode>>(){
 			@Override
 			public P2<ASTNode, ASTNode> f(ASTNode n1, ASTNode n2) {
-				return List.single(n1).zip(List.single(n2)).head();
+				return P.p(n1, n2);
 			}}).filter(new F<P2<ASTNode,ASTNode>, Boolean>() {
 				@Override
 				public Boolean f(P2<ASTNode, ASTNode> arg0) {

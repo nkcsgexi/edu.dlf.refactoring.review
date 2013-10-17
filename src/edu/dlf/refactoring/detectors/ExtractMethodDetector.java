@@ -25,6 +25,7 @@ import fj.Equal;
 import fj.F;
 import fj.F2;
 import fj.Ord;
+import fj.P;
 import fj.P2;
 import fj.data.List;
 
@@ -119,7 +120,7 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 							return p._2();
 						}
 					});	
-					return List.single(subList1).zip(List.single(subList2)).head();
+					return P.p(subList1, subList2);
 				}
 			};
 		
@@ -130,7 +131,7 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 				@Override
 				public P2<IChangeSearchResult, IChangeSearchResult> f(
 						IChangeSearchResult result1, IChangeSearchResult result2) {
-					return List.single(result1).zip(List.single(result2)).head();
+					return P.p(result1, result2);
 				}});
 	
 		return multiplied.filter(filter).group(eq).map(grouper).bind(new

@@ -20,6 +20,7 @@ import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
 import edu.dlf.refactoring.refactorings.DetectedExtractMethodRefactoring;
 import fj.F;
 import fj.F2;
+import fj.P;
 import fj.P2;
 import fj.data.List;
 import fj.data.List.Buffer;
@@ -128,7 +129,7 @@ public class ExtractMethodChecker implements IRefactoringChecker{
 				Boolean isSame = t1.toString().equals(t2.toString());
 				String message = "";
 				if(!isSame) message = "Return type does not match";
-				return List.single(isSame).zip(List.single(message)).head();
+				return P.p(isSame, message);
 			}};
 	}
 	

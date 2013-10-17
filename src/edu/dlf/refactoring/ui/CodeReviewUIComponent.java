@@ -157,7 +157,7 @@ public class CodeReviewUIComponent implements IFactorComponent{
 							@Override
 							public P2<ICheckingResult, ASTNode> f(
 									ICheckingResult result, ASTNode node) {
-								return List.single(result).zip(List.single(node)).head();
+								return P.p(result, node);
 							}
 						});
 				}});

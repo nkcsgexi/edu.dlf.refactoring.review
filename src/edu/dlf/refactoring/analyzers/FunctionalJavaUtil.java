@@ -1,5 +1,6 @@
 package edu.dlf.refactoring.analyzers;
 
+import fj.P;
 import fj.P2;
 import fj.data.List;
 import fj.data.List.Buffer;
@@ -29,7 +30,7 @@ public class FunctionalJavaUtil {
 	
 	public static <T, S> P2<T, S> createPair(T t, S s)
 	{
-		return List.single(t).zip(List.single(s)).head();
+		return P.p(t, s);
 	}
 	
 }
