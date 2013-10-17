@@ -9,6 +9,7 @@ import fj.Effect;
 import fj.Equal;
 import fj.F;
 import fj.F2;
+import fj.Monoid;
 import fj.P2;
 import fj.data.Array;
 import fj.data.List;
@@ -71,6 +72,13 @@ public class FunctionJavaTests extends TestSuite{
 				return true;
 			}});
 	}
+	
+	@Test
+	public void monoidTest()
+	{
+		Monoid<Integer> m = Monoid.intAdditionMonoid;
+	}
+	
 	
 	
 	@Test
