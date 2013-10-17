@@ -79,8 +79,6 @@ public class FunctionJavaTests extends TestSuite{
 		Monoid<Integer> m = Monoid.intAdditionMonoid;
 	}
 	
-	
-	
 	@Test
 	public void listBindTest()
 	{
