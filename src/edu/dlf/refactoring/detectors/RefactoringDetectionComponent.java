@@ -43,7 +43,6 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 		this.queue = queue;
 		this.logger = logger;
 		this.detectorsList = list(rmDetector, emDetector, mDetector, rtDetector);
-		//this.detectorsList = list(rmDetector, emDetector, rtDetector);
 		this.bus = new EventBus();
 		bus.register(component);
 	}

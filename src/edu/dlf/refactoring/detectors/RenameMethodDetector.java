@@ -1,4 +1,5 @@
 package edu.dlf.refactoring.detectors;
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.SimpleName;
 
@@ -15,18 +16,22 @@ import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
 import edu.dlf.refactoring.refactorings.RenameMethodRefactoring;
 import fj.Equal;
 import fj.F;
+import fj.Ord;
 import fj.data.List;
 
 public class RenameMethodDetector extends AbstractRefactoringDetector{
 	private final IChangeSearchCriteria declarationChangeCriteira;
 	private final IChangeSearchCriteria invocationChangeCriteira;
+	private Logger logger;
 
 	@Inject
 	public RenameMethodDetector(
+			Logger logger,
 			@SimpleNameAnnotation String snChangeLevel,
 			@MethodDeclarationAnnotation String mdChangeLevel,
 			@MethodInvocationAnnotation String miChangeLevel)
 	{
+		this.logger = logger;
 		this.declarationChangeCriteira = this.getCascadeCriteriaBuilder().
 			addSingleChangeCriteria(mdChangeLevel, SourceChangeType.PARENT)
 				.addSingleChangeCriteria(snChangeLevel, SourceChangeType.UPDATE).
@@ -43,14 +48,7 @@ public class RenameMethodDetector extends AbstractRefactoringDetector{
 	private final SimpleName getLastChangeAfterName(IChangeSearchResult result){
 		return (SimpleName) result.getSourceChanges().last().getNodeAfter();
 	}
-	
-	private final boolean areBindingSame(SimpleName name1, SimpleName name2)
-	{
-		if(name1.resolveBinding() == null || name2.resolveBinding() == null)
-			return false;
-		return name1.resolveBinding().getKey().equals(name2.resolveBinding().getKey());
-	}
-	
+
 	@Override
 	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
 		List<IChangeSearchResult> decChanges = this.declarationChangeCriteira.search(change);
@@ -58,34 +56,38 @@ public class RenameMethodDetector extends AbstractRefactoringDetector{
 		if(decChanges.isEmpty() && invChanges.isEmpty())
 			return List.nil();
 		
-		return decChanges.append(invChanges).filter(new F<IChangeSearchResult, Boolean>(){
+		
+		F<IChangeSearchResult, String> getKeyFunc = new F<IChangeSearchResult, 
+			String>() {
 			@Override
-			public Boolean f(IChangeSearchResult result) {
-				return getLastChangeBeforeName(result).resolveBinding() != null ||
-						getLastChangeAfterName(result).resolveBinding() != null;
-			}}).group(Equal.equal(new F<IChangeSearchResult, F<IChangeSearchResult, Boolean>>(){
+			public String f(IChangeSearchResult result) {
+				String key2 = getLastChangeBeforeName(result).resolveBinding().
+					getKey() + getLastChangeAfterName(result).resolveBinding().
+						getKey();
+				return key2;
+		}};
+		Ord<IChangeSearchResult> sorter = Ord.stringOrd.comap(getKeyFunc);
+		Equal<IChangeSearchResult> grouper = Equal.stringEqual.comap(getKeyFunc);
+		
+		List<List<IChangeSearchResult>> groupedNameChanges = invChanges.
+			append(decChanges).sort(sorter).group(grouper);
+		
+		logger.info(groupedNameChanges.length());
+		return groupedNameChanges.map(
+			new F<List<IChangeSearchResult>, IDetectedRefactoring>(){
 				@Override
-				public F<IChangeSearchResult, Boolean> f(final IChangeSearchResult r1) {
-					return new F<IChangeSearchResult, Boolean>(){
+				public IDetectedRefactoring f(List<IChangeSearchResult> results) {
+					List<ASTNode> namesBefore = results.map(new F<IChangeSearchResult, ASTNode>(){
 						@Override
-						public Boolean f(IChangeSearchResult r2) {
-							return areBindingSame(getLastChangeBeforeName(r1), getLastChangeBeforeName(r2)) 
-								|| areBindingSame(getLastChangeAfterName(r1), getLastChangeAfterName(r2));
-						}};
-				}})).map(new F<List<IChangeSearchResult>, IDetectedRefactoring>(){
-					@Override
-					public IDetectedRefactoring f(List<IChangeSearchResult> results) {
-						List<ASTNode> namesBefore = results.map(new F<IChangeSearchResult, ASTNode>(){
-							@Override
-							public ASTNode f(IChangeSearchResult result) {
-								return getLastChangeBeforeName(result);
-							}});
-						List<ASTNode> namesAfter = results.map(new F<IChangeSearchResult, ASTNode>(){
-							@Override
-							public ASTNode f(IChangeSearchResult result) {
-								return getLastChangeAfterName(result);
-							}});
-						return new RenameMethodRefactoring(namesBefore, namesAfter);				
-					}});
+						public ASTNode f(IChangeSearchResult result) {
+							return getLastChangeBeforeName(result);
+						}});
+					List<ASTNode> namesAfter = results.map(new F<IChangeSearchResult, ASTNode>(){
+						@Override
+						public ASTNode f(IChangeSearchResult result) {
+							return getLastChangeAfterName(result);
+						}});
+					return new RenameMethodRefactoring(namesBefore, namesAfter);				
+				}});
 	}
 }
