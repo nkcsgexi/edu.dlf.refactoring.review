@@ -13,7 +13,7 @@ import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.IRefactoringDetector;
 import edu.dlf.refactoring.design.ISourceChange;
-import edu.dlf.refactoring.design.ServiceLocator.RefactoringCheckerCompAnnotation;
+import edu.dlf.refactoring.design.ServiceLocator.RefactoringImplementaterCompAnnotation;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
@@ -38,7 +38,7 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 			@ExtractMethod IRefactoringDetector emDetector,
 			@RenameType IRefactoringDetector rtDetector,
 			@MoveResource IRefactoringDetector mDetector,
-			@RefactoringCheckerCompAnnotation IFactorComponent component)
+			@RefactoringImplementaterCompAnnotation IFactorComponent component)
 	{
 		this.queue = queue;
 		this.logger = logger;

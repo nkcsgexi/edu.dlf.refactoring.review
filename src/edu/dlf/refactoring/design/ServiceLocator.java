@@ -29,6 +29,7 @@ import edu.dlf.refactoring.checkers.RefactoringCheckerComponent;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponent;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector;
 import edu.dlf.refactoring.implementer.ImplementerCompInjector;
+import edu.dlf.refactoring.implementer.RefactoringImplementerComponent;
 import edu.dlf.refactoring.ui.CodeReviewUIComponent;
 import edu.dlf.refactoring.ui.UICompInjector;
 import edu.dlf.refactoring.utils.WorkQueue;
@@ -55,6 +56,14 @@ public class ServiceLocator extends AbstractModule {
 	public @interface RefactoringDetectionCompAnnotation {
 	}
 
+
+	@BindingAnnotation
+	@Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR })
+	@Retention(RUNTIME)
+	public @interface RefactoringImplementaterCompAnnotation {
+	}
+	
+	
 	@BindingAnnotation
 	@Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR })
 	@Retention(RUNTIME)
@@ -84,15 +93,24 @@ public class ServiceLocator extends AbstractModule {
 		bind(IFactorComponent.class)
 				.annotatedWith(HistorySavingCompAnnotation.class)
 				.to(HistorySavingComponent.class).in(Singleton.class);
-		;
+		
 		bind(IFactorComponent.class).annotatedWith(ChangeCompAnnotation.class)
 				.to(ChangeComponent.class).in(Singleton.class);
+		
 		bind(IFactorComponent.class)
 				.annotatedWith(RefactoringDetectionCompAnnotation.class)
 				.to(RefactoringDetectionComponent.class).in(Singleton.class);
+		
+		bind(IFactorComponent.class)
+		.annotatedWith(RefactoringImplementaterCompAnnotation.class)
+		.to(RefactoringImplementerComponent.class).in(Singleton.class);
+		
+		
 		bind(IFactorComponent.class)
 				.annotatedWith(RefactoringCheckerCompAnnotation.class)
 				.to(RefactoringCheckerComponent.class).in(Singleton.class);
+		
+		
 		bind(IFactorComponent.class).annotatedWith(UICompAnnotation.class)
 				.to(CodeReviewUIComponent.class).in(Singleton.class);
 	}

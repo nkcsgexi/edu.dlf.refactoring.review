@@ -13,8 +13,6 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
-import edu.dlf.refactoring.change.SourceChangeUtils;
-import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
@@ -35,15 +33,16 @@ public class RenameMethodImplementer extends AbstractRenameImplementer{
 		Logger logger,
 		@CompilationUnitAnnotation IASTNodeChangeCalculator cuCalculater)
 	{
-		super(logger);
+		super(logger, cuCalculater);
 		this.logger = logger;
 		this.cuCalculator = cuCalculater;
 	}
 
 	@Override
-	public Option<IImplementedRefactoring> implementRefactoring
-			(IDetectedRefactoring refactoring) {
-		List<ASTNode> names = refactoring.getEffectedNodeList(RenameMethodRefactoring.
+	public void implementRefactoring
+			(final IDetectedRefactoring detectedRefactoring, 
+			final IImplementedRefactoringCallback callback) {
+		List<ASTNode> names = detectedRefactoring.getEffectedNodeList(RenameMethodRefactoring.
 			SimpleNamesBefore);
 		F<ASTNode, IJavaElement> getElement = new F<ASTNode, IJavaElement>() {
 			@Override
@@ -56,21 +55,22 @@ public class RenameMethodImplementer extends AbstractRenameImplementer{
 			getJavaElementEQ());
 		IJavaElement declaration = elements.head();
 		JavaRenameProcessor processor = this.getRenameProcessor(declaration);
-		processor.setNewElementName(getNewName(refactoring));
+		processor.setNewElementName(getNewName(detectedRefactoring));
 		RenameRefactoring autoRefactoring = this.getRenameRefactoring(processor);
 		Option<Change> op = RefactoringUtils.createChange(autoRefactoring);
-		if(op.isNone()) return Option.none();
-		List<ASTNodePair> pairs = RefactoringUtils.collectChangedCompilationUnits
-			(op.some());		
-		List<ISourceChange> sourceChanges = pairs.map(
-			new F<ASTNodePair, ISourceChange>() {
-				@Override
-				public ISourceChange f(ASTNodePair pair) {
-					return cuCalculator.CalculateASTNodeChange(pair);
-				}}).map(SourceChangeUtils.getPruneSourceChangeFunc());
-		logger.info("Automatic change collected.");
-		return Option.some((IImplementedRefactoring)new ImplementedRefactoring
-			(RefactoringType.RenameMethod, sourceChanges));
+		if(op.isNone()) return;
+		collectAutoRefactoringChangesAsync(op.some(), 
+			new IAutoChangeCallback() {
+			@Override
+			public void onFinishChanges(List<ISourceChange> 
+				changes) {
+				IImplementedRefactoring implemented = new 
+					ImplementedRefactoring(RefactoringType.ExtractMethod, 
+						changes);
+				callback.onImplementedRefactoringReady(detectedRefactoring, 
+					implemented);
+			}
+		});
 	}
 	
 	private String getNewName(IDetectedRefactoring refactoring)

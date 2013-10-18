@@ -7,33 +7,22 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringChecker;
-import edu.dlf.refactoring.design.IRefactoringImplementer;
-import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
-import fj.data.Option;
 
 public class MoveRefactoringChecker implements IRefactoringChecker{
 
 	private final Logger logger;
-	private final IRefactoringImplementer implementer;
 
 	@Inject
-	public MoveRefactoringChecker(Logger logger,
-			@MoveResource IRefactoringImplementer implementer)
+	public MoveRefactoringChecker(Logger logger)
 	{
 		this.logger = logger;
-		this.implementer = implementer;
 	}
 	
 	
 	@Override
 	public ICheckingResult checkRefactoring(final IDetectedRefactoring 
-			detectedRefactoring) {
-		Option<IImplementedRefactoring> im = this.implementer.implementRefactoring
-			(detectedRefactoring);
-		if(im.isSome())
-		{
-			
-		}
+			detectedRefactoring, final IImplementedRefactoring implemented) {
+		
 		return new ICheckingResult() {
 			
 			@Override

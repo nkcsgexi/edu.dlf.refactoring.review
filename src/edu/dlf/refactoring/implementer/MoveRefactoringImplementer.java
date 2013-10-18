@@ -25,11 +25,8 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
-import edu.dlf.refactoring.change.SourceChangeUtils;
-import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
-import edu.dlf.refactoring.design.IRefactoringImplementer;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.refactorings.DetectedMoveRefactoring;
@@ -37,7 +34,7 @@ import edu.dlf.refactoring.utils.RefactoringUtils;
 import fj.data.List;
 import fj.data.Option;
 
-public class MoveRefactoringImplementer implements IRefactoringImplementer{
+public class MoveRefactoringImplementer extends AbstractRefactoringImplementer{
 
 	private final Logger logger;
 	private final IASTNodeChangeCalculator cuCalculator;
@@ -47,13 +44,15 @@ public class MoveRefactoringImplementer implements IRefactoringImplementer{
 		Logger logger,
 		@CompilationUnitAnnotation IASTNodeChangeCalculator cuCalculator)
 	{
+		super(logger, cuCalculator);
 		this.logger = logger;
 		this.cuCalculator = cuCalculator;
 	}
 	
 	@Override
-	public Option<IImplementedRefactoring> implementRefactoring(
-			IDetectedRefactoring detectedRefactoring) {
+	public void implementRefactoring(
+			final IDetectedRefactoring detectedRefactoring, 
+			final IImplementedRefactoringCallback callback) {
 		ASTNode removedDec = detectedRefactoring.getEffectedNode(DetectedMoveRefactoring.
 			RemovedDeclarationDescriptor);
 		ASTNode addedDec = detectedRefactoring.getEffectedNode(DetectedMoveRefactoring.
@@ -70,13 +69,18 @@ public class MoveRefactoringImplementer implements IRefactoringImplementer{
 					Option<Change> change = RefactoringUtils.createChange(refactoring);
 					if(change.isSome())
 					{
-						List<ASTNodePair> pairs = RefactoringUtils.
-							collectChangedCompilationUnits(change.some());
-						List<ISourceChange> changes = SourceChangeUtils.
-							calculateASTNodeChanges(pairs, cuCalculator);
-						if(changes.isNotEmpty()) logger.info("Move auto-performed.");
-						return Option.some((IImplementedRefactoring)new 
-							ImplementedRefactoring(RefactoringType.Move, changes));
+						collectAutoRefactoringChangesAsync(change.some(), 
+							new IAutoChangeCallback() {
+							@Override
+							public void onFinishChanges(List<ISourceChange> 
+								changes) {
+								IImplementedRefactoring implemented = new 
+									ImplementedRefactoring(RefactoringType.Move, 
+										changes);
+								callback.onImplementedRefactoringReady(
+									detectedRefactoring, implemented);
+							}
+						});
 					}
 				}
 			}
@@ -86,7 +90,6 @@ public class MoveRefactoringImplementer implements IRefactoringImplementer{
 		{
 			logger.fatal(e);
 		}
-		return Option.none();	
 	}
 		
 	

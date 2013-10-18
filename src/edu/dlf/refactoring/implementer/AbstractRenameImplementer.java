@@ -28,9 +28,9 @@ import org.eclipse.jdt.internal.corext.util.JdtFlags;
 import org.eclipse.jdt.ui.refactoring.RenameSupport;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 
-import edu.dlf.refactoring.design.IRefactoringImplementer;
+import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 
-public abstract class AbstractRenameImplementer implements IRefactoringImplementer{
+public abstract class AbstractRenameImplementer extends AbstractRefactoringImplementer{
 
 	private final int flag = 
 			RenameSupport.UPDATE_REFERENCES|
@@ -38,8 +38,10 @@ public abstract class AbstractRenameImplementer implements IRefactoringImplement
 			RenameSupport.UPDATE_SETTER_METHOD;
 	private final Logger logger;
 	
-	protected AbstractRenameImplementer(Logger logger)
+	protected AbstractRenameImplementer(Logger logger, IASTNodeChangeCalculator 
+			cuCalculater)
 	{
+		super(logger, cuCalculater);
 		this.logger = logger;
 	}
 	

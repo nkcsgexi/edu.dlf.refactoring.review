@@ -45,18 +45,12 @@ public class ExtractMethodChecker implements IRefactoringChecker{
 	
 	@Override
 	public ICheckingResult checkRefactoring(IDetectedRefactoring 
-			detectedRefactoring) {
-		Option<IImplementedRefactoring> op = implementer.
-			implementRefactoring(detectedRefactoring);
-		if(op.isSome())
+			detected, IImplementedRefactoring implemented) {
+		if(isRefactoringSame(implemented, detected))
 		{
-			IImplementedRefactoring implemented = op.some();
-			if(isRefactoringSame(implemented, detectedRefactoring))
-			{
-				return new DefaultCheckingResult(true, detectedRefactoring);
-			}
+			return new DefaultCheckingResult(true, detected);
 		}
-		return new DefaultCheckingResult(true, detectedRefactoring);
+		return new DefaultCheckingResult(true, detected);
 	}
 
 	private boolean isRefactoringSame(IImplementedRefactoring implemented,

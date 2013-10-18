@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IFactorComponent;
+import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringChecker;
 import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator.UICompAnnotation;
@@ -15,7 +16,9 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Extra
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
+import edu.dlf.refactoring.implementer.ImplementedRefactoring;
 import edu.dlf.refactoring.utils.WorkQueue;
+import fj.P2;
 import fj.data.HashMap;
 
 public class RefactoringCheckerComponent implements 
@@ -47,17 +50,35 @@ public class RefactoringCheckerComponent implements
 	@Subscribe
 	@Override
 	public Void listen(final Object event) {
-		queue.execute(new Runnable(){
+		if(isEventRight(event)){
+			queue.execute(new Runnable(){
 			@Override
 			public void run() {
-				IDetectedRefactoring refactoring = (IDetectedRefactoring)event;
-				IRefactoringChecker checker = map.get(refactoring.
-						getRefactoringType()).some();
-				ICheckingResult result = checker.checkRefactoring(refactoring);
+				IDetectedRefactoring detected = (IDetectedRefactoring)
+					((P2)event)._1();
+				IImplementedRefactoring implemented = (ImplementedRefactoring)
+					((P2)event)._2();
+				IRefactoringChecker checker = map.get(detected.
+					getRefactoringType()).some();
+				ICheckingResult result = checker.checkRefactoring(detected,
+					implemented);
 				bus.post(result);
-			}});
+			}});}
 		return null;
 	}
+	
+	private boolean isEventRight(Object event)
+	{
+		if(event instanceof P2)
+		{
+			Object first = ((P2)event)._1();
+			Object second = ((P2)event)._2();
+			return first instanceof IDetectedRefactoring && second instanceof
+				IImplementedRefactoring;
+		}
+		return false;
+	}
+	
 
 	@Override
 	public Void registerListener(ICompListener listener) {

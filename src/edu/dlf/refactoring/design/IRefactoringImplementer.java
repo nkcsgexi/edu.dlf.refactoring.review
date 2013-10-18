@@ -1,8 +1,9 @@
 package edu.dlf.refactoring.design;
 
-import fj.data.Option;
+import edu.dlf.refactoring.implementer.IImplementedRefactoringCallback;
+
 
 public interface IRefactoringImplementer {
-	Option<IImplementedRefactoring> implementRefactoring(IDetectedRefactoring 
-			refactoring);
+	void implementRefactoring(IDetectedRefactoring 
+			refactoring, IImplementedRefactoringCallback callback);
 }

@@ -62,7 +62,6 @@ public class RefactoringUtils {
 	
 	
 	
-	
 	public synchronized static List<ASTNodePair> collectChangedCompilationUnits
 		(Change change)
 	{	

@@ -7,40 +7,25 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringChecker;
-import edu.dlf.refactoring.design.IRefactoringImplementer;
-import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
-import fj.data.Option;
 
 public class RenameMethodChecker implements IRefactoringChecker{
 
-	private final IRefactoringImplementer implementer;
 	private final Logger logger;
 
-
 	@Inject
-	public RenameMethodChecker(
-			Logger logger,
-			@RenameMethod IRefactoringImplementer implementer)
+	public RenameMethodChecker(Logger logger)
 	{
 		this.logger = logger;
-		this.implementer = implementer;
 	}
 	
 	
 	@Override
 	public synchronized ICheckingResult checkRefactoring(IDetectedRefactoring 
-		refactoring) {
-		Option<IImplementedRefactoring> implemented = this.implementer.
-			implementRefactoring(refactoring);
-		if(implemented.isSome())
-		{
-			IImplementedRefactoring imRefactoring = implemented.some();
-			if(isRefactoringSame(imRefactoring, refactoring))
-				return new DefaultCheckingResult(true, refactoring);
+		detected, IImplementedRefactoring implemented) {
+			if(isRefactoringSame(implemented, detected))
+				return new DefaultCheckingResult(true, detected);
 			else
-				return new DefaultCheckingResult(false, refactoring);
-		}
-		return new DefaultCheckingResult(true, refactoring);
+				return new DefaultCheckingResult(false, detected);
 	}
 
 
