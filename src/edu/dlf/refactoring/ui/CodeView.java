@@ -25,7 +25,8 @@ public abstract class CodeView extends ViewPart implements ICompListener {
 	
 	@Override
 	public final void createPartControl(Composite parent) {    
-		this.styledText = new StyledText(parent, SWT.BORDER | SWT.SCROLL_LINE);
+		this.styledText = new StyledText(parent, SWT.BORDER|SWT.SCROLL_LINE|
+			SWT.V_SCROLL);
 		this.styledText.setEditable(false);
 		this.styledText.setBackground(new Color(UIUtils.getDisplay(), 
 				255,255,255));
