@@ -66,9 +66,11 @@ public class RenameMethodDetector extends AbstractRefactoringDetector{
 						getKey();
 				return key2;
 		}};
+		
+		// The functional java List only group consecutive elements, so needs to sort
+		// first.
 		Ord<IChangeSearchResult> sorter = Ord.stringOrd.comap(getKeyFunc);
 		Equal<IChangeSearchResult> grouper = Equal.stringEqual.comap(getKeyFunc);
-		
 		List<List<IChangeSearchResult>> groupedNameChanges = invChanges.
 			append(decChanges).sort(sorter).group(grouper);
 		
