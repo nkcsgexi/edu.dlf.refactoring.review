@@ -26,7 +26,7 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 
 	private final Logger logger;
 	private final String cuLevel;
-	private final CascadeChangeCriteriaBuilder builder;
+	private final ChangeCriteriaBuilder builder;
 	private final String mdLevel;
 	private final String fLevel;
 	private final F<ISourceChange, ASTNode> getBeforeNode;
@@ -38,7 +38,7 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 
 	@Inject
 	public MoveRefactoringDetector(Logger logger,
-			CascadeChangeCriteriaBuilder exbuilder,
+			ChangeCriteriaBuilder exbuilder,
 			@CompilationUnitAnnotation String cuLevel,
 			@MethodDeclarationAnnotation String mdLevel,
 			@FieldDeclarationAnnotation String fLevel)

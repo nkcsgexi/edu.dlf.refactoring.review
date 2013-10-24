@@ -246,6 +246,8 @@ public class ASTAnalyzer {
 	{
 		return node1.subtreeMatch(new ASTMatcher(), node2);
 	}
+
+	
 	
 	public static IEqualityComparer<ASTNode> getASTEqualityComparer()
 	{
@@ -378,6 +380,18 @@ public class ASTAnalyzer {
 	public static boolean isStatement(ASTNode node) {
 		return node instanceof Statement;
 	}
+	
+	public static F<ASTNode, String> getContainingCompilationUnitName()
+	{
+		return new F<ASTNode, String>() {
+			@Override
+			public String f(ASTNode node) {
+				return ((CompilationUnit)node.getRoot()).getJavaElement().
+					getElementName();
+			}
+		};
+	}
+	
 	
 	public static Equal<ASTNode> getASTNodeEQ()
 	{

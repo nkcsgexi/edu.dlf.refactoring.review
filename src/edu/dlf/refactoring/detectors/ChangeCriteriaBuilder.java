@@ -17,12 +17,12 @@ import fj.F;
 import fj.data.List;
 import fj.data.List.Buffer;
 
-public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
+public class ChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 	
 	private Buffer<String> criteriaChain;
 	
 	@Inject
-	public CascadeChangeCriteriaBuilder()
+	public ChangeCriteriaBuilder()
 	{
 		this.reset();
 	}
@@ -32,13 +32,13 @@ public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 		this.criteriaChain = Buffer.empty();
 	}
 	
-	public CascadeChangeCriteriaBuilder addSingleChangeCriteria(final String c,
+	public ChangeCriteriaBuilder addSingleChangeCriteria(final String c,
 			final SourceChangeType t) {
 		criteriaChain.snoc("(@" + c + t.toString() + ")");
 		return this;
 	}
 	
-	public CascadeChangeCriteriaBuilder addOneOrMoreChangeCriteria(final String c, 
+	public ChangeCriteriaBuilder addOneOrMoreChangeCriteria(final String c, 
 			final SourceChangeType t)
 	{
 		criteriaChain.snoc("(@" + c + t.toString() + ")+");
@@ -46,7 +46,7 @@ public class CascadeChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 	}
 	
 	
-	public CascadeChangeCriteriaBuilder addZeroOrMoreChangeCriteria(final String c, 
+	public ChangeCriteriaBuilder addZeroOrMoreChangeCriteria(final String c, 
 			final SourceChangeType t)
 	{
 		criteriaChain.snoc("(@" + c + t.toString() + ")*");

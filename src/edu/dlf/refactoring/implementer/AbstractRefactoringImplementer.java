@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.ltk.core.refactoring.Change;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
+import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.design.ASTNodePair;
@@ -37,7 +38,6 @@ public abstract class AbstractRefactoringImplementer implements
 		this.logger = logger;
 		this.cuCalculator = cuCalculator;
 	}
-		
 	
 	protected void collectAutoRefactoringChangesAsync
 		(Change change, IAutoChangeCallback callback)
@@ -53,81 +53,50 @@ public abstract class AbstractRefactoringImplementer implements
 			logger.fatal(e);
 		}
 	}
-
 	
-	private class AutoRefactoringListener implements IElementChangedListener
+	private abstract class CompilationUnitsChangedListener implements 
+		IElementChangedListener
 	{
-		private List<ASTNode> unitsBefore;
-		private List<ASTNode> unitsAfter;
-		private final IAutoChangeCallback callback;
+		protected abstract void compilationUnitsChanged(List<IJavaElement> elements);
 		
-		public AutoRefactoringListener(IAutoChangeCallback callback)
-		{
-			this.callback = callback;
-		}
-		
-		@Override
-		public synchronized void elementChanged(ElementChangedEvent event) {
-			if(event.getType() != ElementChangedEvent.POST_CHANGE)
-				return;
-			if(unitsBefore != null)
-				JavaCore.removeElementChangedListener(this);
-			List<IJavaElement> changedIUs = List.nil();
-			IJavaElementDelta delta = event.getDelta();
-			if(delta.getElement().getElementType() == IJavaElement.
-				COMPILATION_UNIT)
-			{
-				changedIUs = changedIUs.snoc(delta.getElement());
-			} else if(delta.getElement().getAncestor(IJavaElement.
-					COMPILATION_UNIT) != null)
-			{
-				changedIUs = changedIUs.snoc(delta.getElement().getAncestor(
-					IJavaElement.COMPILATION_UNIT));
-				
-			} else 
-			{
-				changedIUs = searchEffectedICompilationUnit(delta);
+		private F2<Integer, IJavaElementDelta, Boolean> getFilterFunc = 
+			new F2<Integer, IJavaElementDelta, Boolean>() {
+			@Override
+			public Boolean f(Integer flag, IJavaElementDelta delta) {
+				return (delta.getFlags() & flag) != 0;
 			}
-			
-			F<IJavaElement, ASTNode> parser = new F<IJavaElement, ASTNode>() {
+		};
+		
+		private F<IJavaElementDelta, IJavaElement> getElementFun = 
+			new F<IJavaElementDelta, IJavaElement>() {
 				@Override
-				public ASTNode f(IJavaElement unit) {	
-					return ASTAnalyzer.parseICompilationUnit(unit);
+				public IJavaElement f(IJavaElementDelta delta) {
+					return delta.getElement();
 				}
 			};
-			if(unitsBefore == null)
+		
+		@Override
+		public void elementChanged(ElementChangedEvent event) {
+			List<IJavaElementDelta> unitsDelta = searchEffectedICompilationUnitDelta
+				(event.getDelta());
+			List<IJavaElement> changedUnits = unitsDelta.filter(getFilterFunc.
+				f(IJavaElementDelta.F_PRIMARY_RESOURCE)).map(getElementFun);
+			if(changedUnits.isNotEmpty())
 			{
-				this.unitsBefore = changedIUs.map(parser);
-			}
-			else
-			{
-				this.unitsAfter = changedIUs.map(parser);
-				List<ISourceChange> changes = mapCompilationUnit(unitsAfter, 
-					unitsBefore).map(new F<ASTNodePair, 
-					ISourceChange>(){
-						@Override
-						public ISourceChange f(ASTNodePair pair) {
-							return cuCalculator.CalculateASTNodeChange(pair);
-				}});
-				callback.onFinishChanges(changes);
+				compilationUnitsChanged(changedUnits);
 			}
 		}
 		
-		private List<IJavaElement> searchEffectedICompilationUnit(IJavaElementDelta 
-			delta)
-		{						
+		private List<IJavaElementDelta> searchEffectedICompilationUnitDelta
+			(IJavaElementDelta delta)
+		{	
 			F<IJavaElementDelta, List<IJavaElementDelta>> map2Children = new 
 					F<IJavaElementDelta, List<IJavaElementDelta>>() {
 				@Override
 				public List<IJavaElementDelta> f(IJavaElementDelta delta) {
-					Buffer<IJavaElementDelta> children = Buffer.empty();
-					for(IJavaElementDelta child : delta.getAffectedChildren())
-					{
-						children.snoc(child);
-					}
-					return children.toList();
-				}
-			};
+					return FunctionalJavaUtil.createListFromArray(delta.
+						getAffectedChildren());
+			}};
 
 			List<IJavaElementDelta> list = List.single(delta);
 			Buffer<IJavaElementDelta> buffer = Buffer.empty();
@@ -144,11 +113,49 @@ public abstract class AbstractRefactoringImplementer implements
 					return d.getElement().getElementType() == IJavaElement.
 						COMPILATION_UNIT;
 				}
-			}).map(new F<IJavaElementDelta, IJavaElement>() {
-				@Override
-				public IJavaElement f(IJavaElementDelta d) {
-					return d.getElement();
+			});
+		}
+	}
+
+	
+	private class AutoRefactoringListener extends CompilationUnitsChangedListener
+	{
+		private List<ASTNode> unitsBefore;
+		private List<ASTNode> unitsAfter;
+		private final IAutoChangeCallback callback;
+		private final F<IJavaElement, ASTNode> parser = new F<IJavaElement, 
+			ASTNode>() {
+			@Override
+			public ASTNode f(IJavaElement unit) {	
+				return ASTAnalyzer.parseICompilationUnit(unit);
+			}
+		};
+		
+		public AutoRefactoringListener(IAutoChangeCallback callback)
+		{
+			this.callback = callback;
+		}
+		
+		@Override
+		protected void compilationUnitsChanged(List<IJavaElement> elements) {
+			if(unitsBefore != null)
+				JavaCore.removeElementChangedListener(this);
+			if(unitsBefore == null)
+			{
+				this.unitsBefore = elements.map(parser);
+			}
+			else
+			{
+				this.unitsAfter = elements.map(parser);
+				List<ISourceChange> changes = mapCompilationUnit(unitsAfter, 
+					unitsBefore).map(new F<ASTNodePair, 
+					ISourceChange>(){
+						@Override
+						public ISourceChange f(ASTNodePair pair) {
+							return cuCalculator.CalculateASTNodeChange(pair);
 				}});
+				callback.onFinishChanges(changes);
+			}
 		}
 		
 		
@@ -175,6 +182,5 @@ public abstract class AbstractRefactoringImplementer implements
 					}
 				});
 		}
-
 	}
 }

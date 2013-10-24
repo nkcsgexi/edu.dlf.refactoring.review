@@ -79,11 +79,8 @@ public class MoveRefactoringImplementer extends AbstractRefactoringImplementer{
 										changes);
 								callback.onImplementedRefactoringReady(
 									detectedRefactoring, implemented);
-							}
-						});
-					}
-				}
-			}
+							}});
+					}}}
 			else
 				logger.fatal("Elements count is " + elements.length());
 		}catch (Exception e)

@@ -70,8 +70,7 @@ public class RefactoringImplementerComponent implements IFactorComponent,
 						implementer.some().implementRefactoring(refactoring, listener);
 				} catch (Exception e) {
 					logger.fatal(e);
-				}
-			}});}
+				}}});}
 		return null;
 	}
 

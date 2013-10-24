@@ -11,9 +11,9 @@ public abstract class AbstractRefactoringDetector implements IRefactoringDetecto
 	{
 	}
 		
-	protected CascadeChangeCriteriaBuilder getCascadeCriteriaBuilder()
+	protected ChangeCriteriaBuilder getCascadeCriteriaBuilder()
 	{
-		return new CascadeChangeCriteriaBuilder();
+		return new ChangeCriteriaBuilder();
 	}
 	
 	protected IChangeSearchCriteria getBasicSearchCriteria(final String c, final SourceChangeType t)

@@ -13,7 +13,7 @@ import edu.dlf.refactoring.design.IRefactoringChecker;
 import edu.dlf.refactoring.design.IRefactoringImplementer;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
-import edu.dlf.refactoring.detectors.CascadeChangeCriteriaBuilder;
+import edu.dlf.refactoring.detectors.ChangeCriteriaBuilder;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
@@ -78,7 +78,7 @@ public class ExtractMethodChecker implements IRefactoringChecker{
 
 	private Option<ASTNode> getAddedMethod(IImplementedRefactoring implemented) {
 		List<ISourceChange> changes = implemented.getSourceChanges();
-		CascadeChangeCriteriaBuilder builder = new CascadeChangeCriteriaBuilder();
+		ChangeCriteriaBuilder builder = new ChangeCriteriaBuilder();
 		final IChangeSearchCriteria criteria = builder.addSingleChangeCriteria
 			(methodLevel, SourceChangeType.ADD).getSearchCriteria();
 		List<ISourceChange> addedMethods = changes.bind(new F<ISourceChange, 

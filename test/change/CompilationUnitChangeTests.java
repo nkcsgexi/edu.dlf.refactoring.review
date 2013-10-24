@@ -16,7 +16,7 @@ import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.design.ServiceLocator;
-import edu.dlf.refactoring.detectors.CascadeChangeCriteriaBuilder;
+import edu.dlf.refactoring.detectors.ChangeCriteriaBuilder;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
 import fj.data.List;
 
@@ -53,7 +53,7 @@ public class CompilationUnitChangeTests extends TestSuite{
 				"TestCUAfter1.java"));
 		ISourceChange change = calculator.CalculateASTNodeChange(new ASTNodePair(cuBefore, cuAfter));
 		change = SourceChangeUtils.pruneSourceChange(change);
-		CascadeChangeCriteriaBuilder changeBuilder = new CascadeChangeCriteriaBuilder();
+		ChangeCriteriaBuilder changeBuilder = new ChangeCriteriaBuilder();
 		changeBuilder.addSingleChangeCriteria("Method", SourceChangeType.PARENT).
 			addSingleChangeCriteria("BlockStatement", SourceChangeType.PARENT).
 				addSingleChangeCriteria("Statement", SourceChangeType.ADD);
