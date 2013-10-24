@@ -39,8 +39,8 @@ public abstract class AbstractRefactoringImplementer implements
 		this.cuCalculator = cuCalculator;
 	}
 	
-	protected void collectAutoRefactoringChangesAsync
-		(Change change, IAutoChangeCallback callback)
+	protected void collectAutoRefactoringChangesAsync(Change change, 
+		IAutoChangeCallback callback)
 	{	
 		try{
 			AutoRefactoringListener listener = new AutoRefactoringListener
@@ -112,8 +112,7 @@ public abstract class AbstractRefactoringImplementer implements
 				public Boolean f(IJavaElementDelta d) {
 					return d.getElement().getElementType() == IJavaElement.
 						COMPILATION_UNIT;
-				}
-			});
+			}});
 		}
 	}
 
@@ -148,8 +147,7 @@ public abstract class AbstractRefactoringImplementer implements
 			{
 				this.unitsAfter = elements.map(parser);
 				List<ISourceChange> changes = mapCompilationUnit(unitsAfter, 
-					unitsBefore).map(new F<ASTNodePair, 
-					ISourceChange>(){
+					unitsBefore).map(new F<ASTNodePair, ISourceChange>(){
 						@Override
 						public ISourceChange f(ASTNodePair pair) {
 							return cuCalculator.CalculateASTNodeChange(pair);
