@@ -8,7 +8,6 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
-import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringChecker;

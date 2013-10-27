@@ -6,15 +6,16 @@ import org.eclipse.jdt.core.dom.Type;
 
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
+import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
+import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringChecker;
-import edu.dlf.refactoring.design.IRefactoringImplementer;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.detectors.ChangeCriteriaBuilder;
-import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
 import edu.dlf.refactoring.refactorings.DetectedExtractMethodRefactoring;
@@ -29,19 +30,20 @@ import fj.data.Option;
 public class ExtractMethodChecker implements IRefactoringChecker{
 
 	private final Logger logger;
-	private final IRefactoringImplementer implementer;
 	private final String methodLevel;
+	private final IASTNodeChangeCalculator blockCalculator;
 	
 	@Inject
 	public ExtractMethodChecker(
 			Logger logger,
 			@MethodDeclarationAnnotation String methodLevel,
-			@ExtractMethod IRefactoringImplementer emImplementer)
+			@BlockAnnotation IASTNodeChangeCalculator blockCalculator)
 	{
 		this.logger = logger;
 		this.methodLevel = methodLevel;
-		this.implementer = emImplementer;
+		this.blockCalculator = blockCalculator;
 	}
+	
 	
 	@Override
 	public ICheckingResult checkRefactoring(IDetectedRefactoring 
@@ -86,21 +88,19 @@ public class ExtractMethodChecker implements IRefactoringChecker{
 			@Override
 			public List<ISourceChange> f(ISourceChange change) {
 				return criteria.search(change).bind(new 
-						F<IChangeSearchResult, List<ISourceChange>>() {
-							@Override
-							public List<ISourceChange> f(IChangeSearchResult 
-									change) {
-								return change.getSourceChanges().filter(new 
-										F<ISourceChange, Boolean>() {		
-									@Override
-									public Boolean f(ISourceChange change) {
-										return change.getSourceChangeLevel().
-											equals(methodLevel);
-									}});}});}});
+					F<IChangeSearchResult, List<ISourceChange>>() {
+						@Override
+						public List<ISourceChange> f(IChangeSearchResult 
+								change) {
+							return change.getSourceChanges().filter(new 
+									F<ISourceChange, Boolean>() {		
+								@Override
+								public Boolean f(ISourceChange change) {
+									return change.getSourceChangeLevel().
+										equals(methodLevel);
+								}});}});}});
 		if(addedMethods.isNotEmpty())
-		{
 			return Option.some(addedMethods.head().getNodeAfter());
-		}
 		else
 			return Option.none();
 	}
@@ -110,24 +110,42 @@ public class ExtractMethodChecker implements IRefactoringChecker{
 	{
 		Buffer<F2<ASTNode, ASTNode, P2<Boolean, String>>> buffer = Buffer.empty();
 		buffer.snoc(getReturnValueChecker());
+		buffer.snoc(getStatementsChecker());
 		return buffer.toList();
 	}
+	
 	
 	private F2<ASTNode, ASTNode, P2<Boolean, String>> getReturnValueChecker()
 	{
 		return new F2<ASTNode, ASTNode, P2<Boolean, String>>(){
 			@Override
 			public P2<Boolean, String> f(ASTNode m1, ASTNode m2) {
-				Type t1 = (Type) m1.getStructuralProperty(MethodDeclaration.RETURN_TYPE2_PROPERTY);
-				Type t2 = (Type) m2.getStructuralProperty(MethodDeclaration.RETURN_TYPE2_PROPERTY);								
+				Type t1 = (Type) m1.getStructuralProperty(MethodDeclaration.
+					RETURN_TYPE2_PROPERTY);
+				Type t2 = (Type) m2.getStructuralProperty(MethodDeclaration.
+					RETURN_TYPE2_PROPERTY);								
 				Boolean isSame = t1.toString().equals(t2.toString());
-				String message = "";
-				if(!isSame) message = "Return type does not match";
+				String message = "Return type right.";
+				if(!isSame) message = "Return type does not match.";
 				return P.p(isSame, message);
 			}};
 	}
 	
-	
-	
-
+	private F2<ASTNode, ASTNode, P2<Boolean, String>> getStatementsChecker()
+	{
+		return new F2<ASTNode, ASTNode, P2<Boolean,String>>() {
+			@Override
+			public P2<Boolean, String> f(ASTNode method1, ASTNode method2) {
+				ASTNode body1 = (ASTNode) method1.getStructuralProperty
+					(MethodDeclaration.BODY_PROPERTY);
+				ASTNode body2 = (ASTNode) method2.getStructuralProperty
+					(MethodDeclaration.BODY_PROPERTY);
+				ISourceChange bodyChange = blockCalculator.CalculateASTNodeChange
+					(new ASTNodePair(body1, body2));
+				if(bodyChange.getSourceChangeType() == SourceChangeType.NULL)
+					return P.p(true, "Body right.");
+				return P.p(false, "Body changed.");
+			}
+		};
+	}
 }

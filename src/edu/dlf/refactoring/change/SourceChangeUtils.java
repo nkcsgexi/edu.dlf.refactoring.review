@@ -11,6 +11,7 @@ import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.design.ServiceLocator;
+import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
 import edu.dlf.refactoring.utils.XList;
 import edu.dlf.refactoring.utils.XList.IAggregator;
 import fj.Equal;
@@ -106,6 +107,16 @@ public class SourceChangeUtils {
 			}));
 	}
 	
+	public static F<IChangeSearchResult, ISourceChange> getLeafSourceChangeFunc()
+	{
+		return new F<IChangeSearchResult, ISourceChange>() {
+			@Override
+			public ISourceChange f(IChangeSearchResult result) {
+				return result.getSourceChanges().last();
+			}
+		};
+	}
+	
 	
 	public static List<ASTNode> getEffectedASTNodesBefore(ISourceChange change)
 	{
@@ -131,6 +142,25 @@ public class SourceChangeUtils {
 			});
 	}
 	
+	
+	public static F<ISourceChange, ASTNode> getNodeBeforeFunc()
+	{
+		return new F<ISourceChange, ASTNode>() {
+			@Override
+			public ASTNode f(ISourceChange change) {
+				return change.getNodeBefore();
+			}
+		};
+	}
+	
+	public static F<ISourceChange, ASTNode> getNodeAfterFunc()
+	{
+		return new F<ISourceChange, ASTNode>(){
+			@Override
+			public ASTNode f(ISourceChange change) {
+				return change.getNodeAfter();
+			}};
+	}
 	
 	
 	private static boolean pruneSubChanges(ISourceChange change)

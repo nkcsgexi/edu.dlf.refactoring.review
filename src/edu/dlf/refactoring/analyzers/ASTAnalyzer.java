@@ -2,6 +2,7 @@ package edu.dlf.refactoring.analyzers;
 
 
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -31,6 +32,7 @@ import fj.P;
 import fj.P2;
 import fj.data.List;
 import fj.data.Option;
+import fj.data.List.Buffer;
 
 
 public class ASTAnalyzer {
@@ -196,6 +198,23 @@ public class ASTAnalyzer {
 			}
 		};
 	}
+	
+	public static F2<Integer, ASTNode, List<ASTNode>> getDecendantFunc()
+	{
+		return new F2<Integer, ASTNode, List<ASTNode>>() {
+			@Override
+			public List<ASTNode> f(Integer kind, ASTNode parent) {
+				Buffer<ASTNode> buffer = Buffer.empty();
+				Collection<ASTNode> decs = getDecendents(parent);
+				for(ASTNode node : decs) {
+					if(node.getNodeType() == kind)
+						buffer.snoc(node);
+				}
+				return buffer.toList();
+			}};
+	}
+	
+	
 	
 	public static IDistanceCalculator getASTNodeCompleteDistanceCalculator()
 	{
