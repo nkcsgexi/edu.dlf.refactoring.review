@@ -19,6 +19,7 @@ import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.FieldDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.TypeAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeDeclarationAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
@@ -37,17 +38,20 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 	private final ChangeBuilder changeBuilder;
 	private final IASTNodeChangeCalculator snChangeCalculator;
 	private final IASTNodeChangeCalculator fCalculator;
+	private final IASTNodeChangeCalculator typeCalculator;
 	
 	@Inject
 	public TypeDeclarationChangeCalculator(
 			@SimpleNameAnnotation IASTNodeChangeCalculator snChangeCalculator,
 			@TypeDeclarationAnnotation String changeLevel,
+			@TypeAnnotation IASTNodeChangeCalculator typeCalculator,
 			@FieldDeclarationAnnotation IASTNodeChangeCalculator fCalculator,
 			@MethodDeclarationAnnotation IASTNodeChangeCalculator mChangeCalculator)
 	{
 		this.snChangeCalculator = snChangeCalculator;
 		this.mChangeCalculator = mChangeCalculator;
 		this.fCalculator = fCalculator;
+		this.typeCalculator = typeCalculator;
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
 
@@ -67,6 +71,7 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 				}})));	
 			TypeDeclaration typeB = (TypeDeclaration) pair.getNodeBefore();
 			TypeDeclaration typeA = (TypeDeclaration) pair.getNodeAfter();
+			container.addMultiSubChanges(calculateSuperTypeChanges(typeB, typeA));
 			container.addMultiSubChanges(calculateFieldChanges(typeB, typeA));
 			container.addMultiSubChanges(calculateMethodChanges(typeB, typeA));
 			return container;
@@ -75,6 +80,38 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			logger.fatal(e);
 			return changeBuilder.createUnknownChange(pair);
 		}
+	}
+	
+	
+	private Collection<ISourceChange> calculateSuperTypeChanges(TypeDeclaration 
+		typeB, TypeDeclaration typeA)
+	{
+		
+		F<P2<ASTNode, ASTNode>, ISourceChange> calculateChange = 
+			new F<P2<ASTNode,ASTNode>, ISourceChange>() {
+			@Override
+			public ISourceChange f(P2<ASTNode, ASTNode> pair) {
+				return typeCalculator.CalculateASTNodeChange(ASTAnalyzer.
+					getP2PairConverter().f(pair));
+		}};
+		
+		F<ASTNode, List<ASTNode>> getSuperTypes = new F<ASTNode, List<ASTNode>>() {
+			@Override
+			public List<ASTNode> f(ASTNode type) {
+				List<ASTNode> interfaces = FunctionalJavaUtil.createListFromCollection(
+					(java.util.List)type.getStructuralProperty
+					(TypeDeclaration.SUPER_INTERFACE_TYPES_PROPERTY));
+				List<ASTNode> classes = FunctionalJavaUtil.createListFromCollection((
+					java.util.List)type.getStructuralProperty
+					(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY));
+				return interfaces.append(classes);
+		}};
+		
+		F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> mapper = 
+			ASTAnalyzer.getASTNodeMapper(4, ASTAnalyzer.
+				getASTNodeDefaultSimilarityScoreCalculator());
+		return mapper.f(getSuperTypes.f(typeB), getSuperTypes.f(typeA)).map
+			(calculateChange).toCollection();
 	}
 
 

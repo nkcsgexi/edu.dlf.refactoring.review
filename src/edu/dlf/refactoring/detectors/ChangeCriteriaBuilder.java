@@ -145,7 +145,6 @@ public class ChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 						public List<IChangeSearchResult> f(ISourceChange leaf) {
 							return getMatchedChangeChain(patternString, leaf);
 						}});
-			}
-		};
+			}};
 	}
 }

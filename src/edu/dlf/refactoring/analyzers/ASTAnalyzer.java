@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDistanceCalculator;
+import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.IEqualityComparer;
 import edu.dlf.refactoring.utils.XList;
@@ -421,18 +422,60 @@ public class ASTAnalyzer {
 					@Override
 					public Boolean f(ASTNode n2) {
 						return n1 == n2;
-					}
-				};
-			}});
+			}};}});
 	}
+	
+	public static F2<ASTNode, ASTNode, P2<ASTNode, ASTNode>> getPNodeFunc()
+	{
+		return new F2<ASTNode, ASTNode, P2<ASTNode,ASTNode>>() {
+			@Override
+			public P2<ASTNode, ASTNode> f(ASTNode arg0, ASTNode arg1) {
+				return P.p(arg0, arg1);
+			}
+		};
+	}
+	
+	public static F<P2<ASTNode, ASTNode>, ASTNodePair> getP2PairConverter()
+	{
+		return new F<P2<ASTNode,ASTNode>, ASTNodePair>() {
+			@Override
+			public ASTNodePair f(P2<ASTNode, ASTNode> p) {
+				return new ASTNodePair(p._1(), p._2());
+			}};
+	}
+	
+	
+	public static F<ASTNodePair, P2<ASTNode, ASTNode>> getPair2PConverter()
+	{
+		return new F<ASTNodePair, P2<ASTNode,ASTNode>>(){
+			@Override
+			public P2<ASTNode, ASTNode> f(ASTNodePair pair) {
+				return P.p(pair.getNodeBefore(), pair.getNodeAfter());
+			}};
+	}
+	
+	public static F<P2<ASTNode, ASTNode>, ASTNode> getP1Func = 
+		new F<P2<ASTNode,ASTNode>, ASTNode>() {
+		@Override
+		public ASTNode f(P2<ASTNode, ASTNode> p) {
+			return p._1();
+	}}; 
+	
+	public static F<P2<ASTNode, ASTNode>, ASTNode> getP2Func = 
+			new F<P2<ASTNode,ASTNode>, ASTNode>() {
+			@Override
+			public ASTNode f(P2<ASTNode, ASTNode> p) {
+				return p._2();
+	}}; 
+		
+	
 	
 	public static F2<ASTNode, ASTNode, Integer> getASTNodeDefaultSimilarityScoreCalculator() {
 		return new F2<ASTNode, ASTNode, Integer>() {
 			@Override
 			public Integer f(ASTNode n1, ASTNode n2) {
 				return 0 - XStringUtils.distance(n1.toString(), n2.toString());
-			}
-		};
+			}};
 	}
 
 	public static Boolean areNodesNeighbors(ASTNode node1, ASTNode node2) {

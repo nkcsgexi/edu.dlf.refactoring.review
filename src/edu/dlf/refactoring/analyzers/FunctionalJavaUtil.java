@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.analyzers;
 
+import java.util.Collection;
+
 import fj.Equal;
 import fj.F;
 import fj.P;
@@ -52,6 +54,15 @@ public class FunctionalJavaUtil {
 			{
 				buffer.snoc(P.p(head, found.some()));
 			}
+		}
+		return buffer.toList();
+	}
+
+	public static <T> List<T> createListFromCollection(Collection<T> items) {
+		Buffer<T> buffer = Buffer.empty();
+		for(T t : items)
+		{
+			buffer.snoc(t);
 		}
 		return buffer.toList();
 	}
