@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Statement;
@@ -261,6 +262,19 @@ public class ASTAnalyzer {
 		return "";
 	}
 	
+	public static F<ASTNode, List<ASTNode>> getAllDecendantsFunc = 
+		new F<ASTNode, List<ASTNode>>() {
+		@Override
+		public List<ASTNode> f(ASTNode root) {
+			return FunctionalJavaUtil.createListFromCollection(getDecendents(root));
+		}};
+		
+	public static F<ASTNode, List<ASTNode>> getChildrenFunc = 
+		new F<ASTNode, List<ASTNode>>() {
+		@Override
+		public List<ASTNode> f(ASTNode arg0) {
+			return FunctionalJavaUtil.createListFromCollection(getChildren(arg0));
+		}};
 	
 	public static boolean areASTNodeSame (ASTNode node1, ASTNode node2)
 	{
@@ -468,6 +482,14 @@ public class ASTAnalyzer {
 				return p._2();
 	}}; 
 		
+	public static F<ASTNode, String> getInvokedMethodName = new F<ASTNode, String>() {
+		@Override
+		public String f(ASTNode node) {
+			return node.getStructuralProperty(MethodInvocation.NAME_PROPERTY).
+				toString();
+		}
+	};
+	
 	
 	
 	public static F2<ASTNode, ASTNode, Integer> getASTNodeDefaultSimilarityScoreCalculator() {

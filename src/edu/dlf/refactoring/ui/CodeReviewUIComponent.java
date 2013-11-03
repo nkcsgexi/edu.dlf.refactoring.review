@@ -30,11 +30,13 @@ import fj.data.List;
 
 public class CodeReviewUIComponent implements IFactorComponent{
 	
+	private final EventBus bus = new EventBus();
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	private final Multimap<String, ICheckingResult> allResults = 
 			ArrayListMultimap.create();
 	private final Hashtable<ICheckingResult, Color> colorRepo = new 
 		Hashtable<ICheckingResult, Color>();
+	
 	private final F<ICheckingResult, Color> getColorFunc = 
 		new F<ICheckingResult, Color>() {
 		@Override
@@ -44,10 +46,7 @@ public class CodeReviewUIComponent implements IFactorComponent{
 				colorRepo.put(result, UIUtils.getNextColor());
 			}
 			return colorRepo.get(result);
-		}
-	};
-	
-	private final EventBus bus = new EventBus();
+	}};
 
 	
 	@Inject

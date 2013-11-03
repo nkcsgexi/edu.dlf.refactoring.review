@@ -59,6 +59,7 @@ public class FunctionalJavaUtil {
 	}
 
 	public static <T> List<T> createListFromCollection(Collection<T> items) {
+		if(items == null || items.isEmpty()) return List.nil();
 		Buffer<T> buffer = Buffer.empty();
 		for(T t : items)
 		{
