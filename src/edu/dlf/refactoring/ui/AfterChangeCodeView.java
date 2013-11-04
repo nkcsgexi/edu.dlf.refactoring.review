@@ -14,6 +14,6 @@ public class AfterChangeCodeView extends CodeView {
 
 	@Override
 	public void callBack(Object output) {
-		UpdateCodeInternal(((StyledTextUpdater[])output)[1]);
+		UpdateCodeInternal(((StyledTextUpdater[])output)[2]);
 	}
 }

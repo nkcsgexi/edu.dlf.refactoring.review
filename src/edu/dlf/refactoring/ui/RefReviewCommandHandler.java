@@ -31,22 +31,19 @@ public class RefReviewCommandHandler extends AbstractHandler {
 		String id = event.getCommand().getId();
 		if(id.equals("RefReview.CalculateDiff")){
 			queue.execute(new Runnable(){
-				@Override
-				public void run() {
-					context.clearContext();
-					if(input.getInputType() == InputType.ASTNode)
-					{
-						changeComp.listen(new ASTNodePair((ASTNode) input.getInputBefore(),
-							(ASTNode) input.getInputAfter()));
-					}
-					else{
-						JavaElementPair pair = new JavaElementPair((IJavaElement)
-							input.getInputBefore(), (IJavaElement)input.
-								getInputAfter());
-						changeComp.listen(pair);
-					}
-				}});
-		}
+			@Override
+			public void run() {
+				context.clearContext();
+				if(input.getInputType() == InputType.ASTNode) {
+					changeComp.listen(new ASTNodePair((ASTNode) input.getInputBefore(),
+						(ASTNode) input.getInputAfter()));
+				}
+				else {
+					JavaElementPair pair = new JavaElementPair((IJavaElement)
+						input.getInputBefore(), (IJavaElement)input.
+							getInputAfter());
+					changeComp.listen(pair);
+			}}});}
 		return null;
 	}
 }

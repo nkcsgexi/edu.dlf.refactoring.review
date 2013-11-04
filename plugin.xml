@@ -14,7 +14,7 @@
       <view
             class="edu.dlf.refactoring.ui.BeforeChangeCodeView"
             id="RefReview.BeforeChangeCodeView"
-            name="Code after change"
+            name="Code before change"
             restorable="true">
       </view>
       <view
@@ -27,6 +27,12 @@
             class="edu.dlf.refactoring.ui.DiffTreeView"
             id="RefReview.DiffTreeView"
             name="Diff Structure"
+            restorable="true">
+      </view>
+      <view
+            class="edu.dlf.refactoring.ui.CodeViewAfterHiding"
+            id="RefReview.AfterHidingCodeView"
+            name="Code after hiding refactorings"
             restorable="true">
       </view>
    </extension>

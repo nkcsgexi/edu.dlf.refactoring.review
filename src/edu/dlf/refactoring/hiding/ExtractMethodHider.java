@@ -16,7 +16,10 @@ import fj.P2;
 import fj.data.List;
 
 public class ExtractMethodHider extends AbstractRefactoringHider{
-
+	private final F<ASTNode, List<ASTNode>> findMethodsDecFunc = ASTAnalyzer.
+		getDecendantFunc().f(ASTNode.METHOD_DECLARATION);
+	private final F<ASTNode, List<ASTNode>> findMethodInvsFunc = ASTAnalyzer.
+		getDecendantFunc().f(ASTNode.METHOD_INVOCATION);
 	private final Logger logger;
 	
 	@Inject
@@ -36,34 +39,25 @@ public class ExtractMethodHider extends AbstractRefactoringHider{
 		final String statements = removedStatements.map(astNode2String).foldLeft
 			(XStringUtils.stringCombiner, new StringBuilder()).toString();
 		
-		UpdateRuleBuilder builder = new UpdateRuleBuilder();
+		ASTUpdator updator = new ASTUpdator();
+		findMethodsDecFunc.f(afterRoot).filter(ASTAnalyzer.
+			getMethodDeclarationNamesEqualFunc().f(addedMethod)).map(
+				new F<ASTNode, P2<ASTNode, String>>() {
+					@Override
+					public P2<ASTNode, String> f(ASTNode node) {
+						return P.p(node, "");
+		}}).foreach(add2Updator.f(updator));
 		
-		// Add remove method rule.
-		builder.addUpdateRule(new F<ASTNode, P2<String,Boolean>>() {
+		findMethodInvsFunc.f(afterRoot).filter(new F<ASTNode, Boolean>() {
 			@Override
-			public P2<String, Boolean> f(ASTNode node) {
-				if(node.getNodeType() == ASTNode.METHOD_DECLARATION) {
-					if(ASTAnalyzer.getMethodDeclarationNamesEqualFunc().f
-						(addedMethod, node))
-						return P.p("", true);
-				}
-				return getDefaultUpdate.f(node);
-			}});
-		
-		// Add flatten method invocation
-		builder.addUpdateRule(new F<ASTNode, P2<String,Boolean>>() {
+			public Boolean f(ASTNode inv) {
+				return ASTAnalyzer.getInvokedMethodName.f(inv).equals(addedMethodName);
+		}}).map(new F<ASTNode, P2<ASTNode, String>>() {
 			@Override
-			public P2<String, Boolean> f(ASTNode node) {
-				if(node.getNodeType() == ASTNode.METHOD_INVOCATION)
-				{
-					String name = ASTAnalyzer.getInvokedMethodName.f(node);
-					if(name.equals(addedMethodName))
-					{
-						return P.p(statements, true);
-					}
-				}
-				return getDefaultUpdate.f(node);
-		}});		
-		return new ASTUpdator(builder.getCombinedRule()).f(afterRoot);
+			public P2<ASTNode, String> f(ASTNode node) {
+				return P.p(node, statements);
+		}}).foreach(add2Updator.f(updator));
+	
+		return updator.f(afterRoot);
 	}
 }

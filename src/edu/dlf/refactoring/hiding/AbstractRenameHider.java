@@ -27,18 +27,7 @@ public abstract class AbstractRenameHider extends AbstractRefactoringHider{
 			(getBeforeNamesDescriptor()).head().toString();
 		final String afterName = refactoring.getEffectedNodeList
 			(getAfterNamesDescriptor()).head().toString();
-		UpdateRuleBuilder builder = new UpdateRuleBuilder();
-		builder.addUpdateRule(new F<ASTNode, P2<String,Boolean>>() {
-			@Override
-			public P2<String, Boolean> f(ASTNode node) {
-				if(node.getNodeType() == ASTNode.SIMPLE_NAME
-					&& node.toString().equals(afterName))
-				{	
-					return P.p(beforeName, true);
-				}
-				return getDefaultUpdate.f(node);
-		}});
-		return new ASTUpdator(builder.getCombinedRule()).f(rootAfter);
+		return rootAfter;
 	}
 
 }

@@ -28,6 +28,8 @@ import edu.dlf.refactoring.change.HistorySavingComponent;
 import edu.dlf.refactoring.checkers.RefactoringCheckerComponent;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponent;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector;
+import edu.dlf.refactoring.hiding.HidingComponentInjector;
+import edu.dlf.refactoring.hiding.RefactoringHidingComponent;
 import edu.dlf.refactoring.implementer.ImplementerCompInjector;
 import edu.dlf.refactoring.implementer.RefactoringImplementerComponent;
 import edu.dlf.refactoring.ui.CodeReviewUIComponent;
@@ -75,6 +77,12 @@ public class ServiceLocator extends AbstractModule {
 	@Retention(RUNTIME)
 	public @interface UICompAnnotation {
 	}
+	
+	@BindingAnnotation
+	@Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR })
+	@Retention(RUNTIME)
+	public @interface HidingCompAnnotation {
+	}
 
 	private ServiceLocator() {
 
@@ -82,37 +90,29 @@ public class ServiceLocator extends AbstractModule {
 
 	@Override
 	protected void configure() {
-
 		this.install(new ChangeComponentInjector());
 		this.install(new RefactoringDetectionComponentInjector());
 		this.install(new ImplementerCompInjector());
 		this.install(new UICompInjector());
+		this.install(new HidingComponentInjector());
 
 		bind(ComponentsRepository.class).in(Singleton.class);
-
-		bind(IFactorComponent.class)
-				.annotatedWith(HistorySavingCompAnnotation.class)
-				.to(HistorySavingComponent.class).in(Singleton.class);
-		
+		bind(IFactorComponent.class).annotatedWith(HistorySavingCompAnnotation.class)
+			.to(HistorySavingComponent.class).in(Singleton.class);
 		bind(IFactorComponent.class).annotatedWith(ChangeCompAnnotation.class)
-				.to(ChangeComponent.class).in(Singleton.class);
-		
-		bind(IFactorComponent.class)
-				.annotatedWith(RefactoringDetectionCompAnnotation.class)
-				.to(RefactoringDetectionComponent.class).in(Singleton.class);
-		
-		bind(IFactorComponent.class)
-		.annotatedWith(RefactoringImplementaterCompAnnotation.class)
-		.to(RefactoringImplementerComponent.class).in(Singleton.class);
-		
-		
-		bind(IFactorComponent.class)
-				.annotatedWith(RefactoringCheckerCompAnnotation.class)
-				.to(RefactoringCheckerComponent.class).in(Singleton.class);
-		
-		
+			.to(ChangeComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(RefactoringDetectionCompAnnotation.class)
+			.to(RefactoringDetectionComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(RefactoringImplementaterCompAnnotation.class)
+			.to(RefactoringImplementerComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(RefactoringCheckerCompAnnotation.class)
+			.to(RefactoringCheckerComponent.class).in(Singleton.class);
 		bind(IFactorComponent.class).annotatedWith(UICompAnnotation.class)
-				.to(CodeReviewUIComponent.class).in(Singleton.class);
+			.to(CodeReviewUIComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(HidingCompAnnotation.class)
+			.to(RefactoringHidingComponent.class).in(Singleton.class);
+
+		
 	}
 
 	public static <T> T ResolveType(Class T) {

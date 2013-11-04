@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTMatcher;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -159,24 +160,26 @@ public class ASTAnalyzer {
 	
 	public static XList<ASTNode> getChildren(ASTNode root)
 	{
-		XList<ASTNode> allChildren = XList.CreateList();
-	    java.util.List list= root.structuralPropertiesForType();
-	    for (int i= 0; i < list.size(); i++) {
-	        StructuralPropertyDescriptor curr= (StructuralPropertyDescriptor) list.get(i);
-            Object child = root.getStructuralProperty(curr);
-	        if (child instanceof List) {
-	        	for(Object c : (List)child)
-	        	{
-	        		if(c instanceof ASTNode)
-	        		{
-	        			allChildren.add((ASTNode)c);
-	        		}
-	        	}
-	        } else if (child instanceof ASTNode) {
-	            allChildren.add((ASTNode)child);
-            }
-	    }
-	    return allChildren;
+		collectChildrenVisitor visitor = new collectChildrenVisitor(root);
+		root.accept(visitor);
+		return visitor.children;
+	}
+	
+	private static class collectChildrenVisitor extends ASTVisitor
+	{
+		private final XList<ASTNode> children = XList.CreateList();
+		private final ASTNode parent;
+		
+		private collectChildrenVisitor(ASTNode parent)
+		{
+			this.parent = parent;
+		}
+		
+		public void preVisit(ASTNode node)
+		{
+			if(node.getParent() == parent)
+				children.add(node);
+		}
 	}
 	
 	public static boolean areASTNodesSame(ASTNode before, ASTNode after) {

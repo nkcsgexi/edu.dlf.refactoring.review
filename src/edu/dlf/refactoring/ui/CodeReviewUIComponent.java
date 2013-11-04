@@ -19,6 +19,8 @@ import edu.dlf.refactoring.design.IDetectedRefactoring.NodeListDescriptor;
 import edu.dlf.refactoring.design.IDetectedRefactoring.SingleNodeDescriptor;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.ServiceLocator;
+import edu.dlf.refactoring.design.ServiceLocator.HidingCompAnnotation;
+import edu.dlf.refactoring.hiding.IHidingComponentInput;
 import edu.dlf.refactoring.utils.UIUtils;
 import fj.Effect;
 import fj.F;
@@ -36,22 +38,23 @@ public class CodeReviewUIComponent implements IFactorComponent{
 			ArrayListMultimap.create();
 	private final Hashtable<ICheckingResult, Color> colorRepo = new 
 		Hashtable<ICheckingResult, Color>();
+	private final IFactorComponent hidingComponent;
 	
 	private final F<ICheckingResult, Color> getColorFunc = 
-		new F<ICheckingResult, Color>() {
-		@Override
-		public Color f(ICheckingResult result) {
-			if(!colorRepo.containsKey(result))
-			{
-				colorRepo.put(result, UIUtils.getNextColor());
-			}
-			return colorRepo.get(result);
-	}};
-
+			new F<ICheckingResult, Color>() {
+			@Override
+			public Color f(ICheckingResult result) {
+				if(!colorRepo.containsKey(result))
+				{
+					colorRepo.put(result, UIUtils.getNextColor());
+				}
+				return colorRepo.get(result);
+		}};
 	
 	@Inject
-	public CodeReviewUIComponent()
+	public CodeReviewUIComponent(@HidingCompAnnotation IFactorComponent hidingComponent)
 	{
+		this.hidingComponent = hidingComponent;
 	}
 	
 	public synchronized void updateViewedCode(ASTNode rootBefore, ASTNode rootAfter)
@@ -59,10 +62,42 @@ public class CodeReviewUIComponent implements IFactorComponent{
 		String mainTypeName = ASTAnalyzer.getMainTypeName(rootBefore);
 		StyledTextUpdater[] updators = new StyledTextUpdater[]{ 
 			createStyledTextUpdatorBefore(rootBefore, 
-				List.iterableList(allResults.get(mainTypeName))),
+				List.iterableList(allResults.get(mainTypeName))), null,
 			createStyledTextUpdatorAfter(rootAfter, List.iterableList
 				(allResults.get(mainTypeName)))};
-		this.bus.post(updators);
+		updateViewHidingRefactoring(rootAfter, List.iterableList
+			(allResults.get(mainTypeName)), updators);
+	}
+	
+	private void updateViewHidingRefactoring(final ASTNode root, final List
+		<ICheckingResult> results, final StyledTextUpdater[] updators)
+	{
+		this.hidingComponent.listen(new IHidingComponentInput() {
+			@Override
+			public ASTNode getRootNode() {
+				return root;
+			}
+			
+			@Override
+			public List<IDetectedRefactoring> getHideRefactorings() {
+				return results.filter(new F<ICheckingResult, Boolean>() {
+					@Override
+					public Boolean f(ICheckingResult result) {
+						return result.IsBehaviorPreserving();
+					}}).map(new F<ICheckingResult, IDetectedRefactoring>() {
+						@Override
+						public IDetectedRefactoring f(ICheckingResult result) {
+							return result.getDetectedRefactoring();
+						}});
+			}
+			
+			@Override
+			public void callback(ASTNode rootAfterHiding) {
+				StyledTextUpdater updater = new StyledTextUpdater();
+				updater.setText(rootAfterHiding.toString());
+				updators[1] = updater;
+				bus.post(updators);
+			}});
 	}
 	
 	private StyledTextUpdater createStyledTextUpdatorAfter(ASTNode root, 
@@ -109,8 +144,7 @@ public class CodeReviewUIComponent implements IFactorComponent{
 				int length = p._2().getLength();
 				Color color = getColorFunc.f(p._1());
 				return P.p(start, length, color);
-			}
-		};
+		}};
 	}
 	
 	private List<P2<ICheckingResult, ASTNode>> getCorrectRefactoredNode(
@@ -157,9 +191,7 @@ public class CodeReviewUIComponent implements IFactorComponent{
 							public P2<ICheckingResult, ASTNode> f(
 									ICheckingResult result, ASTNode node) {
 								return P.p(result, node);
-							}
-						});
-				}});
+							}});}});
 	}
 	
 	
