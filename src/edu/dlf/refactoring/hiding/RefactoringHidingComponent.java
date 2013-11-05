@@ -12,6 +12,9 @@ import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import edu.dlf.refactoring.utils.WorkQueue;
 import fj.F;
 
@@ -36,12 +39,18 @@ public class RefactoringHidingComponent implements IFactorComponent{
 	
 	@Inject
 	public RefactoringHidingComponent(Logger logger, WorkQueue queue,
-			@ExtractMethod AbstractRefactoringHider emHider)
+			@ExtractMethod AbstractRefactoringHider emHider,
+			@RenameMethod AbstractRefactoringHider rmHider,
+			@RenameType AbstractRefactoringHider rtHider,
+			@MoveResource AbstractRefactoringHider mrHider)
 	{
 		this.logger = logger;
 		this.queue = queue;
 		this.allHiders = new HashMap<RefactoringType, AbstractRefactoringHider>();
 		allHiders.put(RefactoringType.ExtractMethod, emHider);
+		allHiders.put(RefactoringType.RenameMethod, rmHider);
+		allHiders.put(RefactoringType.RenameType, rtHider);
+		allHiders.put(RefactoringType.Move, mrHider);
 	}
 	
 	

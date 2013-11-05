@@ -27,7 +27,7 @@ import edu.dlf.refactoring.detectors.ExtractMethodDetector;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponent;
 import edu.dlf.refactoring.detectors.RenameMethodDetector;
 import edu.dlf.refactoring.refactorings.DetectedExtractMethodRefactoring;
-import edu.dlf.refactoring.refactorings.RenameMethodRefactoring;
+import edu.dlf.refactoring.refactorings.DetectedRenameMethodRefactoring;
 import fj.data.List;
 
 public class ExtractMethodDetectorTests extends TestSuite{
@@ -86,9 +86,9 @@ public class ExtractMethodDetectorTests extends TestSuite{
 		List<IDetectedRefactoring> refactorings = rmDetector.detectRefactoring(change);
 		Assert.isTrue(refactorings.length() == 2);
 		IDetectedRefactoring ref = refactorings.head();
-		Assert.isTrue(ref instanceof RenameMethodRefactoring);
-		List<ASTNode> namesBefore = ref.getEffectedNodeList(RenameMethodRefactoring.SimpleNamesBefore);
-		List<ASTNode> namesAfter = ref.getEffectedNodeList(RenameMethodRefactoring.SimpleNamesAfter);
+		Assert.isTrue(ref instanceof DetectedRenameMethodRefactoring);
+		List<ASTNode> namesBefore = ref.getEffectedNodeList(DetectedRenameMethodRefactoring.SimpleNamesBefore);
+		List<ASTNode> namesAfter = ref.getEffectedNodeList(DetectedRenameMethodRefactoring.SimpleNamesAfter);
 		
 	}
 

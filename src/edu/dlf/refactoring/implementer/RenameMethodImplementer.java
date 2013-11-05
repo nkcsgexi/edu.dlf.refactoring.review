@@ -17,7 +17,7 @@ import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.RefactoringType;
-import edu.dlf.refactoring.refactorings.RenameMethodRefactoring;
+import edu.dlf.refactoring.refactorings.DetectedRenameMethodRefactoring;
 import edu.dlf.refactoring.utils.RefactoringUtils;
 import fj.F;
 import fj.data.List;
@@ -42,7 +42,7 @@ public class RenameMethodImplementer extends AbstractRenameImplementer{
 	public void implementRefactoring
 			(final IDetectedRefactoring detectedRefactoring, 
 			final IImplementedRefactoringCallback callback) {
-		List<ASTNode> names = detectedRefactoring.getEffectedNodeList(RenameMethodRefactoring.
+		List<ASTNode> names = detectedRefactoring.getEffectedNodeList(DetectedRenameMethodRefactoring.
 			SimpleNamesBefore);
 		F<ASTNode, IJavaElement> getElement = new F<ASTNode, IJavaElement>() {
 			@Override
@@ -76,7 +76,7 @@ public class RenameMethodImplementer extends AbstractRenameImplementer{
 	private String getNewName(IDetectedRefactoring refactoring)
 	{
 		SimpleName name = (SimpleName) refactoring.getEffectedNodeList(
-			RenameMethodRefactoring.SimpleNamesAfter).head();
+			DetectedRenameMethodRefactoring.SimpleNamesAfter).head();
 		return name.getIdentifier();
 	}
 	

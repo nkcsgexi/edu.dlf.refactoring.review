@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
-import edu.dlf.refactoring.analyzers.XStringUtils;
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.Effect;
 import fj.F;

@@ -13,7 +13,7 @@ import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
-import edu.dlf.refactoring.refactorings.RenameMethodRefactoring;
+import edu.dlf.refactoring.refactorings.DetectedRenameMethodRefactoring;
 import fj.Equal;
 import fj.F;
 import fj.Ord;
@@ -89,7 +89,7 @@ public class RenameMethodDetector extends AbstractRefactoringDetector{
 						public ASTNode f(IChangeSearchResult result) {
 							return getLastChangeAfterName(result);
 						}});
-					return new RenameMethodRefactoring(namesBefore, namesAfter);				
+					return new DetectedRenameMethodRefactoring(namesBefore, namesAfter);				
 				}});
 	}
 }

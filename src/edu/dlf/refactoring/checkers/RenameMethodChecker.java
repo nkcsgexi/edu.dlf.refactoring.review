@@ -16,7 +16,7 @@ import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.detectors.ChangeCriteriaBuilder;
 import edu.dlf.refactoring.detectors.ChangeSearchUtils;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
-import edu.dlf.refactoring.refactorings.RenameMethodRefactoring;
+import edu.dlf.refactoring.refactorings.DetectedRenameMethodRefactoring;
 import fj.Equal;
 import fj.F;
 import fj.Ord;
@@ -45,9 +45,9 @@ public class RenameMethodChecker implements IRefactoringChecker{
 	public synchronized ICheckingResult checkRefactoring(IDetectedRefactoring 
 		detected, IImplementedRefactoring implemented) {
 		List<ASTNode> namesBefore = detected.getEffectedNodeList(
-			RenameMethodRefactoring.SimpleNamesBefore);
+			DetectedRenameMethodRefactoring.SimpleNamesBefore);
 		List<ASTNode> namesAfter = detected.getEffectedNodeList(
-			RenameMethodRefactoring.SimpleNamesAfter);
+			DetectedRenameMethodRefactoring.SimpleNamesAfter);
 		
 		Equal<ASTNode> eqFunc = Equal.stringEqual.comap(ASTAnalyzer.
 			getContainingCompilationUnitName());

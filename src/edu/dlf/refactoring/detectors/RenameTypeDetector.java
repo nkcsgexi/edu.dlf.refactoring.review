@@ -13,7 +13,7 @@ import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
-import edu.dlf.refactoring.refactorings.RenameTypeRefactoring;
+import edu.dlf.refactoring.refactorings.DetectedRenameTypeRefactoring;
 import fj.Equal;
 import fj.F;
 import fj.Ord;
@@ -63,7 +63,7 @@ public class RenameTypeDetector extends AbstractRefactoringDetector{
 			@Override
 			public IDetectedRefactoring f(List<ISourceChange> changes) {
 				logger.info("Create a rename type.");
-				return new RenameTypeRefactoring(changes.map(SourceChangeUtils.
+				return new DetectedRenameTypeRefactoring(changes.map(SourceChangeUtils.
 					getNodeBeforeFunc()), changes.map(SourceChangeUtils.
 						getNodeAfterFunc()));
 		}});

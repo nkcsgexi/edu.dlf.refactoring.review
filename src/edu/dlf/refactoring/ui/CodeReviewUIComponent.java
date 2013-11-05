@@ -94,7 +94,8 @@ public class CodeReviewUIComponent implements IFactorComponent{
 			@Override
 			public void callback(ASTNode rootAfterHiding) {
 				StyledTextUpdater updater = new StyledTextUpdater();
-				updater.setText(rootAfterHiding.toString());
+				updater.setText(ASTAnalyzer.getOriginalSourceFromRoot
+					(rootAfterHiding));
 				updators[1] = updater;
 				bus.post(updators);
 			}});
