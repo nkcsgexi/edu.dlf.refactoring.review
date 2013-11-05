@@ -10,14 +10,14 @@ import fj.Effect;
 import fj.F;
 import fj.Ord;
 import fj.P;
-import fj.P2;
+import fj.P3;
 import fj.data.List;
 import fj.data.List.Buffer;
 
 public class ASTUpdator extends F<ASTNode, ASTNode>{
 	
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
-	private final Buffer<P2<ASTNode, String>> replacementBuffer = Buffer.empty();
+	private final Buffer<P3<Integer, Integer, String>> replacementBuffer = Buffer.empty();
 	
 	private final Effect<ASTNode> printNode = new Effect<ASTNode>() {
 		@Override
@@ -27,29 +27,35 @@ public class ASTUpdator extends F<ASTNode, ASTNode>{
 	
 	public void addNodeUpdate(ASTNode node, String replace)
 	{
-		replacementBuffer.snoc(P.p(node, replace));
+		replacementBuffer.snoc(P.p(node.getStartPosition(), node.getLength(), replace));
 	}
+	
+	public void addInsertCode(int position, String code)
+	{
+		replacementBuffer.snoc(P.p(position, 0, code));
+	}
+	
 	
 	@Override
 	public ASTNode f(ASTNode node) {
 		String originalCode = ASTAnalyzer.getOriginalSourceFromRoot(node.getRoot());
-		List<P2<ASTNode, String>> replaces = replacementBuffer.toList();
-		Ord<P2<ASTNode, String>> order = Ord.intOrd.comap(new F<P2<ASTNode,String>, 
-			Integer>() {
+		List<P3<Integer, Integer, String>> replaces = replacementBuffer.toList();
+		Ord<P3<Integer, Integer, String>> order = Ord.intOrd.comap(
+			new F<P3<Integer, Integer, String>, Integer>() {
 			@Override
-			public Integer f(P2<ASTNode, String> p) {
-				return p._1().getStartPosition();
-			}});
-		F<String, F<P2<ASTNode, String>, String>> folder = 
-			new F<String, F<P2<ASTNode,String>,String>>() {
+			public Integer f(P3<Integer, Integer, String> p) {
+				return p._1();
+		}});
+		F<String, F<P3<Integer, Integer, String>, String>> folder = 
+			new F<String, F<P3<Integer, Integer, String>,String>>() {
 			@Override
-			public F<P2<ASTNode, String>, String> f(final String code) {
-				return new F<P2<ASTNode,String>, String>() {
+			public F<P3<Integer, Integer, String>, String> f(final String code) {
+				return new F<P3<Integer, Integer ,String>, String>() {
 					@Override
-					public String f(final P2<ASTNode, String> replace) {
+					public String f(final P3<Integer, Integer, String> replace) {
 						StringBuilder sb = new StringBuilder();
-						int nodeStart = replace._1().getStartPosition();
-						int nodeLength = replace._1().getLength();
+						int nodeStart = replace._1();
+						int nodeLength = replace._2();
 						sb.append(code.substring(0, nodeStart));
 						sb.append(replace._2());
 						sb.append(code.substring(nodeStart + nodeLength));

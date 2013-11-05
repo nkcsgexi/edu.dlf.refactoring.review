@@ -121,6 +121,21 @@ public class ASTAnalyzer {
 	}
 	
 	
+	public static F<Integer, F<ASTNode, List<ASTNode>>> getAncestorsFunc =
+		new F<Integer, F<ASTNode,List<ASTNode>>>() {
+			@Override
+			public F<ASTNode, List<ASTNode>> f(final Integer kind) {
+				return new F<ASTNode, List<ASTNode>>() {
+					@Override
+					public List<ASTNode> f(ASTNode node) {
+						return FunctionalJavaUtil.createListFromCollection
+							(getAncestors(node)).filter(new F<ASTNode, Boolean>() {
+								@Override
+								public Boolean f(ASTNode node) {
+									return node.getNodeType() == kind;
+	}});}};}};
+	
+	
 	public static XList<ASTNode> getAncestors(ASTNode node)
 	{
 		XList<ASTNode> results = XList.CreateList();
@@ -428,6 +443,16 @@ public class ASTAnalyzer {
 			}
 		};
 	}
+	
+	public static Equal<ASTNode> sameMainTypeEq = Equal.stringEqual.
+		comap(new F<ASTNode, String>() {
+			@Override
+			public String f(ASTNode node) {
+				return getMainTypeName(node.getRoot());
+	}});
+	
+
+
 	
 	
 	public static Equal<ASTNode> getASTNodeEQ()
