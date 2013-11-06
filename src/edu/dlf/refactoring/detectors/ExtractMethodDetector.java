@@ -75,8 +75,7 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 					(getLeafChange.f(pair._2())).find(findType).some();
 				return (type1 == null || type2 == null) ? false : ASTAnalyzer.
 					areTypesSame(type1, type2);
-			}
-		};
+		}};
 		
 		final Equal<P2<IChangeSearchResult, IChangeSearchResult>> eq = 
 			Equal.equal(new F<P2<IChangeSearchResult, IChangeSearchResult>, 

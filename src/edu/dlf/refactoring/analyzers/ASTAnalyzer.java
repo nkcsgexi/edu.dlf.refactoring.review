@@ -136,6 +136,18 @@ public class ASTAnalyzer {
 	}});}};}};
 	
 	
+	public static F<F<ASTNode, Boolean>, F<ASTNode, List<ASTNode>>>
+		getAncestorsConditionalFunc = new F<F<ASTNode,Boolean>, F<ASTNode,List<ASTNode>>>() {
+			@Override
+			public F<ASTNode, List<ASTNode>> f(final F<ASTNode, Boolean> condition) {
+				return new F<ASTNode, List<ASTNode>>() {
+					@Override
+					public List<ASTNode> f(final ASTNode node) {
+						return FunctionalJavaUtil.createListFromCollection
+							(getAncestors(node)).filter(condition);
+	}};}};
+	
+	
 	public static XList<ASTNode> getAncestors(ASTNode node)
 	{
 		XList<ASTNode> results = XList.CreateList();

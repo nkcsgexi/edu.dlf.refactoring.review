@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
+import edu.dlf.refactoring.analyzers.ASTNode2ASTNodeUtils;
 import edu.dlf.refactoring.analyzers.XStringUtils;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.refactorings.DetectedExtractMethodRefactoring;
@@ -16,11 +17,11 @@ import fj.P2;
 import fj.data.List;
 
 public class ExtractMethodHider extends AbstractRefactoringHider{
+	private final Logger logger;
 	private final F<ASTNode, List<ASTNode>> findMethodsDecFunc = ASTAnalyzer.
 		getDecendantFunc().f(ASTNode.METHOD_DECLARATION);
 	private final F<ASTNode, List<ASTNode>> findMethodInvsFunc = ASTAnalyzer.
 		getDecendantFunc().f(ASTNode.METHOD_INVOCATION);
-	private final Logger logger;
 	
 	@Inject
 	public ExtractMethodHider(Logger logger)
@@ -34,10 +35,9 @@ public class ExtractMethodHider extends AbstractRefactoringHider{
 			DetectedExtractMethodRefactoring.DeclaredMethod);
 		final String addedMethodName = addedMethod.getStructuralProperty
 			(MethodDeclaration.NAME_PROPERTY).toString();
-		final List<ASTNode> removedStatements = refactoring.getEffectedNodeList(
-			DetectedExtractMethodRefactoring.ExtractedStatements);
-		final String statements = removedStatements.map(astNode2String).foldLeft
-			(XStringUtils.stringCombiner, new StringBuilder()).toString();
+		final String statements = ASTNode2ASTNodeUtils.getMethodStatements.f(addedMethod).
+			map(astNode2String).foldLeft(XStringUtils.stringCombiner, 
+				new StringBuilder()).toString();
 		
 		ASTUpdator updator = new ASTUpdator();
 		findMethodsDecFunc.f(afterRoot).filter(ASTAnalyzer.
@@ -52,7 +52,8 @@ public class ExtractMethodHider extends AbstractRefactoringHider{
 			@Override
 			public Boolean f(ASTNode inv) {
 				return ASTAnalyzer.getInvokedMethodName.f(inv).equals(addedMethodName);
-		}}).map(new F<ASTNode, P2<ASTNode, String>>() {
+		}}).map(ASTNode2ASTNodeUtils.getEnclosingStatement).map
+			(new F<ASTNode, P2<ASTNode, String>>() {
 			@Override
 			public P2<ASTNode, String> f(ASTNode node) {
 				return P.p(node, statements);
