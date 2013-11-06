@@ -53,8 +53,6 @@ public class DiffTreeView extends ViewPart implements ICompListener{
 		    	if(change instanceof ISourceChange){
 		    		treeViewer.setInput(List.single(change));
 		    		treeViewer.refresh();
-		    	}
-		    }
-		});
+		}}});
 	}
 }

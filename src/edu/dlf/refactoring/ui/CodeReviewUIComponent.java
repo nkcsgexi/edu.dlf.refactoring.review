@@ -55,6 +55,8 @@ public class CodeReviewUIComponent implements IFactorComponent{
 	public CodeReviewUIComponent(@HidingCompAnnotation IFactorComponent hidingComponent)
 	{
 		this.hidingComponent = hidingComponent;
+		this.registerListener((ICompListener)ServiceLocator.ResolveType
+			(RefactoringComparator.class));
 	}
 	
 	public synchronized void updateViewedCode(ASTNode rootBefore, ASTNode rootAfter)
@@ -100,6 +102,8 @@ public class CodeReviewUIComponent implements IFactorComponent{
 				bus.post(updators);
 			}});
 	}
+	
+	
 	
 	private StyledTextUpdater createStyledTextUpdatorAfter(ASTNode root, 
 			List<ICheckingResult> results) {

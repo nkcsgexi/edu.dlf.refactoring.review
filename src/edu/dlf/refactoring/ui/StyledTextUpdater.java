@@ -35,6 +35,11 @@ public class StyledTextUpdater {
 		this.text = text;
 	}
 	
+	public String getText()
+	{
+		return this.text;
+	}
+	
 	public void UpdateStyledText(final StyledText st)
 	{
 		Display.getDefault().syncExec(new Runnable() {

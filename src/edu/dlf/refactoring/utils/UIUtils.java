@@ -44,6 +44,10 @@ public class UIUtils {
 		return allColors[currentColor++ % allColors.length];
 	}
 	
+	public static void RunInUIThread(Runnable runnable)
+	{
+		Display.getDefault().asyncExec(runnable);
+	}
 	
 
 }

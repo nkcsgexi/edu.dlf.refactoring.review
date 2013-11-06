@@ -1,5 +1,6 @@
 package edu.dlf.refactoring.ui;
 
+import org.eclipse.compare.CompareUI;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -44,6 +45,7 @@ public class RefReviewCommandHandler extends AbstractHandler {
 							getInputAfter());
 					changeComp.listen(pair);
 			}}});}
+		
 		return null;
 	}
 }
