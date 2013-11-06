@@ -19,7 +19,7 @@ public class DetectedMoveRefactoring extends AbstractRefactoring{
 		
 	public DetectedMoveRefactoring(RefactoringType refactoringType, ASTNode removedNode,
 			ASTNode addedNode) {
-		super(refactoringType);
+		super(RefactoringType.Move);
 		this.addSingleNode(AddedDeclarationDescripter, addedNode);
 		this.addSingleNode(RemovedDeclarationDescriptor, removedNode);
 		logger.info(refactoringType + " created.");

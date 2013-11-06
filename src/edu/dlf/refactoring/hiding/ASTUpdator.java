@@ -54,11 +54,11 @@ public class ASTUpdator extends F<ASTNode, ASTNode>{
 					@Override
 					public String f(final P3<Integer, Integer, String> replace) {
 						StringBuilder sb = new StringBuilder();
-						int nodeStart = replace._1();
-						int nodeLength = replace._2();
-						sb.append(code.substring(0, nodeStart));
-						sb.append(replace._2());
-						sb.append(code.substring(nodeStart + nodeLength));
+						int start = replace._1();
+						int length = replace._2();
+						sb.append(code.substring(0, start));
+						sb.append(replace._3());
+						sb.append(code.substring(start + length));
 						return sb.toString();
 		}};}};
 		String code = replaces.sort(order).reverse().foldLeft(folder, originalCode);

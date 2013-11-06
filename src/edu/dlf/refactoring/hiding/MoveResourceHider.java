@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2IntegerUtils;
+import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
 import edu.dlf.refactoring.analyzers.ASTNodeEq;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.refactorings.DetectedMoveRefactoring;
@@ -40,23 +41,28 @@ public class MoveResourceHider extends AbstractRefactoringHider{
 		
 	@Override
 	public ASTNode f(IDetectedRefactoring refactoring, ASTNode root) {
+		logger.info("Move hider.");
 		ASTNode addedDec = refactoring.getEffectedNode(DetectedMoveRefactoring.
 			AddedDeclarationDescripter);
 		ASTNode removedDec = refactoring.getEffectedNode(DetectedMoveRefactoring.
 			RemovedDeclarationDescriptor);
-		ASTUpdator updator = new ASTUpdator();
-		if(ASTAnalyzer.sameMainTypeEq.eq(addedDec, root))
-		{
-			findaddedDec(addedDec, root);
+		
+		Option<ASTNode> op = findaddedDec(addedDec, root);
+		if(op.isSome()) {
+			ASTUpdator updator = new ASTUpdator();
+			updator.addNodeUpdate(op.some(), "");
+			return updator.f(root);
 		}
-		if(ASTAnalyzer.sameMainTypeEq.eq(removedDec, root))
-		{
-			findRemovedDecPosition(removedDec, root);
+		
+		if(ASTAnalyzer.sameMainTypeEq.eq(removedDec, root)) {
+			int position = findRemovedDecPosition(removedDec, root);
+			ASTUpdator updator = new ASTUpdator();
+			updator.addInsertCode(position, ASTNode2StringUtils.
+				getCorrespondingSource.f(removedDec));
+			return updator.f(root);
 		}
 		return root;
 	}
-
-	
 
 	private Option<ASTNode> findaddedDec(final ASTNode add, final ASTNode root) {
 		final F<ASTNode, List<ASTNode>> finder = this.finders.get(add.getNodeType());
@@ -85,11 +91,4 @@ public class MoveResourceHider extends AbstractRefactoringHider{
 			return ASTNode2IntegerUtils.getEnd.f(decsInRoot.last());
 		return ASTNode2IntegerUtils.getEnd.f(decsInRoot.index(index - 1));
 	}
-	
-	
-	
-	
-	
-	
-	
 }

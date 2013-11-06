@@ -67,20 +67,17 @@ public class MoveRefactoringImplementer extends AbstractRefactoringImplementer{
 				if(refactoring != null)
 				{
 					Option<Change> change = RefactoringUtils.createChange(refactoring);
-					if(change.isSome())
-					{
+					if(change.isSome()) {
 						collectAutoRefactoringChangesAsync(change.some(), 
 							new IAutoChangeCallback() {
 							@Override
-							public void onFinishChanges(List<ISourceChange> 
-								changes) {
+							public void onFinishChanges(List<ISourceChange> changes) {
 								IImplementedRefactoring implemented = new 
 									ImplementedRefactoring(RefactoringType.Move, 
 										changes);
 								callback.onImplementedRefactoringReady(
 									detectedRefactoring, implemented);
-							}});
-					}}}
+					}});}}}
 			else
 				logger.fatal("Elements count is " + elements.length());
 		}catch (Exception e)

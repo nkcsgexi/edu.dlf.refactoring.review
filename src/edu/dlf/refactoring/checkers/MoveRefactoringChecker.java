@@ -22,7 +22,7 @@ public class MoveRefactoringChecker implements IRefactoringChecker{
 	@Override
 	public ICheckingResult checkRefactoring(final IDetectedRefactoring 
 			detectedRefactoring, final IImplementedRefactoring implemented) {
-		
+		logger.info("Checking move.");
 		return new ICheckingResult() {
 			
 			@Override
