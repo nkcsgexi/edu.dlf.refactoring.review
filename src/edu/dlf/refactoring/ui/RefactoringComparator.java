@@ -84,14 +84,14 @@ public class RefactoringComparator implements ICompListener{
 		UIUtils.RunInUIThread(new Runnable() {
 			@Override
 			public void run() {
-				CompareUI.openCompareDialog(new RefactoringCompareInput(before, 
+				CompareUI.openCompareEditor(new RefactoringCompareInput(before, 
 					after));
 		}});
 		
 		UIUtils.RunInUIThread(new Runnable() {
 			@Override
 			public void run() {
-				CompareUI.openCompareDialog(new RefactoringCompareInput(before, 
+				CompareUI.openCompareEditor(new RefactoringCompareInput(before, 
 					middle));
 		}});
 	}

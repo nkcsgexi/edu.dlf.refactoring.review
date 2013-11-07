@@ -9,15 +9,13 @@ public class ReviewPerspectiveFactory implements IPerspectiveFactory {
 	public void createInitialLayout(IPageLayout layout) {
 		layout.setEditorAreaVisible(true);
 		layout.setFixed(true);
-	
 		layout.addStandaloneView("RefReview.DiffTreeView", true, 
 				IPageLayout.LEFT, 0.2f, layout.getEditorArea());
-		layout.addStandaloneView("RefReview.BeforeChangeCodeView", true, 
+		/*layout.addStandaloneView("RefReview.BeforeChangeCodeView", true, 
 				IPageLayout.LEFT, 0.3f, layout.getEditorArea());
 		layout.addStandaloneView("RefReview.AfterHidingCodeView", true, 
 				IPageLayout.LEFT, 0.3f, layout.getEditorArea());
 		layout.addStandaloneView("RefReview.AfterChangeCodeView", true, 
-				IPageLayout.LEFT, 0.3f, layout.getEditorArea());
-		
+				IPageLayout.LEFT, 0.3f, layout.getEditorArea());*/
 	}
 }

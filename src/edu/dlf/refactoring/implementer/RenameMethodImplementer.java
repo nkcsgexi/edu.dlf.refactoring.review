@@ -42,20 +42,14 @@ public class RenameMethodImplementer extends AbstractRenameImplementer{
 	public void implementRefactoring
 			(final IDetectedRefactoring detectedRefactoring, 
 			final IImplementedRefactoringCallback callback) {
-		List<ASTNode> names = detectedRefactoring.getEffectedNodeList(DetectedRenameMethodRefactoring.
-			SimpleNamesBefore);
-		F<ASTNode, IJavaElement> getElement = new F<ASTNode, IJavaElement>() {
-			@Override
-			public IJavaElement f(ASTNode node) {
-				SimpleName name = (SimpleName) node;
-				return name.resolveBinding().getJavaElement();
-			}
-		};
-		List<IJavaElement> elements = names.map(getElement).nub(JavaModelAnalyzer.
-			getJavaElementEQ());
+		List<ASTNode> names = detectedRefactoring.getEffectedNodeList(
+			DetectedRenameMethodRefactoring.SimpleNamesBefore);
+		List<IJavaElement> elements = names.map(resolveSimpleNameElement).
+			nub(JavaModelAnalyzer.getJavaElementEQ());
 		IJavaElement declaration = elements.head();
 		JavaRenameProcessor processor = this.getRenameProcessor(declaration);
-		processor.setNewElementName(getNewName(detectedRefactoring));
+		processor.setNewElementName(getNewName.f(DetectedRenameMethodRefactoring.
+			SimpleNamesAfter, detectedRefactoring));
 		RenameRefactoring autoRefactoring = this.getRenameRefactoring(processor);
 		Option<Change> op = RefactoringUtils.createChange(autoRefactoring);
 		if(op.isNone()) return;
@@ -65,20 +59,12 @@ public class RenameMethodImplementer extends AbstractRenameImplementer{
 			public void onFinishChanges(List<ISourceChange> 
 				changes) {
 				IImplementedRefactoring implemented = new 
-					ImplementedRefactoring(RefactoringType.ExtractMethod, 
+					ImplementedRefactoring(RefactoringType.RenameMethod, 
 						changes);
 				callback.onImplementedRefactoringReady(detectedRefactoring, 
 					implemented);
-			}
-		});
+		}});
 	}
-	
-	private String getNewName(IDetectedRefactoring refactoring)
-	{
-		SimpleName name = (SimpleName) refactoring.getEffectedNodeList(
-			DetectedRenameMethodRefactoring.SimpleNamesAfter).head();
-		return name.getIdentifier();
-	}
-	
+
 
 }

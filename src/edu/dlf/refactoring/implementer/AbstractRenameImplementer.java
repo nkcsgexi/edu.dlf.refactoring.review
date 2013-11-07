@@ -11,6 +11,8 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeParameter;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.internal.corext.refactoring.rename.JavaRenameProcessor;
 import org.eclipse.jdt.internal.corext.refactoring.rename.MethodChecks;
 import org.eclipse.jdt.internal.corext.refactoring.rename.RenameCompilationUnitProcessor;
@@ -29,6 +31,10 @@ import org.eclipse.jdt.ui.refactoring.RenameSupport;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
+import edu.dlf.refactoring.design.IDetectedRefactoring;
+import fj.F;
+import fj.F2;
+import edu.dlf.refactoring.design.IDetectedRefactoring.NodeListDescriptor;
 
 public abstract class AbstractRenameImplementer extends AbstractRefactoringImplementer{
 
@@ -44,6 +50,21 @@ public abstract class AbstractRenameImplementer extends AbstractRefactoringImple
 		super(logger, cuCalculater);
 		this.logger = logger;
 	}
+	
+	protected F<ASTNode, IJavaElement> resolveSimpleNameElement = 
+		new F<ASTNode, IJavaElement>() {
+		@Override
+		public IJavaElement f(ASTNode node) {
+			SimpleName name = (SimpleName) node;
+			return name.resolveBinding().getJavaElement();
+	}};
+	
+	protected F2<NodeListDescriptor, IDetectedRefactoring, String> getNewName
+		= new F2<IDetectedRefactoring.NodeListDescriptor, IDetectedRefactoring, String>() {	
+			@Override
+			public String f(NodeListDescriptor des, IDetectedRefactoring refactoring) {
+				return refactoring.getEffectedNodeList(des).head().toString();
+	}};
 	
 	protected JavaRenameProcessor getRenameProcessor(IJavaElement element)
 	{

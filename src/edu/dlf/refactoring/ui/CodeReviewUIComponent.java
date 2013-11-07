@@ -41,7 +41,7 @@ public class CodeReviewUIComponent implements IFactorComponent{
 	private final IFactorComponent hidingComponent;
 	
 	private final F<ICheckingResult, Color> getColorFunc = 
-			new F<ICheckingResult, Color>() {
+		new F<ICheckingResult, Color>() {
 			@Override
 			public Color f(ICheckingResult result) {
 				if(!colorRepo.containsKey(result))

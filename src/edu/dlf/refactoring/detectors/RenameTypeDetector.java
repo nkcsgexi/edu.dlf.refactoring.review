@@ -62,7 +62,6 @@ public class RenameTypeDetector extends AbstractRefactoringDetector{
 			IDetectedRefactoring>() {
 			@Override
 			public IDetectedRefactoring f(List<ISourceChange> changes) {
-				logger.info("Create a rename type.");
 				return new DetectedRenameTypeRefactoring(changes.map(SourceChangeUtils.
 					getNodeBeforeFunc()), changes.map(SourceChangeUtils.
 						getNodeAfterFunc()));
