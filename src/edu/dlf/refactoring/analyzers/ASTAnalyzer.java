@@ -454,18 +454,7 @@ public class ASTAnalyzer {
 					getElementName();
 			}
 		};
-	}
-	
-	public static Equal<ASTNode> sameMainTypeEq = Equal.stringEqual.
-		comap(new F<ASTNode, String>() {
-			@Override
-			public String f(ASTNode node) {
-				return getMainTypeName(node.getRoot());
-	}});
-	
-
-
-	
+	}	
 	
 	public static Equal<ASTNode> getASTNodeEQ()
 	{

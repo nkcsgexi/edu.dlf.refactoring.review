@@ -16,6 +16,8 @@ import edu.dlf.refactoring.refactorings.DetectedMoveRefactoring;
 import fj.Equal;
 import fj.F;
 import fj.Ord;
+import fj.P;
+import fj.P2;
 import fj.data.List;
 import fj.data.Option;
 
@@ -46,7 +48,7 @@ public class MoveResourceHider extends AbstractRefactoringHider{
 			AddedDeclarationDescripter);
 		ASTNode removedDec = refactoring.getEffectedNode(DetectedMoveRefactoring.
 			RemovedDeclarationDescriptor);
-		
+	
 		Option<ASTNode> op = findaddedDec(addedDec, root);
 		if(op.isSome()) {
 			ASTUpdator updator = new ASTUpdator();
@@ -54,13 +56,14 @@ public class MoveResourceHider extends AbstractRefactoringHider{
 			return updator.f(root);
 		}
 		
-		if(ASTAnalyzer.sameMainTypeEq.eq(removedDec, root)) {
-			int position = findRemovedDecPosition(removedDec, root);
-			ASTUpdator updator = new ASTUpdator();
-			updator.addInsertCode(position, ASTNode2StringUtils.
-				getCorrespondingSource.f(removedDec));
-			return updator.f(root);
-		}
+		if(ASTNodeEq.SameMainTypeEq.eq(removedDec, root)) {
+			P2<Boolean, Integer> position = findRemovedDecPosition(removedDec, root);
+			if(position._1()){
+				ASTUpdator updator = new ASTUpdator();
+				updator.addInsertCode(position._2(), ASTNode2StringUtils.
+					getCorrespondingSource.f(removedDec));
+				return updator.f(root);
+		}}
 		return root;
 	}
 
@@ -74,21 +77,23 @@ public class MoveResourceHider extends AbstractRefactoringHider{
 		}});
 	}
 	
-	private int findRemovedDecPosition(ASTNode dec, ASTNode root) {
+	private P2<Boolean, Integer> findRemovedDecPosition(ASTNode dec, ASTNode root) {
 		final Ord<ASTNode> sorter = Ord.intOrd.comap(ASTNode2IntegerUtils.getLength);
 		final List<ASTNode> typeDecs = getTypeAncestors.f(dec);
 		final List<ASTNode> typeDecsInRoot = getTypeDecendants.f(root);
-		ASTNode type = typeDecs.minus(ASTNodeEq.TypeDeclarationNameEq, typeDecsInRoot).sort
-			(sorter).head();
-		ASTNode typeInRoot = typeDecsInRoot.minus(ASTNodeEq.TypeDeclarationNameEq, 
-			typeDecs).sort(sorter).head();
-		List<ASTNode> neighbors = ASTAnalyzer.getDecendantFunc().f(dec.getNodeType()).f(type);
-		int index = neighbors.elementIndex(ASTNodeEq.ReferenceEq, dec).some();
-		List<ASTNode> decsInRoot = finders.get(dec.getNodeType()).f(typeInRoot);
-		if(index == 0)
-			return decsInRoot.head().getStartPosition();
-		if(index > decsInRoot.length())
-			return ASTNode2IntegerUtils.getEnd.f(decsInRoot.last());
-		return ASTNode2IntegerUtils.getEnd.f(decsInRoot.index(index - 1));
+		final ASTNode type = typeDecs.sort(sorter).head();
+		Option<ASTNode> typeInRootOp = typeDecsInRoot.find(ASTNodeEq.TypeDeclarationNameEq.eq(type));
+		if(typeInRootOp.isSome()) {
+			ASTNode typeInRoot = typeInRootOp.some();
+			List<ASTNode> neighbors = ASTAnalyzer.getDecendantFunc().f(dec.getNodeType()).f(type);
+			int index = neighbors.elementIndex(ASTNodeEq.ReferenceEq, dec).some();
+			List<ASTNode> decsInRoot = finders.get(dec.getNodeType()).f(typeInRoot);
+			if(index == 0)
+				return P.p(true, decsInRoot.head().getStartPosition());
+			if(index > decsInRoot.length())
+				return P.p(true, ASTNode2IntegerUtils.getEnd.f(decsInRoot.last()) + 1);
+			return P.p(true, ASTNode2IntegerUtils.getEnd.f(decsInRoot.index(index - 1)) + 1);
+		}
+		return P.p(false, -1);
 	}
 }

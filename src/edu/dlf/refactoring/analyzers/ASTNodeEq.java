@@ -13,14 +13,21 @@ public class ASTNodeEq {
 	}
 	
 	public static Equal<ASTNode> ReferenceEq = Equal.equal(
-			new F<ASTNode, F<ASTNode, Boolean>>() {
-				@Override
-				public F<ASTNode, Boolean> f(final ASTNode node1) {
-					return new F<ASTNode, Boolean>() {
-						@Override
-						public Boolean f(final ASTNode node2) {
-							return node1 == node2;
+		new F<ASTNode, F<ASTNode, Boolean>>() {
+			@Override
+			public F<ASTNode, Boolean> f(final ASTNode node1) {
+				return new F<ASTNode, Boolean>() {
+					@Override
+					public Boolean f(final ASTNode node2) {
+						return node1 == node2;
 	}};}});
+	
+	public static Equal<ASTNode> SameMainTypeEq = Equal.stringEqual.
+		comap(new F<ASTNode, String>() {
+			@Override
+			public String f(ASTNode node) {
+				return ASTAnalyzer.getMainTypeName(node.getRoot());
+	}});
 		
 	
 	public static Equal<ASTNode> TypeDeclarationNameEq = Equal.stringEqual.comap(
