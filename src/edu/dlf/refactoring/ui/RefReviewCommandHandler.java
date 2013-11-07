@@ -1,6 +1,5 @@
 package edu.dlf.refactoring.ui;
 
-import org.eclipse.compare.CompareUI;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;

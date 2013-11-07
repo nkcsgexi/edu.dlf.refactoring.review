@@ -34,8 +34,8 @@ import fj.Ord;
 import fj.P;
 import fj.P2;
 import fj.data.List;
-import fj.data.Option;
 import fj.data.List.Buffer;
+import fj.data.Option;
 
 
 public class ASTAnalyzer {

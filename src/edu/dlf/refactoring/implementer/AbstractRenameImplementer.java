@@ -32,9 +32,9 @@ import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
+import edu.dlf.refactoring.design.IDetectedRefactoring.NodeListDescriptor;
 import fj.F;
 import fj.F2;
-import edu.dlf.refactoring.design.IDetectedRefactoring.NodeListDescriptor;
 
 public abstract class AbstractRenameImplementer extends AbstractRefactoringImplementer{
 

@@ -25,16 +25,17 @@ public class ASTUpdator extends F<ASTNode, ASTNode>{
 			logger.info(node.toString());
 	}};
 	
-	public void addNodeUpdate(ASTNode node, String replace)
-	{
+	public void addNodeUpdate(ASTNode node, String replace) {
 		replacementBuffer.snoc(P.p(node.getStartPosition(), node.getLength(), replace));
 	}
 	
-	public void addInsertCode(int position, String code)
-	{
+	public void addInsertCode(int position, String code) {
 		replacementBuffer.snoc(P.p(position, 0, code));
 	}
 	
+	public void addSubStringUpdator(int start, int length, String code) {
+		replacementBuffer.snoc(P.p(start, length, code));
+	}
 	
 	@Override
 	public ASTNode f(ASTNode node) {
@@ -64,4 +65,6 @@ public class ASTUpdator extends F<ASTNode, ASTNode>{
 		String code = replaces.sort(order).reverse().foldLeft(folder, originalCode);
 		return ASTAnalyzer.parseICompilationUnit(code);
 	}
+
+
 }

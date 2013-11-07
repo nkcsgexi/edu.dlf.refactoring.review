@@ -3,7 +3,6 @@ package edu.dlf.refactoring.implementer;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.internal.corext.refactoring.rename.JavaRenameProcessor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
@@ -19,7 +18,6 @@ import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.refactorings.DetectedRenameMethodRefactoring;
 import edu.dlf.refactoring.utils.RefactoringUtils;
-import fj.F;
 import fj.data.List;
 import fj.data.Option;
 

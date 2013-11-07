@@ -8,12 +8,14 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2ASTNodeUtils;
-import edu.dlf.refactoring.analyzers.XStringUtils;
+import edu.dlf.refactoring.analyzers.ASTNode2IntegerUtils;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.refactorings.DetectedExtractMethodRefactoring;
 import fj.F;
+import fj.Ord;
 import fj.P;
 import fj.P2;
+import fj.P3;
 import fj.data.List;
 
 public class ExtractMethodHider extends AbstractRefactoringHider{
@@ -35,9 +37,13 @@ public class ExtractMethodHider extends AbstractRefactoringHider{
 			DetectedExtractMethodRefactoring.DeclaredMethod);
 		final String addedMethodName = addedMethod.getStructuralProperty
 			(MethodDeclaration.NAME_PROPERTY).toString();
-		final String statements = ASTNode2ASTNodeUtils.getMethodStatements.f(addedMethod).
-			map(astNode2String).foldLeft(XStringUtils.stringCombiner, 
-				new StringBuilder()).toString();
+		
+		final List<ASTNode> statements = ASTNode2ASTNodeUtils.getMethodStatements.
+			f(addedMethod);
+		int start = statements.map(ASTNode2IntegerUtils.getStart).sort(Ord.intOrd).head();
+		int end = statements.map(ASTNode2IntegerUtils.getEnd).sort(Ord.intOrd).last();
+		final String stateReplacement = ASTAnalyzer.getOriginalSourceFromRoot
+			(addedMethod.getRoot()).substring(start, end + 1);
 		
 		ASTUpdator updator = new ASTUpdator();
 		findMethodsDecFunc.f(afterRoot).filter(ASTAnalyzer.
@@ -53,11 +59,12 @@ public class ExtractMethodHider extends AbstractRefactoringHider{
 			public Boolean f(ASTNode inv) {
 				return ASTAnalyzer.getInvokedMethodName.f(inv).equals(addedMethodName);
 		}}).map(ASTNode2ASTNodeUtils.getEnclosingStatement).map
-			(new F<ASTNode, P2<ASTNode, String>>() {
-			@Override
-			public P2<ASTNode, String> f(ASTNode node) {
-				return P.p(node, statements);
-		}}).foreach(add2Updator.f(updator));
+			(new F<ASTNode, P3<Integer, Integer, String>>() {
+				@Override
+				public P3<Integer, Integer, String> f(ASTNode node) {
+					return P.p(node.getStartPosition(), node.getLength(), 
+						stateReplacement);
+				}}).foreach(addIndex2Updator.f(updator));
 	
 		return updator.f(afterRoot);
 	}
