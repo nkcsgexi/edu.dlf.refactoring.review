@@ -17,7 +17,7 @@ import fj.Equal;
 import fj.F;
 import fj.Ord;
 import fj.P;
-import fj.P2;
+import fj.P3;
 import fj.data.List;
 import fj.data.Option;
 
@@ -57,10 +57,10 @@ public class MoveResourceHider extends AbstractRefactoringHider{
 		}
 		
 		if(ASTNodeEq.SameMainTypeEq.eq(removedDec, root)) {
-			P2<Boolean, Integer> position = findRemovedDecPosition(removedDec, root);
+			P3<Boolean, Integer, String> position = findRemovedDecPosition(removedDec, root);
 			if(position._1()){
 				ASTUpdator updator = new ASTUpdator();
-				updator.addInsertCode(position._2(), ASTNode2StringUtils.
+				updator.addInsertCode(position._2(), position._3() + ASTNode2StringUtils.
 					getCorrespondingSource.f(removedDec));
 				return updator.f(root);
 		}}
@@ -77,7 +77,7 @@ public class MoveResourceHider extends AbstractRefactoringHider{
 		}});
 	}
 	
-	private P2<Boolean, Integer> findRemovedDecPosition(ASTNode dec, ASTNode root) {
+	private P3<Boolean, Integer, String> findRemovedDecPosition(ASTNode dec, ASTNode root) {
 		final Ord<ASTNode> sorter = Ord.intOrd.comap(ASTNode2IntegerUtils.getLength);
 		final List<ASTNode> typeDecs = getTypeAncestors.f(dec);
 		final List<ASTNode> typeDecsInRoot = getTypeDecendants.f(root);
@@ -85,15 +85,20 @@ public class MoveResourceHider extends AbstractRefactoringHider{
 		Option<ASTNode> typeInRootOp = typeDecsInRoot.find(ASTNodeEq.TypeDeclarationNameEq.eq(type));
 		if(typeInRootOp.isSome()) {
 			ASTNode typeInRoot = typeInRootOp.some();
-			List<ASTNode> neighbors = ASTAnalyzer.getDecendantFunc().f(dec.getNodeType()).f(type);
+			final List<ASTNode> neighbors = ASTAnalyzer.getDecendantFunc().
+				f(dec.getNodeType()).f(type);
+			String preWhiteSpace = neighbors.isEmpty() ? "\n" : ASTNode2StringUtils.
+				getPreWhitespace.f(neighbors.head());
 			int index = neighbors.elementIndex(ASTNodeEq.ReferenceEq, dec).some();
 			List<ASTNode> decsInRoot = finders.get(dec.getNodeType()).f(typeInRoot);
 			if(index == 0)
-				return P.p(true, decsInRoot.head().getStartPosition());
+				return P.p(true, decsInRoot.head().getStartPosition(), preWhiteSpace);
 			if(index > decsInRoot.length())
-				return P.p(true, ASTNode2IntegerUtils.getEnd.f(decsInRoot.last()) + 1);
-			return P.p(true, ASTNode2IntegerUtils.getEnd.f(decsInRoot.index(index - 1)) + 1);
+				return P.p(true, ASTNode2IntegerUtils.getEnd.f(decsInRoot.last()) + 1, 
+					preWhiteSpace);
+			return P.p(true, ASTNode2IntegerUtils.getEnd.f(decsInRoot.index
+				(index - 1)) + 1, preWhiteSpace);
 		}
-		return P.p(false, -1);
+		return P.p(false, -1, "");
 	}
 }
