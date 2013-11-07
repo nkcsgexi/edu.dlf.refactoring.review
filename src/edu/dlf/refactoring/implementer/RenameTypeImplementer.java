@@ -38,9 +38,9 @@ public class RenameTypeImplementer extends AbstractRenameImplementer{
 		final IDetectedRefactoring refactoring, 
 		final IImplementedRefactoringCallback callback) {
 		List<ASTNode> names = refactoring.getEffectedNodeList(
-				DetectedRenameTypeRefactoring.SimpleNamesBefore);
+			DetectedRenameTypeRefactoring.SimpleNamesBefore);
 		List<IJavaElement> elements = names.map(resolveSimpleNameElement).
-				nub(JavaModelAnalyzer.getJavaElementEQ());
+			nub(JavaModelAnalyzer.getJavaElementEQ());
 		IJavaElement declaration = elements.head();
 		JavaRenameProcessor processor = this.getRenameProcessor(declaration);
 		processor.setNewElementName(getNewName.f(DetectedRenameTypeRefactoring.
@@ -48,14 +48,14 @@ public class RenameTypeImplementer extends AbstractRenameImplementer{
 		RenameRefactoring autoRefactoring = this.getRenameRefactoring(processor);
 		Option<Change> op = RefactoringUtils.createChange(autoRefactoring);
 		if(op.isNone()) return;
-		collectAutoRefactoringChangesAsync(op.some(), 
-			new IAutoChangeCallback() {
+		collectAutoRefactoringChangesAsync(op.some(), new IAutoChangeCallback() {
 			@Override
 			public void onFinishChanges(List<ISourceChange> changes) {
+				logger.info("Auto rename type finished.");
 				IImplementedRefactoring implemented = new 
 					ImplementedRefactoring(RefactoringType.RenameType, changes);
 				callback.onImplementedRefactoringReady(refactoring, 
 					implemented);
-			}});
+		}});
 	}
 }
