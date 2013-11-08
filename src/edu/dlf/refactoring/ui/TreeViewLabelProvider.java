@@ -6,9 +6,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
-import refreview.Activator;
 
 import com.google.inject.Inject;
 
@@ -17,6 +14,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotat
 import edu.dlf.refactoring.change.ChangeComponentInjector.JavaProjectAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SourcePackageAnnotation;
 import edu.dlf.refactoring.design.ISourceChange;
+import edu.dlf.refactoring.utils.UIUtils;
 
 public class TreeViewLabelProvider implements ILabelProvider
 {
@@ -28,19 +26,15 @@ public class TreeViewLabelProvider implements ILabelProvider
 			Logger logger,
 			@JavaProjectAnnotation String projectLevel,
 			@SourcePackageAnnotation String packageLevel,
-			@CompilationUnitAnnotation String cuLevel)
-	{
+			@CompilationUnitAnnotation String cuLevel) {
 		this.logger = logger;
 		this.map = new HashMap<String, Image>();
-		this.map.put(cuLevel, createImage("file.gif"));
-		this.map.put(packageLevel, createImage("package.gif"));
-		this.map.put(projectLevel, createImage("project.gif"));
+		this.map.put(cuLevel, UIUtils.createImage("file.gif"));
+		this.map.put(packageLevel, UIUtils.createImage("package.gif"));
+		this.map.put(projectLevel, UIUtils.createImage("project.gif"));
 	}
 	
-	private Image createImage(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID, 
-				"/img/" + path).createImage();
-	}
+
 	
 	@Override
 	public void addListener(ILabelProviderListener listener) {

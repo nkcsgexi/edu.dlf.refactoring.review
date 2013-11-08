@@ -31,17 +31,27 @@ public class RefactoringComparator implements ICompListener{
 		this.logger = logger;
 	}
 	
-	private class RefactoringCompareInput extends CompareEditorInput{
+	private static class RefactoringCompareInput extends CompareEditorInput{
 	
 		private final String version2;
 		private final String version1;
 	
-		public RefactoringCompareInput(String version1, String version2) {
-			super(new CompareConfiguration());
+		public RefactoringCompareInput(Boolean hided, String version1, String version2) {
+			super(createConfig(hided));
 			this.version1 = version1;
 			this.version2 = version2;
 		}
 	
+		private static CompareConfiguration createConfig(Boolean hided) {
+			CompareConfiguration config = new CompareConfiguration();
+			config.setLeftLabel("Baseline");
+			config.setRightLabel(hided ? "Changes after hiding refactorings" 
+				: "Changes with refactorings");
+			config.setLeftImage(UIUtils.createImage("1.png"));
+			config.setRightImage(UIUtils.createImage("2.png"));
+			return config;
+		}
+
 		@Override
 		protected Object prepareInput(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
@@ -84,14 +94,14 @@ public class RefactoringComparator implements ICompListener{
 		UIUtils.RunInUIThread(new Runnable() {
 			@Override
 			public void run() {
-				CompareUI.openCompareEditor(new RefactoringCompareInput(before, 
+				CompareUI.openCompareEditor(new RefactoringCompareInput(false, before, 
 					after));
 		}});
 		
 		UIUtils.RunInUIThread(new Runnable() {
 			@Override
 			public void run() {
-				CompareUI.openCompareEditor(new RefactoringCompareInput(before, 
+				CompareUI.openCompareEditor(new RefactoringCompareInput(true, before, 
 					middle));
 		}});
 	}

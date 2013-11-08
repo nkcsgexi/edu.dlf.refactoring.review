@@ -3,7 +3,11 @@ package edu.dlf.refactoring.utils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import refreview.Activator;
 
 public class UIUtils {
 
@@ -49,5 +53,9 @@ public class UIUtils {
 		Display.getDefault().asyncExec(runnable);
 	}
 	
+	public static Image createImage(String name) {
+		return AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID, 
+				"/img/" + name).createImage();
+	}
 
 }
