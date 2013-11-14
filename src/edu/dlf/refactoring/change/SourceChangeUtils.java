@@ -23,6 +23,7 @@ public class SourceChangeUtils {
 
 	private SourceChangeUtils() throws Exception
 	{
+		
 		throw new Exception();
 	}
 	
@@ -41,6 +42,7 @@ public class SourceChangeUtils {
 		pruneSubChanges(change);
 		return change;
 	}
+	
 	
 	public static List<ISourceChange> getSelfAndDescendent(ISourceChange root)
 	{	

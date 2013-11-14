@@ -11,22 +11,36 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.dlf.refactoring.change.ChangedLinesComputer;
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.ComponentsRepository;
 import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
+import fj.Effect;
 import fj.data.List;
 
 public class DiffTreeView extends ViewPart implements ICompListener{
 
 	private TreeViewer treeViewer;
 	private final Logger logger;
+	private final ChangedLinesComputer computer;
 
+	private final Effect<ISourceChange> computerChangedLines = 
+		new Effect<ISourceChange>() {
+		@Override
+		public void e(ISourceChange change) {
+			computer.startCompute((ISourceChange)change);
+    		logger.info("Changed lines: " + computer.getChangedLines());
+    		logger.info("Added lines: " + computer.getAddedLines());
+    		logger.info("Removed lines: " + computer.getRemovedLines());
+	}}; 
+	
 	public DiffTreeView() {
 		logger = ServiceLocator.ResolveType(Logger.class);
 		((ComponentsRepository)ServiceLocator.ResolveType(ComponentsRepository.
 			class)).getChangeComponent().registerListener(this);
+		this.computer = ServiceLocator.ResolveType(ChangedLinesComputer.class);
 	}
 
 	@Override
@@ -49,6 +63,7 @@ public class DiffTreeView extends ViewPart implements ICompListener{
 	@Override
 	public void callBack(final Object change) {
 		logger.info("Get change.");
+		computerChangedLines.e((ISourceChange)change);
 		Display.getDefault().asyncExec(new Runnable() {
 		    public void run() {
 		    	if(change instanceof ISourceChange){
