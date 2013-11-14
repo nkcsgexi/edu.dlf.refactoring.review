@@ -32,7 +32,7 @@ public class FakeCodeReviewInput implements ICodeReviewInput{
 		return this.allProjects.find(new F<IJavaElement, Boolean>(){
 			@Override
 			public Boolean f(IJavaElement element) {
-				return element.getElementName().equals("FakeBefore");
+				return element.getElementName().equals("ConditionPreComputing");
 			}}).some();
 	}
 
@@ -41,7 +41,7 @@ public class FakeCodeReviewInput implements ICodeReviewInput{
 		return this.allProjects.find(new F<IJavaElement, Boolean>(){
 			@Override
 			public Boolean f(IJavaElement element) {
-				return element.getElementName().equals("FakeAfter");
+				return element.getElementName().equals("ConditionPreComputing1");
 			}}).some();
 	}
 	

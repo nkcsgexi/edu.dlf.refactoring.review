@@ -14,6 +14,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotat
 import edu.dlf.refactoring.change.ChangeComponentInjector.JavaProjectAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SourcePackageAnnotation;
 import edu.dlf.refactoring.design.ISourceChange;
+import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.utils.UIUtils;
 
 public class TreeViewLabelProvider implements ILabelProvider
@@ -71,8 +72,10 @@ public class TreeViewLabelProvider implements ILabelProvider
 				return before + "=>" + after;
 			}else
 			{
-				String before = ASTAnalyzer.getJavaElement(change.getNodeBefore()).getElementName();
-				String after = ASTAnalyzer.getJavaElement(change.getNodeAfter()).getElementName();
+				String before = change.getNodeBefore() == null ? "" : ASTAnalyzer.
+					getJavaElement(change.getNodeBefore()).getElementName();
+				String after = change.getNodeAfter() == null ? "" : ASTAnalyzer.
+					getJavaElement(change.getNodeAfter()).getElementName();
 				return before + "=>" + after;
 			}
 		}

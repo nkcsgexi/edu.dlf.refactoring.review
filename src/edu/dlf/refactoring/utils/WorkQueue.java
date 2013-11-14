@@ -8,17 +8,14 @@ import edu.dlf.refactoring.design.ServiceLocator;
 
 public class WorkQueue
 {
-    private final int nThreads;
     private final PoolWorker[] threads;
-    private final LinkedList queue;
+    private final LinkedList<Runnable> queue;
     private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 
     public WorkQueue(int nThreads)
     {
-        this.nThreads = nThreads;
-        queue = new LinkedList();
+        queue = new LinkedList<Runnable>();
         threads = new PoolWorker[nThreads];
-
         for (int i=0; i<nThreads; i++) {
             threads[i] = new PoolWorker();
             threads[i].start();
@@ -35,7 +32,6 @@ public class WorkQueue
     private class PoolWorker extends Thread {
         public void run() {
             Runnable r;
-
             while (true) {
                 synchronized(queue) {
                     while (queue.isEmpty()) {
@@ -43,18 +39,16 @@ public class WorkQueue
                         {
                             queue.wait();
                         }
-                        catch (InterruptedException ignored)
+                        catch (InterruptedException e)
                         {
+                        	logger.fatal(e);
                         }
                     }
-
                     r = (Runnable) queue.removeFirst();
                 }
-
-                // If we don't catch RuntimeException, 
-                // the pool could leak threads
                 try {
                     r.run();
+                    logger.info("Queue length:" + queue.size());
                 }
                 catch (RuntimeException e) {
                    logger.fatal(e);

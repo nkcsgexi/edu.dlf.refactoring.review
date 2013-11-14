@@ -25,7 +25,6 @@ import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
-import edu.dlf.refactoring.design.ServiceLocator;
 import fj.F;
 import fj.F2;
 import fj.P2;
@@ -33,7 +32,7 @@ import fj.data.List;
 
 public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator{
 
-	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
+	private final Logger logger;
 	private final IASTNodeChangeCalculator mChangeCalculator;
 	private final ChangeBuilder changeBuilder;
 	private final IASTNodeChangeCalculator snChangeCalculator;
@@ -42,12 +41,14 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 	
 	@Inject
 	public TypeDeclarationChangeCalculator(
+			Logger logger,
 			@SimpleNameAnnotation IASTNodeChangeCalculator snChangeCalculator,
 			@TypeDeclarationAnnotation String changeLevel,
 			@TypeAnnotation IASTNodeChangeCalculator typeCalculator,
 			@FieldDeclarationAnnotation IASTNodeChangeCalculator fCalculator,
 			@MethodDeclarationAnnotation IASTNodeChangeCalculator mChangeCalculator)
 	{
+		this.logger = logger;
 		this.snChangeCalculator = snChangeCalculator;
 		this.mChangeCalculator = mChangeCalculator;
 		this.fCalculator = fCalculator;
@@ -55,9 +56,17 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
 
+	
+	private F<ASTNode, String> getTypeFunc = new F<ASTNode, String>() {
+		@Override
+		public String f(ASTNode node) {
+			return node.getStructuralProperty(TypeDeclaration.NAME_PROPERTY).toString();
+	}};
 
 	@Override
 	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
+		logger.info("Comparing types: " + getTypeFunc.f(pair.getNodeBefore()) + 
+			"=>" + getTypeFunc.f(pair.getNodeAfter()));
 		ISourceChange change = changeBuilder.buildSimpleChange(pair);
 		if(change != null)
 			return change;

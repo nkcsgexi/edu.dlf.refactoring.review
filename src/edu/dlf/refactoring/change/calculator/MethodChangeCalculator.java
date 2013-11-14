@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import com.google.common.base.Function;
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
 import edu.dlf.refactoring.analyzers.XStringUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
@@ -43,7 +44,8 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 
 	@Override
 	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
-
+		logger.info("Compare methods: " + pair.getCompareInfor(ASTNode2StringUtils.
+			getMethodNameFunc));
 		ISourceChange change = changeBuilder.buildSimpleChange(pair);
 		if (change != null)
 			return change;
@@ -66,8 +68,7 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 						@Override
 						public ISourceChange apply(ASTNodePair pair) {
 							return vdCalculator.CalculateASTNodeChange(pair);
-						}
-					}));
+			}}));
 
 			container.addSubChange(blCalculator
 					.CalculateASTNodeChange(new ASTNodePair(methodBefore

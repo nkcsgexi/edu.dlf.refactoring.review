@@ -9,6 +9,7 @@ import com.google.common.base.Function;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.utils.XList;
+import fj.F;
 
 public class ASTNodePair implements IASTNodePair{
 
@@ -46,6 +47,11 @@ public class ASTNodePair implements IASTNodePair{
 			public ASTNode apply(ASTNode node){
 				return (ASTNode) node.getStructuralProperty(descriptor);
 			}});
+	}
+	
+	public String getCompareInfor(F<ASTNode, String> converter)
+	{
+		return converter.f(this.getNodeBefore()) + "=>"+ converter.f(this.getNodeAfter());
 	}
 	
 	public XList[] selectChildrenByDescriptor(final StructuralPropertyDescriptor descriptor)

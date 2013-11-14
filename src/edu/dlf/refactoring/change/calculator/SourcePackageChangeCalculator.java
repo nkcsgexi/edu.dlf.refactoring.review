@@ -48,8 +48,7 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 					public void e(P2<IJavaElement, IJavaElement> p) {
 						change.addSubChange(cuCalculator.CalculateJavaModelChange
 							(new JavaElementPair(p._1(), p._2())));
-					}
-				});
+		}});
 		List<IJavaElement> addedUnits = JavaModelAnalyzer.getAddedElementsFunction().
 			f(JavaModelAnalyzer.getICompilationUnit(pair.getElementBefore()), JavaModelAnalyzer.
 				getICompilationUnit(pair.getElementAfter()));

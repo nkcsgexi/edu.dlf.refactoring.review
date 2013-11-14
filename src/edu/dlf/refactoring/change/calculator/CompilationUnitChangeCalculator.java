@@ -11,6 +11,7 @@ import com.google.common.base.Function;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
+import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
 import edu.dlf.refactoring.analyzers.XStringUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
@@ -22,21 +23,22 @@ import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDista
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.JavaElementPair;
-import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.utils.XList;
 
 public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculator, 
 	IASTNodeChangeCalculator{
 
-	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
+	private final Logger logger;
 	private final IASTNodeChangeCalculator typeChangeCalculator;
-	private final ChangeBuilder changeBuilder;
-
+	private final ChangeBuilder changeBuilder;	
+	
 	@Inject
 	public CompilationUnitChangeCalculator(
+			Logger logger,
 			@CompilationUnitAnnotation String changeLevel,
 			@TypeDeclarationAnnotation IASTNodeChangeCalculator typeChangeCalculator)
 	{
+		this.logger = logger;
 		this.typeChangeCalculator = typeChangeCalculator;
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
@@ -44,16 +46,18 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	
 	@Override
 	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
-		
+		logger.debug("Calculate change: " + pair.getElementBefore().getElementName() 
+			+ "->" + pair.getElementAfter().getElementName());
 		ASTNode cuBefore = ASTAnalyzer.parseICompilationUnit(pair.getElementBefore());
 		ASTNode cuAfter = ASTAnalyzer.parseICompilationUnit(pair.getElementAfter());
 		return CalculateASTNodeChange(new ASTNodePair(cuBefore, cuAfter));
 	}
-
-
+	
 	@Override
 	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
-		
+		logger.debug("Calculate change: " + ASTNode2StringUtils.getCompilationUnitName.
+			f(pair.getNodeBefore()) + "->" + ASTNode2StringUtils.getCompilationUnitName.
+				f(pair.getNodeAfter()));
 		ASTNode cuBefore = pair.getNodeBefore();
 		ASTNode cuAfter = pair.getNodeAfter();
 		ASTNodePair aPair = new ASTNodePair(cuBefore, cuAfter);
@@ -62,7 +66,6 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 		if(change != null)
 			return change;
 		try{	
-			
 			SubChangeContainer container = changeBuilder.createSubchangeContainer(pair);
 			List typesBefore =  (List) cuBefore.getStructuralProperty(CompilationUnit.TYPES_PROPERTY);
 			List typesAfter = (List) cuAfter.getStructuralProperty(CompilationUnit.TYPES_PROPERTY);
@@ -73,7 +76,7 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 					String nb = before.getStructuralProperty(TypeDeclaration.NAME_PROPERTY).toString();
 					String na = after.getStructuralProperty(TypeDeclaration.NAME_PROPERTY).toString();
 					return XStringUtils.distance(nb, na);
-				}});
+			}});
 			
 			container.addMultiSubChanges(mapper.map(new XList<ASTNode>(typesBefore), 
 					new XList<ASTNode>(typesAfter)).
@@ -81,7 +84,7 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 					@Override
 					public ISourceChange apply(ASTNodePair p) {
 						return typeChangeCalculator.CalculateASTNodeChange(p);
-					}}));
+			}}));
 			return container;
 		} catch(Exception e)
 		{

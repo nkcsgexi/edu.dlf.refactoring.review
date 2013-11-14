@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.ComponentsRepository;
 import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.ISourceChange;
@@ -51,6 +52,8 @@ public class DiffTreeView extends ViewPart implements ICompListener{
 		Display.getDefault().asyncExec(new Runnable() {
 		    public void run() {
 		    	if(change instanceof ISourceChange){
+		    		logger.debug(SourceChangeUtils.printChangeTree(
+		    			(ISourceChange)change));
 		    		treeViewer.setInput(List.single(change));
 		    		treeViewer.refresh();
 		}}});

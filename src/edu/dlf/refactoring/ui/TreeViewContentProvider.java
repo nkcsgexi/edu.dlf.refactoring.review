@@ -11,8 +11,10 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.JavaProjectAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SourcePackageAnnotation;
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.ISourceChange;
+import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.F;
+import fj.F2;
 import fj.data.List;
 import fj.data.Option;
 
@@ -50,6 +52,19 @@ public class TreeViewContentProvider implements ITreeContentProvider
 	public Object[] getElements(Object inputElement) {
 		return new Object[] {((List)inputElement).head()};
 	}
+	
+	private F2<String, ISourceChange, List<ISourceChange>> getLevelChildren = 
+		new F2<String, ISourceChange, List<ISourceChange>>() {
+			@Override
+			public List<ISourceChange> f(final String level, final ISourceChange parent) {
+				return SourceChangeUtils.getChildren(parent).filter(
+					new F<ISourceChange, Boolean>() {
+					@Override
+					public Boolean f(ISourceChange change) {
+						return change.getSourceChangeLevel().equals(level) && 
+							change.getSourceChangeType() == SourceChangeType.PARENT;
+	}});}}; 
+	
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
@@ -58,22 +73,19 @@ public class TreeViewContentProvider implements ITreeContentProvider
 		{
 			return null;
 		}
-		List<ISourceChange> subChanges = SourceChangeUtils.getChildren(change);
 		if(change.getSourceChangeLevel().equals(this.projectLevel))
 		{
-			return subChanges.filter(new F<ISourceChange, Boolean>(){
+			return getLevelChildren.f(packageLevel, change).filter(
+				new F<ISourceChange, Boolean>() {
 				@Override
-				public Boolean f(ISourceChange c) {
-					return c.getSourceChangeLevel().equals(packageLevel);
-				}}).toCollection().toArray();
+				public Boolean f(ISourceChange change) {
+					return getLevelChildren.f(cuLevel, change).isNotEmpty();
+				}
+			}).toCollection().toArray();
 		}
 		if(change.getSourceChangeLevel().equals(this.packageLevel))
 		{
-			return subChanges.filter(new F<ISourceChange, Boolean>(){
-				@Override
-				public Boolean f(ISourceChange c) {
-					return c.getSourceChangeLevel().equals(cuLevel);
-				}}).toCollection().toArray();
+			return getLevelChildren.f(cuLevel, change).toCollection().toArray();
 		}
 		return null;
 	}
@@ -86,7 +98,7 @@ public class TreeViewContentProvider implements ITreeContentProvider
 			@Override
 			public Boolean f(ISourceChange c) {
 				return c.getSourceChangeLevel().equals(projectLevel) ||
-						c.getSourceChangeLevel().equals(packageLevel);
+					c.getSourceChangeLevel().equals(packageLevel);
 			}});
 		if(parent.isSome())
 			return parent.some();
@@ -95,8 +107,8 @@ public class TreeViewContentProvider implements ITreeContentProvider
 
 	@Override
 	public boolean hasChildren(Object element) {
-		return !((ISourceChange)element).getSourceChangeLevel().equals
-			(this.cuLevel);
+		return getChildren(element) == null ? false : getChildren(element).
+			length > 0;
 	}
 	
 }
