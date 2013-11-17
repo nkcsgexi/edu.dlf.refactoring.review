@@ -11,7 +11,11 @@ import org.eclipse.core.runtime.Path;
 
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.Effect;
+import fj.F;
+import fj.F2;
+import fj.Unit;
 import fj.data.List;
+import fj.data.Option;
 
 public class EclipseUtils {
 	
@@ -27,7 +31,7 @@ public class EclipseUtils {
 		getLocation();
 	
 
-	public List<IProject> getAllImportedProjects() {
+	public static List<IProject> getAllImportedProjects() {
 		return allImportedProjects;
 	}
 	
@@ -39,13 +43,31 @@ public class EclipseUtils {
 				loadProjectDescription(new Path(projectPath + "/.project"));
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().
 				getProject(description.getName());
-			project.create(description, null);
+			project.create(description, null); 
 			project.open(new NullProgressMonitor());
 			allImportedProjects = allImportedProjects.snoc(project);
 			} catch (Exception e) {
 				logger.fatal(e);
 			}
 	}};
+	
+	public static F<String, String> getProjectName = new F<String, String>() {
+		@Override
+		public String f(final String path) {
+			Option<IProject> projectFinder = getAllImportedProjects().find(
+				new F<IProject, Boolean>() {
+				@Override
+				public Boolean f(IProject project) {
+					return project.getLocation().toOSString().equals(new Path(path).
+						toOSString());
+			}});
+			if(projectFinder.isNone()) {
+				logger.fatal("Cannot find project at: " + path);
+				return "";
+			}
+			return projectFinder.some().getName();
+	}}; 
+	
 	
 	public static Effect<String> removeProject = new Effect<String>() {
 		@Override
@@ -59,4 +81,31 @@ public class EclipseUtils {
 					} catch (CoreException e) {
 						logger.fatal(e);
 	}}});}};
+	
+	
+	public static F2<String, String, Unit> renameProject = 
+		new F2<String, String, Unit>() {
+		@Override
+		public Unit f(final String oldName, final String newName) {
+			Option<IProject> projectFinder = getAllImportedProjects().find
+				(new F<IProject, Boolean>() {
+				@Override
+				public Boolean f(IProject project) {
+					return project.getName().equals(oldName);
+				}});
+			if(projectFinder.isNone()) {
+				logger.fatal("Cannot find project: " + oldName);
+				return Unit.unit();
+			}
+			IProject project = projectFinder.some();
+			try {
+				IProjectDescription descripor = project.getDescription();
+				descripor.setName(newName);
+				project.move(descripor, true, new NullProgressMonitor());
+			} catch (Exception e) {
+				logger.fatal(e);
+			}
+			return Unit.unit();
+		}
+	};
 }

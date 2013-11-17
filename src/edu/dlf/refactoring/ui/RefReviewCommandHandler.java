@@ -50,7 +50,10 @@ public class RefReviewCommandHandler extends AbstractHandler {
 			queue.execute(new Runnable(){
 				@Override
 				public void run() {
-					EclipseUtils.importProject.e("/home/xige/Desktop/pre-checking3");
+					String path = "/home/xige/Desktop/pre-checking3";
+					EclipseUtils.importProject.e(path);
+					String name = EclipseUtils.getProjectName.f(path);
+					EclipseUtils.renameProject.f(name, "newname");
 			}});
 		}
 		
