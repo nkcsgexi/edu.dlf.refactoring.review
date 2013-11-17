@@ -58,6 +58,12 @@
             id="RefReview.ChangeViewedCode"
             name="Change View">
       </command>
+      <command
+            categoryId="RefReview"
+            defaultHandler="edu.dlf.refactoring.ui.RefReviewCommandHandler"
+            id="RefReview.import"
+            name="Import projects">
+      </command>
    </extension>
      <extension
          point="org.eclipse.ui.menus">
@@ -85,6 +91,11 @@
                   icon="img/favicon.ico"
                   id="dlf.refactoring.review.toobar.command"
                   tooltip="Calculate Diff">
+            </command>
+            <command
+                  commandId="RefReview.import"
+                  icon="img/soccer.jpg"
+                  style="push">
             </command>
          </toolbar>
       </menuContribution>

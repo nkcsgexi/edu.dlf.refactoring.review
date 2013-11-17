@@ -12,6 +12,7 @@ import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.ui.ICodeReviewInput.InputType;
+import edu.dlf.refactoring.utils.EclipseUtils;
 import edu.dlf.refactoring.utils.WorkQueue;
 
 public class RefReviewCommandHandler extends AbstractHandler {
@@ -44,6 +45,14 @@ public class RefReviewCommandHandler extends AbstractHandler {
 							getInputAfter());
 					changeComp.listen(pair);
 			}}});}
+		
+		if(id.equals("RefReview.import")){
+			queue.execute(new Runnable(){
+				@Override
+				public void run() {
+					EclipseUtils.importProject.e("/home/xige/Desktop/pre-checking3");
+			}});
+		}
 		
 		return null;
 	}
