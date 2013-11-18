@@ -95,6 +95,18 @@ public class FunctionalJavaUtil {
 				return P.p(mapper.f(p._1()), mapper.f(p._2()));
 		}};
 	}
+	
+	public static <T> Equal<T> getReferenceEq(T t)
+	{
+		return Equal.equal(new F<T, F<T,Boolean>>() {
+			@Override
+			public F<T, Boolean> f(final T t0) {
+				return new F<T, Boolean>() {
+					@Override
+					public Boolean f(final T t1) {
+						return t0 == t1;
+		}};}});
+	}
 
 
 }

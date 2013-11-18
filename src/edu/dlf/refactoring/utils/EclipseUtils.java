@@ -8,6 +8,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import edu.dlf.refactoring.design.ServiceLocator;
@@ -39,6 +41,13 @@ public class EclipseUtils {
 	public static final List<IProject> getAllImportedProjects() {
 		return allImportedProjects.values();
 	}
+	
+	public static final F<IProject, IJavaProject> convertProject2JavaProject =
+		new F<IProject, IJavaProject>() {
+			@Override
+			public IJavaProject f(IProject pro) {
+				return JavaCore.create(pro) ;
+	}};
 	
 	public static final Effect<String> importProject = new Effect<String>() {
 		@Override
