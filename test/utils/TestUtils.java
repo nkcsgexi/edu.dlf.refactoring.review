@@ -16,7 +16,7 @@ public class TestUtils {
 	
 	public static ASTNode getCUByFileName(String file) throws Exception
 	{
-		return ASTAnalyzer.parseICompilationUnit(FileUtils.readAll(
+		return ASTAnalyzer.parseICompilationUnit(FileUtils.readAllFunc.f(
 			getTestFileDirectory() + file));	
 	}
 	

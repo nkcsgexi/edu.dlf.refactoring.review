@@ -51,7 +51,7 @@ public class EclipseUtils {
 			}
 	}};
 	
-	public static F<String, String> getProjectName = new F<String, String>() {
+	public static F<String, String> getProjectNameByPath = new F<String, String>() {
 		@Override
 		public String f(final String path) {
 			Option<IProject> projectFinder = getAllImportedProjects().find(
@@ -106,6 +106,5 @@ public class EclipseUtils {
 				logger.fatal(e);
 			}
 			return Unit.unit();
-		}
-	};
+	}};
 }
