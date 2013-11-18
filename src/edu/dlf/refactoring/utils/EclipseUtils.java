@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -43,11 +42,11 @@ public class EclipseUtils {
 				loadProjectDescription(new Path(projectPath + "/.project"));
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().
 				getProject(description.getName());
-			project.create(description, null); 
+			project.create(description, new NullProgressMonitor()); 
 			project.open(new NullProgressMonitor());
 			allImportedProjects = allImportedProjects.snoc(project);
 			} catch (Exception e) {
-				logger.fatal(e);
+				logger.fatal("Import error: " + e);
 			}
 	}};
 	
@@ -87,6 +86,7 @@ public class EclipseUtils {
 		new F2<String, String, Unit>() {
 		@Override
 		public Unit f(final String oldName, final String newName) {
+			try{
 			Option<IProject> projectFinder = getAllImportedProjects().find
 				(new F<IProject, Boolean>() {
 				@Override
@@ -98,12 +98,11 @@ public class EclipseUtils {
 				return Unit.unit();
 			}
 			IProject project = projectFinder.some();
-			try {
-				IProjectDescription descripor = project.getDescription();
-				descripor.setName(newName);
-				project.move(descripor, true, new NullProgressMonitor());
+			IProjectDescription descripor = project.getDescription();
+			descripor.setName(newName);
+			project.move(descripor, true, new NullProgressMonitor());
 			} catch (Exception e) {
-				logger.fatal(e);
+				logger.fatal("Rename project error " + e);
 			}
 			return Unit.unit();
 	}};
