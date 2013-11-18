@@ -2,6 +2,8 @@ package edu.dlf.refactoring.analyzers;
 
 import java.util.Collection;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
 import fj.Equal;
 import fj.F;
 import fj.F2;
@@ -94,6 +96,18 @@ public class FunctionalJavaUtil {
 			public P2<S, S> f(P2<T, T> p) {
 				return P.p(mapper.f(p._1()), mapper.f(p._2()));
 		}};
+	}
+	
+	public static <T, S> Equal<P2<T, S>> extendEqual2Product(final Equal<T> eqt, 
+		final Equal<S> eqs) {
+		return Equal.equal(new F<P2<T, S>, F<P2<T, S>,Boolean>>() {
+			@Override
+			public F<P2<T, S>, Boolean> f(final P2<T, S> p1) {
+				return new F<P2<T,S>, Boolean>() {
+					@Override
+					public Boolean f(final P2<T, S> p2) {
+						return eqt.eq(p1._1(), p2._1()) && eqs.eq(p1._2(), p2._2());
+		}};}});
 	}
 	
 	public static <T> Equal<T> getReferenceEq(T t)
