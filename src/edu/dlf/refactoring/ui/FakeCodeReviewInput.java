@@ -28,7 +28,6 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 		return InputType.JavaElement;
 	}
 	
-	
 	private List<P2<String, String>> comparedPairs = List.nil();
 	private F<P2<String, String>, Boolean> hasPairCompared = 
 		new F<P2<String,String>, Boolean>() {
@@ -43,7 +42,20 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 			return op.isSome();
 	}}; 
 	
-
+	private F<String, Object> findProjectByName = new F<String, Object>() {
+		@Override
+		public Object f(String name) {
+			Option<IJavaElement> finder = EclipseUtils.findJavaProjecInWorkspacetByName
+				.f(name);
+			if (finder.isNone())
+				logger.fatal("Cannot find project with name: " + name);
+			return finder.some();
+	}}; 
+	
+	private F<P2<String, String>, P2<Object, Object>> getPairProjectsByNames = 
+		FunctionalJavaUtil.extendMapper2Product(findProjectByName);
+	
+	
 	private List<P2<String, String>> getAllNamePairs() {
 		List<String> names = EclipseUtils.getAllImportedProjects().map(
 			new F<IProject, String>() {
@@ -55,17 +67,13 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 			.filter(FunctionalJavaUtil.convertEqualToProduct(Equal.stringEqual));
 	}
 
-	private Object findProjectByName(String name) {
-		Option<IJavaElement> finder = EclipseUtils.findJavaProjecInWorkspacetByName
-			.f(name);
-		if (finder.isNone())
-			logger.fatal("Cannot find project with name: " + name);
-		return finder.some();
-	}
-
 	@Override
 	public P2<Object, Object> getInputPair() {
-		
+		Option<P2<String, String>> op = getAllNamePairs().find(hasPairCompared);
+		if(op.isSome()) {
+			comparedPairs = comparedPairs.snoc(op.some());
+			return getPairProjectsByNames.f(op.some());
+		}
 		return null;
 	}
 	

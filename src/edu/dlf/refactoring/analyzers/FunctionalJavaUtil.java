@@ -86,6 +86,15 @@ public class FunctionalJavaUtil {
 				return eq.eq(pair._1(), pair._2());
 		}};
 	}
-
 	
+	public static <T, S> F<P2<T, T>, P2<S, S>> extendMapper2Product(final F<T, S> mapper) 
+	{
+		return new F<P2<T,T>, P2<S,S>>() {
+			@Override
+			public P2<S, S> f(P2<T, T> p) {
+				return P.p(mapper.f(p._1()), mapper.f(p._2()));
+		}};
+	}
+
+
 }
