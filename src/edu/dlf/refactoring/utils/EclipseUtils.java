@@ -53,7 +53,8 @@ public class EclipseUtils {
 	public static F<String, String> getProjectNameByPath = new F<String, String>() {
 		@Override
 		public String f(final String path) {
-			Option<IProject> projectFinder = getAllImportedProjects().find(
+			List<IProject> allprojects = getAllImportedProjects();
+			Option<IProject> projectFinder = allprojects.find(
 				new F<IProject, Boolean>() {
 				@Override
 				public Boolean f(IProject project) {

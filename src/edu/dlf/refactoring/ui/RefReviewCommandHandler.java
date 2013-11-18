@@ -45,8 +45,6 @@ public class RefReviewCommandHandler extends AbstractHandler {
 				logger.fatal(e);
 			}
 	}}; 
-
-	
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
