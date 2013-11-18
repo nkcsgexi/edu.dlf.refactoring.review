@@ -10,16 +10,20 @@ import org.eclipse.core.runtime.Path;
 
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.Effect;
+import fj.Equal;
 import fj.F;
 import fj.F2;
+import fj.Hash;
 import fj.Unit;
+import fj.data.HashMap;
 import fj.data.List;
 import fj.data.Option;
 
 public class EclipseUtils {
 	
-	private static List<IProject> allImportedProjects = List.nil();
-	private static Logger logger = ServiceLocator.ResolveType(Logger.class);
+	private static final HashMap<String, IProject> allImportedProjects = new HashMap<String, 
+		IProject>(Equal.stringEqual, Hash.stringHash);
+	private static final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	
 	private EclipseUtils() throws Exception
 	{
@@ -31,7 +35,7 @@ public class EclipseUtils {
 	
 
 	public static List<IProject> getAllImportedProjects() {
-		return allImportedProjects;
+		return allImportedProjects.values();
 	}
 	
 	public static Effect<String> importProject = new Effect<String>() {
@@ -44,7 +48,7 @@ public class EclipseUtils {
 				getProject(description.getName());
 			project.create(description, new NullProgressMonitor()); 
 			project.open(new NullProgressMonitor());
-			allImportedProjects = allImportedProjects.snoc(project);
+			allImportedProjects.set(projectPath, project);
 			} catch (Exception e) {
 				logger.fatal("Import error: " + e);
 			}
@@ -53,14 +57,7 @@ public class EclipseUtils {
 	public static F<String, String> getProjectNameByPath = new F<String, String>() {
 		@Override
 		public String f(final String path) {
-			List<IProject> allprojects = getAllImportedProjects();
-			Option<IProject> projectFinder = allprojects.find(
-				new F<IProject, Boolean>() {
-				@Override
-				public Boolean f(IProject project) {
-					return project.getLocation().toOSString().equals(new Path(path).
-						toOSString());
-			}});
+			Option<IProject> projectFinder = allImportedProjects.get(path);
 			if(projectFinder.isNone()) {
 				logger.fatal("Cannot find project at: " + path);
 				return "";
@@ -72,7 +69,7 @@ public class EclipseUtils {
 	public static Effect<String> removeProject = new Effect<String>() {
 		@Override
 		public void e(final String projectName) {
-			allImportedProjects.foreach(new Effect<IProject>() {
+			allImportedProjects.values().foreach(new Effect<IProject>() {
 				@Override
 				public void e(IProject project) {
 					try {

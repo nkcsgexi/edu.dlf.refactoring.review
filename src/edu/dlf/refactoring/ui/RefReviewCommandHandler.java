@@ -39,7 +39,7 @@ public class RefReviewCommandHandler extends AbstractHandler {
 			try {
 			EclipseUtils.importProject.e(path);
 			String name = EclipseUtils.getProjectNameByPath.f(path);
-			EclipseUtils.renameProject.f(name, FileUtils.generateRandomInteger.
+			EclipseUtils.renameProject.f(name, name + FileUtils.generateRandomInteger.
 				f(1000).toString());
 			}catch(Exception e) {
 				logger.fatal(e);
