@@ -27,6 +27,22 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 	public InputType getInputType() {
 		return InputType.JavaElement;
 	}
+	
+	
+	private List<P2<String, String>> comparedPairs = List.nil();
+	private F<P2<String, String>, Boolean> hasPairCompared = 
+		new F<P2<String,String>, Boolean>() {
+		@Override
+		public Boolean f(final P2<String, String> p1) {
+			Option<P2<String, String>> op = comparedPairs.find(
+				new F<P2<String,String>, Boolean>() {
+				@Override
+				public Boolean f(P2<String, String> p2) {
+					return p1._1().equals(p2._1()) && p1._2().equals(p2._2());
+			}});
+			return op.isSome();
+	}}; 
+	
 
 	private List<P2<String, String>> getAllNamePairs() {
 		List<String> names = EclipseUtils.getAllImportedProjects().map(
@@ -49,6 +65,7 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 
 	@Override
 	public P2<Object, Object> getInputPair() {
+		
 		return null;
 	}
 	
