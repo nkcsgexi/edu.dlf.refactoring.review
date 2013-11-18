@@ -99,7 +99,7 @@ public class TreeViewContentProvider implements ITreeContentProvider
 			public Boolean f(ISourceChange c) {
 				return c.getSourceChangeLevel().equals(projectLevel) ||
 					c.getSourceChangeLevel().equals(packageLevel);
-			}});
+		}});
 		if(parent.isSome())
 			return parent.some();
 		return null;

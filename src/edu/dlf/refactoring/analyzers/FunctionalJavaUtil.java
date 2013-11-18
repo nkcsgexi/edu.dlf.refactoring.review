@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import fj.Equal;
 import fj.F;
+import fj.F2;
 import fj.P;
 import fj.P2;
 import fj.data.List;
@@ -68,6 +69,23 @@ public class FunctionalJavaUtil {
 		return buffer.toList();
 	}
 	
+	
+	public static <T> F2<T, T, P2<T, T>> pairFunction(T t)
+	{
+		return new F2<T, T, P2<T,T>>(){
+			@Override
+			public P2<T, T> f(T t1, T t2) {
+				return P.p(t1, t2);
+		}};
+	}
+	
+	public static <T> F<P2<T, T>, Boolean> convertEqualToProduct(final Equal<T> eq) {
+		return new F<P2<T,T>, Boolean>() {
+			@Override
+			public Boolean f(P2<T, T> pair) {
+				return eq.eq(pair._1(), pair._2());
+		}};
+	}
 
 	
 }

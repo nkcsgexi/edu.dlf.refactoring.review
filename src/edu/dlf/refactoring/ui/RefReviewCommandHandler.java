@@ -18,6 +18,7 @@ import edu.dlf.refactoring.utils.EclipseUtils;
 import edu.dlf.refactoring.utils.WorkQueue;
 import fj.Effect;
 import fj.F;
+import fj.P2;
 import fj.data.List;
 
 public class RefReviewCommandHandler extends AbstractHandler {
@@ -43,8 +44,7 @@ public class RefReviewCommandHandler extends AbstractHandler {
 				f(1000).toString());
 			}catch(Exception e) {
 				logger.fatal(e);
-			}
-	}}; 
+	}}}; 
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -54,18 +54,18 @@ public class RefReviewCommandHandler extends AbstractHandler {
 			@Override
 			public void run() {
 				context.clearContext();
+				P2<Object, Object> inputPair = input.getInputPair();
 				if(input.getInputType() == InputType.ASTNode) {
-					changeComp.listen(new ASTNodePair((ASTNode) input.getInputBefore(),
-						(ASTNode) input.getInputAfter()));
+					changeComp.listen(new ASTNodePair((ASTNode) inputPair._1(),
+						(ASTNode) inputPair._2()));
 				}
 				else {
 					JavaElementPair pair = new JavaElementPair((IJavaElement)
-						input.getInputBefore(), (IJavaElement)input.
-							getInputAfter());
+						inputPair._1(), (IJavaElement)inputPair._2());
 					changeComp.listen(pair);
-			}}});}
+		}}});}
 		
-		if(id.equals("RefReview.import")){
+		if(id.equals("RefReview.import")) {
 			queue.execute(new Runnable(){
 				@Override
 				public void run() {
@@ -76,8 +76,7 @@ public class RefReviewCommandHandler extends AbstractHandler {
 								return path.contains("checking");
 					}});
 					directories.foreach(importProject);
-			}});
-		}
+		}});}
 		return null;
 	}
 }

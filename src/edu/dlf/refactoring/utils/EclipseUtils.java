@@ -7,7 +7,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaElement;
 
+import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.Effect;
 import fj.Equal;
@@ -21,8 +23,8 @@ import fj.data.Option;
 
 public class EclipseUtils {
 	
-	private static final HashMap<String, IProject> allImportedProjects = new HashMap<String, 
-		IProject>(Equal.stringEqual, Hash.stringHash);
+	private static final HashMap<String, IProject> allImportedProjects = 
+		new HashMap<String, IProject>(Equal.stringEqual, Hash.stringHash);
 	private static final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	
 	private EclipseUtils() throws Exception
@@ -34,11 +36,11 @@ public class EclipseUtils {
 		getLocation();
 	
 
-	public static List<IProject> getAllImportedProjects() {
+	public static final List<IProject> getAllImportedProjects() {
 		return allImportedProjects.values();
 	}
 	
-	public static Effect<String> importProject = new Effect<String>() {
+	public static final Effect<String> importProject = new Effect<String>() {
 		@Override
 		public void e(String projectPath) {
 			try {
@@ -51,10 +53,9 @@ public class EclipseUtils {
 			allImportedProjects.set(projectPath, project);
 			} catch (Exception e) {
 				logger.fatal("Import error: " + e);
-			}
-	}};
+	}}};
 	
-	public static F<String, String> getProjectNameByPath = new F<String, String>() {
+	public static final F<String, String> getProjectNameByPath = new F<String, String>() {
 		@Override
 		public String f(final String path) {
 			Option<IProject> projectFinder = allImportedProjects.get(path);
@@ -66,7 +67,7 @@ public class EclipseUtils {
 	}}; 
 	
 	
-	public static Effect<String> removeProject = new Effect<String>() {
+	public static final Effect<String> removeProject = new Effect<String>() {
 		@Override
 		public void e(final String projectName) {
 			allImportedProjects.values().foreach(new Effect<IProject>() {
@@ -79,8 +80,18 @@ public class EclipseUtils {
 						logger.fatal(e);
 	}}});}};
 	
-	
-	public static F2<String, String, Unit> renameProject = 
+	public static final F<String, Option<IJavaElement>> findJavaProjecInWorkspacetByName =
+		new F<String, Option<IJavaElement>>() {
+			@Override
+			public Option<IJavaElement> f(final String name) {
+				return JavaModelAnalyzer.getJavaProjectsInWorkSpace().find(
+					new F<IJavaElement, Boolean>() {
+					@Override
+					public Boolean f(IJavaElement element) {
+						return element.getElementName().equals(name);
+	}});}};
+		
+	public static final F2<String, String, Unit> renameProject = 
 		new F2<String, String, Unit>() {
 		@Override
 		public Unit f(final String oldName, final String newName) {

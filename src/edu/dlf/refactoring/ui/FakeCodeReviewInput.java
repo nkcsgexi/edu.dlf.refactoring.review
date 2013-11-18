@@ -1,25 +1,26 @@
 package edu.dlf.refactoring.ui;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaElement;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
-import edu.dlf.refactoring.design.ServiceLocator;
+import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
+import edu.dlf.refactoring.utils.EclipseUtils;
+import fj.Equal;
 import fj.F;
+import fj.P2;
 import fj.data.List;
+import fj.data.Option;
 
-public class FakeCodeReviewInput implements ICodeReviewInput{
+public class FakeCodeReviewInput implements ICodeReviewInput {
 
 	private final Logger logger;
-	private final List<IJavaElement> allProjects;
-	
+
 	@Inject
-	public FakeCodeReviewInput() throws Exception
-	{
-		this.logger = ServiceLocator.ResolveType(Logger.class);
-		this.allProjects = JavaModelAnalyzer.getJavaProjectsInWorkSpace();
+	public FakeCodeReviewInput(Logger logger) {
+		this.logger = logger;
 	}
 
 	@Override
@@ -27,22 +28,28 @@ public class FakeCodeReviewInput implements ICodeReviewInput{
 		return InputType.JavaElement;
 	}
 
-	@Override
-	public Object getInputBefore() {
-		return this.allProjects.find(new F<IJavaElement, Boolean>(){
-			@Override
-			public Boolean f(IJavaElement element) {
-				return element.getElementName().equals("ConditionPreComputing");
-			}}).some();
+	private List<P2<String, String>> getAllNamePairs() {
+		List<String> names = EclipseUtils.getAllImportedProjects().map(
+			new F<IProject, String>() {
+				@Override
+				public String f(IProject project) {
+					return project.getName();
+		}});
+		return names.bind(names, FunctionalJavaUtil.pairFunction(""))
+			.filter(FunctionalJavaUtil.convertEqualToProduct(Equal.stringEqual));
+	}
+
+	private Object findProjectByName(String name) {
+		Option<IJavaElement> finder = EclipseUtils.findJavaProjecInWorkspacetByName
+			.f(name);
+		if (finder.isNone())
+			logger.fatal("Cannot find project with name: " + name);
+		return finder.some();
 	}
 
 	@Override
-	public Object getInputAfter() {
-		return this.allProjects.find(new F<IJavaElement, Boolean>(){
-			@Override
-			public Boolean f(IJavaElement element) {
-				return element.getElementName().equals("ConditionPreComputing1");
-			}}).some();
+	public P2<Object, Object> getInputPair() {
+		return null;
 	}
 	
 
