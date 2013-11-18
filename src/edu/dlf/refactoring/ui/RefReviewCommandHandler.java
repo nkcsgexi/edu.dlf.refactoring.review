@@ -36,10 +36,15 @@ public class RefReviewCommandHandler extends AbstractHandler {
 	private final Effect<String> importProject = new Effect<String>() {
 		@Override
 		public void e(String path) {
+			try {
 			EclipseUtils.importProject.e(path);
 			String name = EclipseUtils.getProjectNameByPath.f(path);
 			EclipseUtils.renameProject.f(name, name + FileUtils.generateRandomInteger.
 				f(1000));
+			}catch(Exception e)
+			{
+				logger.fatal(e);
+			}
 	}}; 
 
 	

@@ -27,7 +27,7 @@ public class EclipseUtils {
 		throw new Exception();
 	}
 	
-	public static IPath workSpacePath = ResourcesPlugin.getWorkspace().getRoot().
+	public static final IPath workSpacePath = ResourcesPlugin.getWorkspace().getRoot().
 		getLocation();
 	
 
@@ -78,7 +78,7 @@ public class EclipseUtils {
 					try {
 						if(project.getName().equals(projectName))
 							project.delete(false, true, new NullProgressMonitor());
-					} catch (CoreException e) {
+					} catch (Exception e) {
 						logger.fatal(e);
 	}}});}};
 	
