@@ -7,6 +7,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -16,6 +17,7 @@ import fj.data.List;
 
 public class FileUtils {
 
+	private static final Random randomGenerator = new Random();
 	private static final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	
 	public static final String desktop = "/home/xige/Desktop/";
@@ -53,9 +55,15 @@ public class FileUtils {
 		        	results = results.snoc(path.toFile().getAbsolutePath());
 		        }
 		    } catch (IOException e){
-		    	logger.fatal(e);
+		    	logger.fatal("Get sub-directory:" + e);
 		    }
 			return results;
 	}};
 	
+	public static final F<Integer, Integer> generateRandomInteger = 
+		new F<Integer, Integer>() {
+		@Override
+		public Integer f(Integer max) {
+			return randomGenerator.nextInt(max);
+	}};
 }

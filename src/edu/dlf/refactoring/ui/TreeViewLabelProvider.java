@@ -14,7 +14,6 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotat
 import edu.dlf.refactoring.change.ChangeComponentInjector.JavaProjectAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SourcePackageAnnotation;
 import edu.dlf.refactoring.design.ISourceChange;
-import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.utils.UIUtils;
 
 public class TreeViewLabelProvider implements ILabelProvider

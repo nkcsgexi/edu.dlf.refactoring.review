@@ -1,16 +1,9 @@
 package edu.dlf.refactoring.ui;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import org.apache.log4j.Logger;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.ASTNode;
 
@@ -25,7 +18,6 @@ import edu.dlf.refactoring.utils.EclipseUtils;
 import edu.dlf.refactoring.utils.WorkQueue;
 import fj.Effect;
 import fj.F;
-import fj.P2;
 import fj.data.List;
 
 public class RefReviewCommandHandler extends AbstractHandler {
@@ -41,13 +33,13 @@ public class RefReviewCommandHandler extends AbstractHandler {
 	private final ICodeReviewInput input = ServiceLocator.ResolveType
 			(ICodeReviewInput.class);
 	
-	private final Effect<P2<String, Integer>> importProject = new Effect<P2<String, 
-		Integer>>() {
+	private final Effect<String> importProject = new Effect<String>() {
 		@Override
-		public void e(P2<String, Integer> pair) {
-			EclipseUtils.importProject.e(pair._1());
-			String name = EclipseUtils.getProjectNameByPath.f(pair._1());
-			EclipseUtils.renameProject.f(name, name + pair._2());
+		public void e(String path) {
+			EclipseUtils.importProject.e(path);
+			String name = EclipseUtils.getProjectNameByPath.f(path);
+			EclipseUtils.renameProject.f(name, name + FileUtils.generateRandomInteger.
+				f(1000));
 	}}; 
 
 	
@@ -79,10 +71,9 @@ public class RefReviewCommandHandler extends AbstractHandler {
 						f(FileUtils.desktop).filter(new F<String, Boolean>() {
 							@Override
 							public Boolean f(String path) {
-								return path.contains("pre-checking");
+								return path.contains("checking");
 					}});
-					directories.zipIndex().foreach(importProject);
-					
+					directories.foreach(importProject);
 			}});
 		}
 		return null;
