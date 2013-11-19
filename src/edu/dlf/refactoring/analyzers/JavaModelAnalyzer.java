@@ -257,7 +257,7 @@ public class JavaModelAnalyzer {
 	}
 	
 	
-	public static List<P2<IJavaElement, IJavaElement>> getSimilaryJavaElement(
+	public static List<P2<IJavaElement, IJavaElement>> getSimilarJavaElement(
 			List<IJavaElement> list1, List<IJavaElement> list2, final int minimumScore,
 			final F2<IJavaElement, IJavaElement, Integer> similarScoreCalculator)
 	{

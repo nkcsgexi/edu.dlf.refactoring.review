@@ -121,5 +121,36 @@ public class FunctionalJavaUtil {
 		}};}});
 	}
 
+	public static <T, S> F<P2<T, S>, T> getFirstElementInPFunc(T t, S s) {
+		return new F<P2<T,S>, T>() {
+			@Override
+			public T f(P2<T, S> p) {
+				return p._1();
+		}};
+	}
+	
+	public static <T, S> F<P2<T, S>, S> getSecondElementInPFunc(T t, S s) {
+		return new F<P2<T,S>, S>() {
+			@Override
+			public S f(P2<T,S> p) {
+				return p._2();
+		}};
+	}
+	
+	public static <T, S> F<T, P2<T, S>> appendNullFunc(T t, S s) {
+		return new F<T, P2<T,S>>() {
+			@Override
+			public P2<T, S> f(T t1) {
+				return P.p(t1, null);
+		}};
+	}
+	
+	public static <T, S> F<T, P2<S, T>> prependNullFunc(T t, S s) {
+		return new F<T, P2<S, T>>() {
+			@Override
+			public P2<S, T> f(T t1) {
+				return P.p(null, t1);
+		}};
+	}
 
 }
