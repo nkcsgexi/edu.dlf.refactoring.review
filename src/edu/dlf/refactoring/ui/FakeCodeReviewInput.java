@@ -51,7 +51,10 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 	public P2<Object, Object> getInputPair() {
 		Option<P2<IProject, IProject>> option = getAllProjectPairs().find(
 			hasPairNotCompared);
-		if(option.isNone()) logger.fatal("Cannot find projects to compare.");
+		if(option.isNone()) {
+			comparedPairs = List.nil();
+			option = Option.some(getAllProjectPairs().head());
+		}
 		P2<IProject, IProject> input = option.some();
 		comparedPairs = comparedPairs.snoc(input);
 		P2<IJavaProject, IJavaProject> javaInput = P2.map(EclipseUtils.
