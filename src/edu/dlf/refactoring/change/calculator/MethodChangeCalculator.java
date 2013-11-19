@@ -71,8 +71,8 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 			}}));
 
 			container.addSubChange(blCalculator
-					.CalculateASTNodeChange(new ASTNodePair(methodBefore
-							.getBody(), methodAfter.getBody())));
+				.CalculateASTNodeChange(new ASTNodePair(methodBefore
+					.getBody(), methodAfter.getBody())));
 			return container;
 		} catch (Exception e) {
 			logger.fatal(e);
@@ -84,8 +84,10 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 		return new SimilarityASTNodeMapStrategy(new IDistanceCalculator(){
 			@Override
 			public int calculateDistance(ASTNode before, ASTNode after) {
-				String nb = before.getStructuralProperty(MethodDeclaration.NAME_PROPERTY).toString();
-				String na = after.getStructuralProperty(MethodDeclaration.NAME_PROPERTY).toString();
+				String nb = before.getStructuralProperty(MethodDeclaration.
+					NAME_PROPERTY).toString();
+				String na = after.getStructuralProperty(MethodDeclaration.
+					NAME_PROPERTY).toString();
 				return XStringUtils.distance(nb, na);
 			}});
 	}

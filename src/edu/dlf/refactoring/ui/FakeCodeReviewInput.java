@@ -1,13 +1,12 @@
 package edu.dlf.refactoring.ui;
 
 import org.apache.log4j.Logger;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IJavaElement;
 
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
-import edu.dlf.refactoring.utils.EclipseUtils;
+import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import fj.Equal;
 import fj.F;
 import fj.P;
@@ -29,37 +28,35 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 		return InputType.JavaElement;
 	}
 	
-	private List<P2<IProject, IProject>> comparedPairs = List.nil();
-	private F<P2<IProject, IProject>, Boolean> hasPairNotCompared = 
-		new F<P2<IProject, IProject>, Boolean>() {
+	private List<P2<IJavaElement, IJavaElement>> comparedPairs = List.nil();
+	private F<P2<IJavaElement, IJavaElement>, Boolean> hasPairNotCompared = 
+		new F<P2<IJavaElement, IJavaElement>, Boolean>() {
 		@Override
-		public Boolean f(final P2<IProject, IProject> pair) {
-			Equal<IProject> eq = FunctionalJavaUtil.getReferenceEq((IProject)null);
-			F<P2<IProject, IProject>, Boolean> selector = FunctionalJavaUtil.
+		public Boolean f(final P2<IJavaElement, IJavaElement> pair) {
+			Equal<IJavaElement> eq = FunctionalJavaUtil.getReferenceEq((IJavaElement)null);
+			F<P2<IJavaElement, IJavaElement>, Boolean> selector = FunctionalJavaUtil.
 				extendEqual2Product(eq, eq).eq(pair);
 			return comparedPairs.find(selector).isNone();
 	}}; 
 	
-	private List<P2<IProject,IProject>> getAllProjectPairs() {
-		List<IProject> projects = EclipseUtils.getAllImportedProjects();
-		return projects.bind(projects, FunctionalJavaUtil.pairFunction((IProject)null)).
+	private List<P2<IJavaElement,IJavaElement>> getAllProjectPairs() {
+		List<IJavaElement> projects = JavaModelAnalyzer.getJavaProjectsInWorkSpace();
+		return projects.bind(projects, FunctionalJavaUtil.pairFunction((IJavaElement)null)).
 			removeAll(FunctionalJavaUtil.convertEqualToProduct(FunctionalJavaUtil.
-				getReferenceEq((IProject)null)));
+				getReferenceEq((IJavaElement)null)));
 	}
 
 	@Override
 	public P2<Object, Object> getInputPair() {
-		Option<P2<IProject, IProject>> option = getAllProjectPairs().find(
+		Option<P2<IJavaElement, IJavaElement>> option = getAllProjectPairs().find(
 			hasPairNotCompared);
 		if(option.isNone()) {
 			comparedPairs = List.nil();
 			option = Option.some(getAllProjectPairs().head());
 		}
-		P2<IProject, IProject> input = option.some();
+		P2<IJavaElement, IJavaElement> input = option.some();
 		comparedPairs = comparedPairs.snoc(input);
-		P2<IJavaProject, IJavaProject> javaInput = P2.map(EclipseUtils.
-			convertProject2JavaProject, input);
-		return P.p((Object)javaInput._1(), (Object)javaInput._2());
+		return P.p((Object)input._1(), (Object)input._2());
 	}
 	
 
