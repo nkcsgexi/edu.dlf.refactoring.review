@@ -31,8 +31,8 @@ public class ASTNode2StringUtils {
 	public static F<ASTNode, String> getMethodNameFunc = new F<ASTNode, String>() {
 		@Override
 		public String f(ASTNode method) {
-			return method.getStructuralProperty(MethodDeclaration.NAME_PROPERTY).
-				toString();
+			return method == null ? "" : method.getStructuralProperty
+				(MethodDeclaration.NAME_PROPERTY).toString();
 	}};
 	
 	public static F<ASTNode, String> getPreWhitespace = new F<ASTNode, String>() {
@@ -56,9 +56,6 @@ public class ASTNode2StringUtils {
 			int end = after.getStartPosition() - 1;
 			return removeNonWhiteSpace(source.substring(start, end + 1));
 	}};
-	
-	
-	
 	
 	private static String removeNonWhiteSpace(String source)
 	{
