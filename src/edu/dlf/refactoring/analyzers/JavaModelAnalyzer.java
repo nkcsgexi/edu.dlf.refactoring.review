@@ -62,7 +62,7 @@ public class JavaModelAnalyzer {
 		new F<IJavaElement, String>() {
 			@Override
 			public String f(IJavaElement element) {
-				return element.getElementName();
+				return element == null ? "" : element.getElementName();
 	}};
 	
 	

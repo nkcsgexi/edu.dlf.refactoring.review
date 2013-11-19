@@ -145,7 +145,7 @@ public class FunctionalJavaUtil {
 		}};
 	}
 	
-	public static <T, S> F<T, P2<S, T>> prependNullFunc(T t, S s) {
+	public static <T, S> F<T, P2<S, T>> prependNullFunc(S s, T t) {
 		return new F<T, P2<S, T>>() {
 			@Override
 			public P2<S, T> f(T t1) {

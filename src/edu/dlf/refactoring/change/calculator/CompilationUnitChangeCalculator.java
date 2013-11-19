@@ -12,6 +12,7 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
+import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import edu.dlf.refactoring.analyzers.XStringUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
@@ -46,8 +47,9 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	
 	@Override
 	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
-		logger.debug("Calculate change: " + pair.getElementBefore().getElementName() 
-			+ "->" + pair.getElementAfter().getElementName());
+		logger.debug("Calculate change: " + JavaModelAnalyzer.getElementNameFunc.
+			f(pair.getElementBefore()) + "->" + JavaModelAnalyzer.getElementNameFunc.
+				f(pair.getElementAfter()) );
 		ASTNode cuBefore = ASTAnalyzer.parseICompilationUnit(pair.getElementBefore());
 		ASTNode cuAfter = ASTAnalyzer.parseICompilationUnit(pair.getElementAfter());
 		return CalculateASTNodeChange(new ASTNodePair(cuBefore, cuAfter));
@@ -55,6 +57,9 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	
 	@Override
 	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
+		ISourceChange simple = changeBuilder.buildSimpleChange(pair);
+		if(simple != null)
+			return simple;
 		logger.debug("Calculate change: " + ASTNode2StringUtils.getCompilationUnitName.
 			f(pair.getNodeBefore()) + "->" + ASTNode2StringUtils.getCompilationUnitName.
 				f(pair.getNodeAfter()));

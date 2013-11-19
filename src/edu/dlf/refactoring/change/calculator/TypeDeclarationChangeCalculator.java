@@ -65,7 +65,7 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 
 	@Override
 	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
-		logger.info("Comparing types: " + getTypeFunc.f(pair.getNodeBefore()) + 
+		logger.debug("Comparing types: " + getTypeFunc.f(pair.getNodeBefore()) + 
 			"=>" + getTypeFunc.f(pair.getNodeAfter()));
 		ISourceChange change = changeBuilder.buildSimpleChange(pair);
 		if(change != null)

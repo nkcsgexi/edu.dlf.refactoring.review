@@ -57,6 +57,8 @@ public class ASTAnalyzer {
 	
 	
 	public static ASTNode parseICompilationUnit(IJavaElement icu) {
+		if(icu == null)
+			return null;
 		try {
 			ASTParser parser = ASTParser.newParser(AST.JLS4);
 			parser.setKind(ASTParser.K_COMPILATION_UNIT);
