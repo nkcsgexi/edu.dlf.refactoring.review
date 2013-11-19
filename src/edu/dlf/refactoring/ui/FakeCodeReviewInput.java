@@ -8,16 +8,17 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import fj.Equal;
-import fj.F;
 import fj.P;
 import fj.P2;
 import fj.data.List;
-import fj.data.Option;
 
 public class FakeCodeReviewInput implements ICodeReviewInput {
 
 	private final Logger logger;
 
+	private final Equal<IJavaElement> projectEq =  Equal.stringEqual.comap
+			(JavaModelAnalyzer.getElementNameFunc);
+	
 	@Inject
 	public FakeCodeReviewInput(Logger logger) {
 		this.logger = logger;
@@ -29,16 +30,7 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 	}
 	
 	private List<P2<IJavaElement, IJavaElement>> comparedPairs = List.nil();
-	private F<P2<IJavaElement, IJavaElement>, Boolean> hasPairNotCompared = 
-		new F<P2<IJavaElement, IJavaElement>, Boolean>() {
-		@Override
-		public Boolean f(final P2<IJavaElement, IJavaElement> pair) {
-			Equal<IJavaElement> eq = FunctionalJavaUtil.getReferenceEq((IJavaElement)null);
-			F<P2<IJavaElement, IJavaElement>, Boolean> selector = FunctionalJavaUtil.
-				extendEqual2Product(eq, eq).eq(pair);
-			return comparedPairs.find(selector).isNone();
-	}}; 
-	
+
 	private List<P2<IJavaElement,IJavaElement>> getAllProjectPairs() {
 		List<IJavaElement> projects = JavaModelAnalyzer.getJavaProjectsInWorkSpace();
 		return projects.bind(projects, FunctionalJavaUtil.pairFunction((IJavaElement)null)).
@@ -48,14 +40,19 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 
 	@Override
 	public P2<Object, Object> getInputPair() {
-		Option<P2<IJavaElement, IJavaElement>> option = getAllProjectPairs().find(
-			hasPairNotCompared);
-		if(option.isNone()) {
+		P2<IJavaElement, IJavaElement> input;
+		List<P2<IJavaElement, IJavaElement>> remainingPairs = getAllProjectPairs().
+			minus(FunctionalJavaUtil.extendEqual2Product(projectEq, projectEq), 
+				comparedPairs);
+		if(remainingPairs.isEmpty()) {
 			comparedPairs = List.nil();
-			option = Option.some(getAllProjectPairs().head());
+			input = getAllProjectPairs().head();
+		} else {
+			input = remainingPairs.head();
 		}
-		P2<IJavaElement, IJavaElement> input = option.some();
 		comparedPairs = comparedPairs.snoc(input);
+		logger.info("Projects to compare: " + input._1().getElementName() + 
+			" and " + input._2().getElementName());
 		return P.p((Object)input._1(), (Object)input._2());
 	}
 	

@@ -26,6 +26,7 @@ import edu.dlf.refactoring.change.calculator.expression.NameChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.PrePostFixExpressionChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.QualifiedNameChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.SimpleNameChangeCalculator;
+import edu.dlf.refactoring.change.calculator.expression.SingleVariableDeclarationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.TypeChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.VariableDeclarationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.VariableDeclarationFragmentChangeCalculator;
@@ -63,6 +64,9 @@ public class ChangeComponentInjector extends AbstractModule{
 	
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface VariableDeclarationAnnotation {}
+		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface SingleVariableDeclarationAnnotation {}
 		
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface VariableDeclarationFragmentAnnotation {}
@@ -168,12 +172,10 @@ public class ChangeComponentInjector extends AbstractModule{
 		
 		private void bindASTCalculators()
 		{
-			bind(IASTNodeChangeCalculator.class).annotatedWith(CompilationUnitAnnotation.class)
-				.to(CompilationUnitChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(CompilationUnitAnnotation.class).to(CompilationUnitChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodDeclarationAnnotation.class).to(MethodChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(TypeDeclarationAnnotation.class).to(TypeDeclarationChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(FieldDeclarationAnnotation.class).to(FieldDeclarationCalculator.class);
-			
 			
 			bind(IASTNodeChangeCalculator.class).annotatedWith(IfStatementAnnotation.class).to(IfStatementChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(StatementAnnotation.class).to(StatementChangeCalculator.class);
@@ -183,35 +185,23 @@ public class ChangeComponentInjector extends AbstractModule{
 			bind(IASTNodeChangeCalculator.class).annotatedWith(DoStatementAnnotation.class).to(DoStatementChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(TryStatementAnnotation.class).to(TryStatementChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(CatchClauseAnnotation.class).to(CatchClauseChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(BreakStatementAnnotation.class).
-				to(KeyWordsStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(ContinueStatementAnnotation.class).
-				to(KeyWordsStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(ReturnStatementAnnotation.class).
-				to(ReturnAndThrowStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(ThrowStatementAnnotation.class).
-				to(ReturnAndThrowStatementChangeCalculator.class);
-			
+			bind(IASTNodeChangeCalculator.class).annotatedWith(BreakStatementAnnotation.class).to(KeyWordsStatementChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(ContinueStatementAnnotation.class).to(KeyWordsStatementChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(ReturnStatementAnnotation.class).to(ReturnAndThrowStatementChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(ThrowStatementAnnotation.class).to(ReturnAndThrowStatementChangeCalculator.class);
 			
 			bind(IASTNodeChangeCalculator.class).annotatedWith(ExpressionAnnotation.class).to(ExpressionChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(AssignmentAnnotation.class).to(AssignmentChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(VariableDeclarationAnnotation.class).to(VariableDeclarationChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(VariableDeclarationFragmentAnnotation.class).
-				to(VariableDeclarationFragmentChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(TypeAnnotation.class).
-				to(TypeChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(SimpleNameAnnotation.class).
-				to(SimpleNameChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(NameAnnotation.class).
-				to(NameChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(QualifiedNameAnnotation.class).
-				to(QualifiedNameChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(PrePostFixExpressionAnnotation.class).
-				to(PrePostFixExpressionChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(InfixExpressionAnnotation.class).
-				to(InfixExpressionChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodInvocationAnnotation.class).
-				to(MethodInvocationChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(SingleVariableDeclarationAnnotation.class).to(SingleVariableDeclarationChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(VariableDeclarationFragmentAnnotation.class).to(VariableDeclarationFragmentChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(TypeAnnotation.class).to(TypeChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(SimpleNameAnnotation.class).to(SimpleNameChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(NameAnnotation.class).to(NameChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(QualifiedNameAnnotation.class).to(QualifiedNameChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(PrePostFixExpressionAnnotation.class).to(PrePostFixExpressionChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(InfixExpressionAnnotation.class).to(InfixExpressionChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodInvocationAnnotation.class).to(MethodInvocationChangeCalculator.class);
 		}
 
 
@@ -225,6 +215,7 @@ public class ChangeComponentInjector extends AbstractModule{
 			bindConstant().annotatedWith(TypeAnnotation.class).to("Type");
 			bindConstant().annotatedWith(ExpressionAnnotation.class).to("Expression");
 			bindConstant().annotatedWith(VariableDeclarationAnnotation.class).to("VariableDeclaration");
+			bindConstant().annotatedWith(SingleVariableDeclarationAnnotation.class).to("SingleVariableDeclaration");
 			bindConstant().annotatedWith(VariableDeclarationFragmentAnnotation.class).to("VariableDeclarationFragment");
 			bindConstant().annotatedWith(AssignmentAnnotation.class).to("Assignment");
 			bindConstant().annotatedWith(MethodInvocationAnnotation.class).to("MethodInvocation");

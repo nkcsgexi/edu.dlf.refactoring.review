@@ -2,8 +2,6 @@ package edu.dlf.refactoring.analyzers;
 
 import java.util.Collection;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-
 import fj.Equal;
 import fj.F;
 import fj.F2;
@@ -22,6 +20,7 @@ public class FunctionalJavaUtil {
 	
 	public static <T> List<T> createListFromArray(T[] array)
 	{
+		if(array == null) return List.nil();
 		Buffer<T> buffer = Buffer.empty();
 		for(T t : array)
 		{

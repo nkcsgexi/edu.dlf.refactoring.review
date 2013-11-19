@@ -58,6 +58,14 @@ public class JavaModelAnalyzer {
 	    return buffer.toList();
 	}
 	
+	public static final F<IJavaElement, String> getElementNameFunc = 
+		new F<IJavaElement, String>() {
+			@Override
+			public String f(IJavaElement element) {
+				return element.getElementName();
+	}};
+	
+	
 	public static Equal<IJavaElement> getJavaElementEQ()
 	{
 		 return Equal.equal(new F<IJavaElement, F<IJavaElement, 

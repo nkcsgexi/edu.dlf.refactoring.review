@@ -4,8 +4,10 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 
 import fj.F;
+import fj.F2;
 import fj.Ord;
 import fj.data.List;
 import fj.data.List.Buffer;
@@ -39,6 +41,22 @@ public class ASTNode2ASTNodeUtils {
 			return ASTNode2ASTNodeUtils.getAncestorStatement.f(node).sort
 					(Ord.intOrd.comap(ASTNode2IntegerUtils.getLength)).head();
 	}};
+	
+	
+	public static final F2<ASTNode, StructuralPropertyDescriptor, List<ASTNode>> 
+		getStructuralPropertyFunc = new F2<ASTNode, StructuralPropertyDescriptor, 
+			List<ASTNode>>() {
+			@Override
+			public List<ASTNode> f(ASTNode node, StructuralPropertyDescriptor des) {
+				Object prop = node.getStructuralProperty(des);
+				if(prop instanceof java.util.List) {
+					return List.iterableList((java.util.List)prop);
+				}
+				if(prop != null && prop instanceof ASTNode) {
+					return List.single((ASTNode)prop);
+				}
+				return List.nil();
+	}}; 
 	
 	private static class NodeCollectorVisitor extends ASTVisitor
 	{
