@@ -21,6 +21,7 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import edu.dlf.refactoring.implementer.ImplementedRefactoring;
 import edu.dlf.refactoring.utils.WorkQueue;
+import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.P2;
 import fj.data.HashMap;
 import fj.data.Option;
@@ -59,9 +60,9 @@ public class RefactoringCheckerComponent implements
 	@Override
 	public Void listen(final Object event) {
 		if(isEventRight(event)){
-			queue.execute(new Runnable(){
+			queue.execute(new WorkQueueItem("Checker"){
 			@Override
-			public void run() {
+			public void internalRun() {
 				IDetectedRefactoring detected = (IDetectedRefactoring)
 					((P2)event)._1();
 				IImplementedRefactoring implemented = (ImplementedRefactoring)

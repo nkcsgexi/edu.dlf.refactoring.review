@@ -16,6 +16,7 @@ import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.ui.ICodeReviewInput.InputType;
 import edu.dlf.refactoring.utils.EclipseUtils;
 import edu.dlf.refactoring.utils.WorkQueue;
+import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.Effect;
 import fj.F;
 import fj.P2;
@@ -50,9 +51,9 @@ public class RefReviewCommandHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String id = event.getCommand().getId();
 		if(id.equals("RefReview.CalculateDiff")){
-			queue.execute(new Runnable(){
+			queue.execute(new WorkQueueItem("DiffButton"){
 			@Override
-			public void run() {
+			public void internalRun() {
 				context.clearContext();
 				P2<Object, Object> inputPair = input.getInputPair();
 				if(input.getInputType() == InputType.ASTNode) {
@@ -66,9 +67,9 @@ public class RefReviewCommandHandler extends AbstractHandler {
 		}}});}
 		
 		if(id.equals("RefReview.import")) {
-			queue.execute(new Runnable(){
+			queue.execute(new WorkQueueItem("ImportButton"){
 				@Override
-				public void run() {
+				public void internalRun() {
 					List<String> directories = FileUtils.getSubDirectories.
 						f(FileUtils.desktop).filter(new F<String, Boolean>() {
 							@Override

@@ -20,6 +20,7 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import edu.dlf.refactoring.utils.WorkQueue;
+import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.Effect;
 import fj.F;
 import fj.data.List;
@@ -53,9 +54,9 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 	@Subscribe
 	@Override
 	public Void listen(final Object event) {
-		queue.execute(new Runnable(){
+		queue.execute(new WorkQueueItem("Detection"){
 			@Override
-			public void run() {
+			public void internalRun() {
 				if(event instanceof ISourceChange)
 				{
 					logger.info("get event.");

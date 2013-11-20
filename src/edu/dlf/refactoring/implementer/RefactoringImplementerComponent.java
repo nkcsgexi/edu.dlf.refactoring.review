@@ -18,6 +18,7 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import edu.dlf.refactoring.utils.WorkQueue;
+import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.P;
 import fj.data.HashMap;
 import fj.data.Option;
@@ -61,9 +62,9 @@ public class RefactoringImplementerComponent implements IFactorComponent,
 	public Void listen(final Object event) {
 		if(event instanceof IDetectedRefactoring){
 		final IImplementedRefactoringCallback listener = this;
-		queue.execute(new Runnable(){
+		queue.execute(new WorkQueueItem("Implementation"){
 		@Override
-		public void run() {
+		public void internalRun() {
 			try {
 				IDetectedRefactoring refactoring = (IDetectedRefactoring)event;
 				Option<IRefactoringImplementer> implementer = implementers.

@@ -20,6 +20,7 @@ import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.design.ServiceLocator.RefactoringDetectionCompAnnotation;
 import edu.dlf.refactoring.utils.WorkQueue;
+import edu.dlf.refactoring.utils.WorkQueueItem;
 
 
 public class ChangeComponent implements IFactorComponent{
@@ -53,9 +54,9 @@ public class ChangeComponent implements IFactorComponent{
 	@Subscribe
 	@Override
 	public Void listen(final Object event) {
-		queue.execute(new Runnable(){
+		queue.execute(new WorkQueueItem("Change"){
 			@Override
-			public void run() {
+			public void internalRun() {
 				if(event instanceof JavaElementPair){
 					logger.info("Get event.");
 					JavaElementPair change = (JavaElementPair) event;

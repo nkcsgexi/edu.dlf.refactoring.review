@@ -13,6 +13,7 @@ import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator.UICompAnnotation;
 import edu.dlf.refactoring.utils.WorkQueue;
+import edu.dlf.refactoring.utils.WorkQueueItem;
 
 public class TreeViewItemDoubleClickListener implements IDoubleClickListener{
 
@@ -34,9 +35,9 @@ public class TreeViewItemDoubleClickListener implements IDoubleClickListener{
 	
 	@Override
 	public void doubleClick(final DoubleClickEvent event) {	
-		queue.execute(new Runnable(){
+		queue.execute(new WorkQueueItem("DoubleClick"){
 			@Override
-			public void run() {
+			public void internalRun() {
 				ISelection selection = event.getSelection();
 				if(!selection.isEmpty())
 				{

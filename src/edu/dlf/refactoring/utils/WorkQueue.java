@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import org.apache.log4j.Logger;
 
 import edu.dlf.refactoring.design.ServiceLocator;
+import fj.Equal;
+import fj.data.List;
+import fj.data.List.Buffer;
 
 public class WorkQueue
 {
@@ -22,12 +25,26 @@ public class WorkQueue
         }
     }
     
-    public void execute(Runnable r) {
+    public void execute(WorkQueueItem r) {
         synchronized(queue) {
             queue.addLast(r);
             queue.notify();
         }
     }
+    
+    public boolean isInQueueNow() {
+    	long current = Thread.currentThread().getId();
+    	return getAllWorkerID().find(Equal.longEqual.eq(current)).isSome();
+    }
+    
+    private List<Long> getAllWorkerID(){
+	   Buffer<Long> buffer = Buffer.empty();
+	   for(Thread t : threads) {
+		   buffer.snoc(t.getId());
+	   }
+	   return buffer.toList();
+    }
+    
 
     private class PoolWorker extends Thread {
         public void run() {

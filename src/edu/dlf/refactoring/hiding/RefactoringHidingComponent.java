@@ -17,6 +17,7 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import edu.dlf.refactoring.utils.WorkQueue;
+import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.F;
 
 public class RefactoringHidingComponent implements IFactorComponent{
@@ -60,9 +61,9 @@ public class RefactoringHidingComponent implements IFactorComponent{
 	@Override
 	public Void listen(final Object event) {
 		if(event instanceof IHidingComponentInput) {
-			queue.execute(new Runnable(){
+			queue.execute(new WorkQueueItem("Hide"){
 			@Override
-			public void run() {
+			public void internalRun() {
 				IHidingComponentInput input = (IHidingComponentInput) event;
 				input.callback(input.getHideRefactorings().foldLeft(folder, 
 					input.getRootNode()));				
