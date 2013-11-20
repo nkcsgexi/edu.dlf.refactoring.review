@@ -55,8 +55,7 @@ public abstract class AbstractRefactoringImplementer implements
 	}
 	
 	private abstract class CompilationUnitsChangedListener implements 
-		IElementChangedListener
-	{
+		IElementChangedListener {
 		protected abstract void compilationUnitsChanged(List<IJavaElement> elements);
 		
 		private F2<Integer, IJavaElementDelta, Boolean> getFilterFunc = 

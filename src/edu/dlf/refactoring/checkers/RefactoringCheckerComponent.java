@@ -1,6 +1,8 @@
 package edu.dlf.refactoring.checkers;
 
 
+import org.apache.log4j.Logger;
+
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
@@ -20,6 +22,7 @@ import edu.dlf.refactoring.implementer.ImplementedRefactoring;
 import edu.dlf.refactoring.utils.WorkQueue;
 import fj.P2;
 import fj.data.HashMap;
+import fj.data.Option;
 
 public class RefactoringCheckerComponent implements 
 		IFactorComponent{
@@ -27,10 +30,11 @@ public class RefactoringCheckerComponent implements
 	private final HashMap<RefactoringType, IRefactoringChecker> map;
 	private final EventBus bus;
 	private final WorkQueue queue;
+	private final Logger logger;
 	
 	@Inject
 	public RefactoringCheckerComponent(
-			WorkQueue queue,
+			WorkQueue queue, Logger logger,
 			@ExtractMethod IRefactoringChecker emChecker,
 			@RenameMethod IRefactoringChecker rmChecker,
 			@RenameType IRefactoringChecker rtChecker,
@@ -38,6 +42,7 @@ public class RefactoringCheckerComponent implements
 			@UICompAnnotation IFactorComponent uiComponent)
 	{
 		this.queue = queue;
+		this.logger = logger;
 		this.map = HashMap.hashMap();
 		this.map.set(RefactoringType.ExtractMethod, emChecker);
 		this.map.set(RefactoringType.RenameMethod, rmChecker);
@@ -58,19 +63,21 @@ public class RefactoringCheckerComponent implements
 					((P2)event)._1();
 				IImplementedRefactoring implemented = (ImplementedRefactoring)
 					((P2)event)._2();
-				IRefactoringChecker checker = map.get(detected.
-					getRefactoringType()).some();
-				ICheckingResult result = checker.checkRefactoring(detected,
-					implemented);
-				bus.post(result);
-			}});}
+				Option<IRefactoringChecker> checkOp = map.get(detected.getRefactoringType());
+				if(checkOp.isSome()) {
+					ICheckingResult result = checkOp.some().checkRefactoring
+						(detected, implemented);
+					bus.post(result);
+				} else {
+					logger.fatal("Missing checker for " + detected.getRefactoringType());
+				}
+		}});}
 		return null;
 	}
 	
 	private boolean isEventRight(Object event)
 	{
-		if(event instanceof P2)
-		{
+		if(event instanceof P2) {
 			Object first = ((P2)event)._1();
 			Object second = ((P2)event)._2();
 			return first instanceof IDetectedRefactoring && second instanceof

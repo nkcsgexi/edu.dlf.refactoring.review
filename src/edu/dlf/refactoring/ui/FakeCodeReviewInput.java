@@ -50,6 +50,7 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 		} else {
 			input = remainingPairs.head();
 		}
+		input = input.swap();
 		comparedPairs = comparedPairs.snoc(input);
 		logger.info("Projects to compare: " + input._1().getElementName() + 
 			" and " + input._2().getElementName());

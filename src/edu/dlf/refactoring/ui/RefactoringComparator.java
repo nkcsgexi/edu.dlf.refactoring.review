@@ -49,6 +49,7 @@ public class RefactoringComparator implements ICompListener{
 				: "Changes with refactorings");
 			config.setLeftImage(UIUtils.createImage("1.png"));
 			config.setRightImage(UIUtils.createImage("2.png"));
+			config.setProperty(CompareConfiguration.IGNORE_WHITESPACE, true);
 			return config;
 		}
 

@@ -14,6 +14,7 @@ import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator.RefactoringCheckerCompAnnotation;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameLocalVariable;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import edu.dlf.refactoring.utils.WorkQueue;
@@ -40,15 +41,16 @@ public class RefactoringImplementerComponent implements IFactorComponent,
 			@ExtractMethod final IRefactoringImplementer emImplementer,
 			@RenameMethod final IRefactoringImplementer rmImplementer,
 			@RenameType final IRefactoringImplementer rtImplementer,
+			@RenameLocalVariable final IRefactoringImplementer rlvImplementer,
 			@MoveResource final IRefactoringImplementer mvImplementer,
-			@RefactoringCheckerCompAnnotation final IFactorComponent nextComp)
-	{
+			@RefactoringCheckerCompAnnotation final IFactorComponent nextComp) {
 		this.logger = logger;
 		this.queue = queue;
 		this.implementers = HashMap.hashMap();
 		this.implementers.set(RefactoringType.ExtractMethod, emImplementer);
 		this.implementers.set(RefactoringType.RenameMethod, rmImplementer);
 		this.implementers.set(RefactoringType.RenameType, rtImplementer);
+		this.implementers.set(RefactoringType.RenameLocalVariable, rlvImplementer);
 		this.implementers.set(RefactoringType.Move, mvImplementer);
 		this.bus = new EventBus();
 		this.bus.register(nextComp);
@@ -58,19 +60,19 @@ public class RefactoringImplementerComponent implements IFactorComponent,
 	@Override
 	public Void listen(final Object event) {
 		if(event instanceof IDetectedRefactoring){
-			final IImplementedRefactoringCallback listener = this;
-			queue.execute(new Runnable(){
-			@Override
-			public void run() {
-				try {
-					IDetectedRefactoring refactoring = (IDetectedRefactoring)event;
-					Option<IRefactoringImplementer> implementer = implementers.
-						get(((IDetectedRefactoring)event).getRefactoringType());
-					if(implementer.isSome())
-						implementer.some().implementRefactoring(refactoring, listener);
-				} catch (Exception e) {
-					logger.fatal(e);
-				}}});}
+		final IImplementedRefactoringCallback listener = this;
+		queue.execute(new Runnable(){
+		@Override
+		public void run() {
+			try {
+				IDetectedRefactoring refactoring = (IDetectedRefactoring)event;
+				Option<IRefactoringImplementer> implementer = implementers.
+					get(((IDetectedRefactoring)event).getRefactoringType());
+				if(implementer.isSome())
+					implementer.some().implementRefactoring(refactoring, listener);
+			} catch (Exception e) {
+				logger.fatal(e);
+			}}});}
 		return null;
 	}
 
