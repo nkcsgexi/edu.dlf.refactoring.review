@@ -53,6 +53,12 @@ public class ChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 		return this;
 	}
 	
+	public ChangeCriteriaBuilder addNonEmptyGap()
+	{
+		criteriaChain.snoc(".+");
+		return this;
+	}
+	
 	
 	private String getElementaryChagneString(ISourceChange change)
 	{
@@ -123,9 +129,7 @@ public class ChangeCriteriaBuilder implements IChangeCriteriaBuilder {
 							@Override
 							public List<ISourceChange> getSourceChanges() {
 								return list;
-							}
-						};
-					}});
+		}};}});
 	}
 	
 	

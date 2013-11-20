@@ -152,5 +152,12 @@ public class FunctionalJavaUtil {
 				return P.p(s, t1);
 		}};
 	}
-
+	
+	public static <T> F<T, List<T>> addSelfToMultipleMapper(final F<T, List<T>> mapper) {
+		return new F<T, List<T>>() {
+			@Override
+			public List<T> f(T t) {
+				return mapper.f(t).snoc(t);
+		}};
+	}
 }

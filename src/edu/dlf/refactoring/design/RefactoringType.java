@@ -4,6 +4,7 @@ public enum RefactoringType {
 		ExtractMethod,
 		RenameMethod,
 		RenameType, 
+		RenameLocalVariable,
 		Move, 
 		ExtractSuperType
 }

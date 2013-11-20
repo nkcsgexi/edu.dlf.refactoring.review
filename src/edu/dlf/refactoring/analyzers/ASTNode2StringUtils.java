@@ -1,18 +1,31 @@
 package edu.dlf.refactoring.analyzers;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Name;
 
+import edu.dlf.refactoring.design.ServiceLocator;
 import fj.F;
 
 public class ASTNode2StringUtils {
 
+	private static final Logger logger = ServiceLocator.ResolveType(Logger.class);
+	
 	private ASTNode2StringUtils() throws Exception
 	{
 		throw new Exception();
 	}
+	
+	public static F<ASTNode, String> resolveBindingKey = new F<ASTNode, String>() {
+		@Override
+		public String f(ASTNode name) {
+			if(!(name instanceof Name)) logger.fatal("Node must be a name.");
+			return ((Name)name).resolveBinding().getKey();
+	}};
+	
 	
 	public static F<ASTNode, String> getCorrespondingSource = new F<ASTNode, String>() {
 		@Override
