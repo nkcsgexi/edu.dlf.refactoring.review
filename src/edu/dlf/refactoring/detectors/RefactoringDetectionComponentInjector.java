@@ -14,6 +14,7 @@ import com.google.inject.BindingAnnotation;
 
 import edu.dlf.refactoring.checkers.ExtractMethodChecker;
 import edu.dlf.refactoring.checkers.MoveRefactoringChecker;
+import edu.dlf.refactoring.checkers.RenameLocalVariableChecker;
 import edu.dlf.refactoring.checkers.RenameMethodChecker;
 import edu.dlf.refactoring.checkers.RenameTypeChecker;
 import edu.dlf.refactoring.design.IRefactoringChecker;
@@ -48,6 +49,7 @@ public class RefactoringDetectionComponentInjector extends AbstractModule{
 		
 		bind(IRefactoringChecker.class).annotatedWith(RenameMethod.class).to(RenameMethodChecker.class);
 		bind(IRefactoringChecker.class).annotatedWith(RenameType.class).to(RenameTypeChecker.class);
+		bind(IRefactoringChecker.class).annotatedWith(RenameLocalVariable.class).to(RenameLocalVariableChecker.class);
 		bind(IRefactoringChecker.class).annotatedWith(ExtractMethod.class).to(ExtractMethodChecker.class);
 		bind(IRefactoringChecker.class).annotatedWith(MoveResource.class).to(MoveRefactoringChecker.class);
 			
