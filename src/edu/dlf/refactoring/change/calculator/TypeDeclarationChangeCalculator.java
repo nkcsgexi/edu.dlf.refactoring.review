@@ -149,10 +149,7 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			public Integer f(ASTNode before, ASTNode after) {
 				String name1 = ASTNode2StringUtils.getMethodNameFunc.f(before);
 				String name2 = ASTNode2StringUtils.getMethodNameFunc.f(after);
-				int dis = XStringUtils.distance(name1, name2);
-				int base = Math.max(name1.length(), name2.length());
-				double score = 1d - (double)dis/(double)base;
-				score = score * 10;
+				Double score = XStringUtils.getSamePartPercentage.f(name1, name2);
 				return (int)(score * 10);
 		}});
 		
@@ -165,7 +162,7 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			map(new F<P2<ASTNode, ASTNode>, ISourceChange>(){
 			@Override
 			public ISourceChange f(P2<ASTNode, ASTNode> pair) {
-				logger.info(ASTNode2StringUtils.getMethodNameFunc.f(pair._1()) 
+				logger.debug(ASTNode2StringUtils.getMethodNameFunc.f(pair._1()) 
 					+ "->" + ASTNode2StringUtils.getMethodNameFunc.f(pair._2()));
 				return mChangeCalculator.CalculateASTNodeChange(new ASTNodePair
 					(pair._1(), pair._2()));

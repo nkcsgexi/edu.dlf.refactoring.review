@@ -137,19 +137,19 @@ public class FunctionalJavaUtil {
 		}};
 	}
 	
-	public static <T, S> F<T, P2<T, S>> appendNullFunc(T t, S s) {
+	public static <T, S> F<T, P2<T, S>> appendElementFunc(final T t, final S s) {
 		return new F<T, P2<T,S>>() {
 			@Override
 			public P2<T, S> f(T t1) {
-				return P.p(t1, null);
+				return P.p(t1, s);
 		}};
 	}
 	
-	public static <T, S> F<T, P2<S, T>> prependNullFunc(S s, T t) {
+	public static <T, S> F<T, P2<S, T>> prependElementFunc(final S s, final T t) {
 		return new F<T, P2<S, T>>() {
 			@Override
 			public P2<S, T> f(T t1) {
-				return P.p(null, t1);
+				return P.p(s, t1);
 		}};
 	}
 

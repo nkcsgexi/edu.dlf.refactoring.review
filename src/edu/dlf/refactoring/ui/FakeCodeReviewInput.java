@@ -55,7 +55,5 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 			" and " + input._2().getElementName());
 		return P.p((Object)input._1(), (Object)input._2());
 	}
-	
-
 
 }

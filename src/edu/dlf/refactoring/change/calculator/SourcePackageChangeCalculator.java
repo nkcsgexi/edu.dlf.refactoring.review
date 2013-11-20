@@ -88,9 +88,9 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 			getSecondElementInPFunc((IJavaElement)null, (IJavaElement)null);
 		removedUnits = removedUnits.minus(eq, similarPairs.map(getFirst));
 		addedUnits = addedUnits.minus(eq, similarPairs.map(getSecond));
-		removedUnits.map(FunctionalJavaUtil.appendNullFunc((IJavaElement)null, 
+		removedUnits.map(FunctionalJavaUtil.appendElementFunc((IJavaElement)null, 
 			(IJavaElement)null)).foreach(calculateSubchange);
-		addedUnits.map(FunctionalJavaUtil.prependNullFunc((IJavaElement)null, 
+		addedUnits.map(FunctionalJavaUtil.prependElementFunc((IJavaElement)null, 
 			(IJavaElement)null)).foreach(calculateSubchange);
 		return change;
 	}
