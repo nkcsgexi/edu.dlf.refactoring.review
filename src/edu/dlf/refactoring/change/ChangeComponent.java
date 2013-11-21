@@ -58,7 +58,7 @@ public class ChangeComponent implements IFactorComponent{
 			@Override
 			public void internalRun() {
 				if(event instanceof JavaElementPair){
-					logger.info("Get event.");
+					logger.debug("Get event.");
 					JavaElementPair change = (JavaElementPair) event;
 					if(change.getElementBefore() instanceof IJavaProject)
 						bus.post(SourceChangeUtils.pruneSourceChange(
@@ -66,19 +66,17 @@ public class ChangeComponent implements IFactorComponent{
 					if(change.getElementBefore() instanceof ICompilationUnit)
 						bus.post(SourceChangeUtils.pruneSourceChange(
 							icuCalculator.CalculateJavaModelChange(change)));
-					logger.info("Handled event.");
+					logger.debug("Handled event.");
 				}
 				
-				if(event instanceof IASTNodePair)
-				{
+				if(event instanceof IASTNodePair) {
 					logger.info("Get event.");
 					ISourceChange change = SourceChangeUtils.
 						pruneSourceChange(cuCalculator.CalculateASTNodeChange
 							((ASTNodePair) event));
 					bus.post(change);
 					logger.info("Handled event.");
-				}
-			}});
+				}}});
 		return null;
 	}
 

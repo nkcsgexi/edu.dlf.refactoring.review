@@ -34,7 +34,7 @@ public class ProjectChangeCalculator implements IJavaModelChangeCalculator{
 	
 	@Override
 	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
-		logger.info("Compare projects: " + pair.getElementBefore().getElementName() + " " 
+		logger.debug("Compare projects: " + pair.getElementBefore().getElementName() + " " 
 				+ pair.getElementAfter().getElementName());
 		final SubChangeContainer container = new SubChangeContainer
 				(this.projectLevel, pair);

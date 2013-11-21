@@ -97,7 +97,7 @@ public class FunctionalJavaUtil {
 		}};
 	}
 	
-	public static <T, S> Equal<P2<T, S>> extendEqual2Product(final Equal<T> eqt, 
+	public static <T, S> Equal<P2<T, S>> extendEqualToProduct(final Equal<T> eqt, 
 		final Equal<S> eqs) {
 		return Equal.equal(new F<P2<T, S>, F<P2<T, S>,Boolean>>() {
 			@Override
@@ -152,6 +152,13 @@ public class FunctionalJavaUtil {
 				return P.p(s, t1);
 		}};
 	}
+	
+	public static <T> F<List<T>, Integer> getListLengthFunc(T t) {
+		return new F<List<T>, Integer>() {
+			@Override
+			public Integer f(List<T> list) {
+				return list.length();
+	}};}
 	
 	public static <T> F<T, List<T>> addSelfToMultipleMapper(final F<T, List<T>> mapper) {
 		return new F<T, List<T>>() {

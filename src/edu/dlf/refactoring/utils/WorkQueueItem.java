@@ -15,11 +15,12 @@ public abstract class WorkQueueItem implements Runnable{
 	
 	@Override
 	public final void run() {
-		long startTime = System.currentTimeMillis();
+		logger.info(itemName + " starts.");
+		long startTime = System.currentTimeMillis();		
 		internalRun();
 		long stopTime = System.currentTimeMillis();
 		long elapsedTime = stopTime - startTime;
-		logger.info("Time for " + this.itemName + ": " + elapsedTime);
+		logger.debug("Time for " + this.itemName + ": " + elapsedTime);
 		callBack();
 	}
 	

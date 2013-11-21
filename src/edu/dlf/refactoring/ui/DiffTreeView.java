@@ -31,9 +31,9 @@ public class DiffTreeView extends ViewPart implements ICompListener{
 		@Override
 		public void e(ISourceChange change) {
 			computer.startCompute((ISourceChange)change);
-    		logger.info("Changed lines: " + computer.getChangedLines());
-    		logger.info("Added lines: " + computer.getAddedLines());
-    		logger.info("Removed lines: " + computer.getRemovedLines());
+    		logger.debug("Changed lines: " + computer.getChangedLines());
+    		logger.debug("Added lines: " + computer.getAddedLines());
+    		logger.debug("Removed lines: " + computer.getRemovedLines());
 	}}; 
 	
 	public DiffTreeView() {

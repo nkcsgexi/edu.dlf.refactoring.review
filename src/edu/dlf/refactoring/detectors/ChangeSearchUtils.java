@@ -3,8 +3,11 @@ package edu.dlf.refactoring.detectors;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import edu.dlf.refactoring.design.ISourceChange;
+import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
 import fj.F;
+import fj.F2;
+import fj.data.List;
 
 public class ChangeSearchUtils {
 
@@ -13,7 +16,7 @@ public class ChangeSearchUtils {
 		throw new Exception();
 	}
 	
-	public static F<IChangeSearchResult, ISourceChange> getLeafSourceChangeFunc(){
+	public static final F<IChangeSearchResult, ISourceChange> getLeafSourceChangeFunc(){
 		return new F<SourceChangeSearcher.IChangeSearchResult, ISourceChange>() {
 			@Override
 			public ISourceChange f(IChangeSearchResult result) {
@@ -34,4 +37,12 @@ public class ChangeSearchUtils {
 				return change.getNodeAfter();
 	}};
 	
+	public static final F2<ISourceChange, IChangeSearchCriteria, List<IChangeSearchResult>> 
+		searchFunc = new F2<ISourceChange, IChangeSearchCriteria, 
+		List<IChangeSearchResult>>() {
+		@Override
+		public List<IChangeSearchResult> f(ISourceChange change, 
+			IChangeSearchCriteria criteria) {
+				return criteria.search(change);
+	}};
 }

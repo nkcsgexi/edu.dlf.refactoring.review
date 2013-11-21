@@ -33,9 +33,10 @@ public class SourceChangeUtils {
 			@Override
 			public ISourceChange f(ISourceChange change) {
 				return pruneSourceChange(change);
-			}
-		};
+			}};
 	}
+	
+
 	
 	public static ISourceChange pruneSourceChange(ISourceChange change)
 	{

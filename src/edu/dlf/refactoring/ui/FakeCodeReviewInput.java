@@ -15,10 +15,17 @@ import fj.data.List;
 public class FakeCodeReviewInput implements ICodeReviewInput {
 
 	private final Logger logger;
+	
+	private int index = 1;
 
 	private final Equal<IJavaElement> projectEq =  Equal.stringEqual.comap
 			(JavaModelAnalyzer.getElementNameFunc);
 	
+	private final Equal<P2<IJavaElement, IJavaElement>> projectPEqual = 
+		FunctionalJavaUtil.extendEqualToProduct(projectEq, projectEq); 
+	
+	private List<P2<IJavaElement, IJavaElement>> comparedPairs = List.nil();
+
 	@Inject
 	public FakeCodeReviewInput(Logger logger) {
 		this.logger = logger;
@@ -28,8 +35,6 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 	public InputType getInputType() {
 		return InputType.JavaElement;
 	}
-	
-	private List<P2<IJavaElement, IJavaElement>> comparedPairs = List.nil();
 
 	private List<P2<IJavaElement,IJavaElement>> getAllProjectPairs() {
 		List<IJavaElement> projects = JavaModelAnalyzer.getJavaProjectsInWorkSpace();
@@ -40,18 +45,12 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 
 	@Override
 	public P2<Object, Object> getInputPair() {
-		P2<IJavaElement, IJavaElement> input;
-		List<P2<IJavaElement, IJavaElement>> remainingPairs = getAllProjectPairs().
-			minus(FunctionalJavaUtil.extendEqual2Product(projectEq, projectEq), 
-				comparedPairs);
-		if(remainingPairs.isEmpty()) {
-			comparedPairs = List.nil();
-			input = getAllProjectPairs().head();
-		} else {
-			input = remainingPairs.head();
+		List<P2<IJavaElement, IJavaElement>> allProjects = getAllProjectPairs();
+		P2<IJavaElement, IJavaElement> input = allProjects.index(index);
+		index += 1;
+		if(index == allProjects.length()) {
+			index = 1;
 		}
-		input = input.swap();
-		comparedPairs = comparedPairs.snoc(input);
 		logger.info("Projects to compare: " + input._1().getElementName() + 
 			" and " + input._2().getElementName());
 		return P.p((Object)input._1(), (Object)input._2());
