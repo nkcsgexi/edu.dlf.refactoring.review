@@ -36,6 +36,9 @@ public class RefactoringDetectionComponentInjector extends AbstractModule{
 	public @interface RenameLocalVariable {}
 
 	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+	public @interface RenameField{}
+	
+	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 	public @interface MoveResource {}
 
 	
@@ -45,6 +48,7 @@ public class RefactoringDetectionComponentInjector extends AbstractModule{
 		bind(IRefactoringDetector.class).annotatedWith(ExtractMethod.class).to(ExtractMethodDetector.class);
 		bind(IRefactoringDetector.class).annotatedWith(RenameType.class).to(RenameTypeDetector.class);
 		bind(IRefactoringDetector.class).annotatedWith(RenameLocalVariable.class).to(RenameLocalVariableDetector.class);
+		bind(IRefactoringDetector.class).annotatedWith(RenameField.class).to(RenameFieldDetector.class);
 		bind(IRefactoringDetector.class).annotatedWith(MoveResource.class).to(MoveRefactoringDetector.class);
 		
 		bind(IRefactoringChecker.class).annotatedWith(RenameMethod.class).to(RenameMethodChecker.class);

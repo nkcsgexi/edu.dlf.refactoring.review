@@ -167,4 +167,16 @@ public class FunctionalJavaUtil {
 				return mapper.f(t).snoc(t);
 		}};
 	}
+	
+	public static <T> F2<List<T>, List<T>, List<T>> listAppender(T t) {
+		return new F2<List<T>, List<T>, List<T>>() {
+			@Override
+			public List<T> f(List<T> list0, List<T> list1) {
+				return list0.append(list1);
+		}};
+	}
+	
+	public static <T> List<T> createEmtpyList(T t) {
+		return List.nil();
+	}
 }

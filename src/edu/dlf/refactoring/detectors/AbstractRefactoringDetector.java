@@ -16,8 +16,8 @@ public abstract class AbstractRefactoringDetector implements IRefactoringDetecto
 		return new ChangeCriteriaBuilder();
 	}
 	
-	protected IChangeSearchCriteria getBasicSearchCriteria(final String c, final SourceChangeType t)
-	{
+	protected IChangeSearchCriteria getBasicSearchCriteria(final String c, 
+		final SourceChangeType t) {
 		return new BasicChangeSearchCriteria() {
 			@Override
 			protected boolean isSourceChangeTypeOk(SourceChangeType type) {
@@ -28,8 +28,6 @@ public abstract class AbstractRefactoringDetector implements IRefactoringDetecto
 			protected boolean isChangeLevelOk(String changeLevel) {
 				return changeLevel.equals(c);
 			}
-		};
-		
-	}
+	};}
 	
 }

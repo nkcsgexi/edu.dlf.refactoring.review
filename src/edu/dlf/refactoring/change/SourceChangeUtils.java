@@ -37,6 +37,13 @@ public class SourceChangeUtils {
 	}
 	
 
+	public static F<ISourceChange, String> getChangeLVFunc = 
+		new F<ISourceChange, String>() {
+		@Override
+		public String f(ISourceChange change) {
+			return change.getSourceChangeLevel();
+	}};
+	
 	
 	public static ISourceChange pruneSourceChange(ISourceChange change)
 	{

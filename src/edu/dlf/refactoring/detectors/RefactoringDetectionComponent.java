@@ -16,6 +16,7 @@ import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator.RefactoringImplementaterCompAnnotation;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameField;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameLocalVariable;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
@@ -40,13 +41,13 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 			@ExtractMethod IRefactoringDetector emDetector,
 			@RenameType IRefactoringDetector rtDetector,
 			@RenameLocalVariable IRefactoringDetector rlvDetector,
+			@RenameField IRefactoringDetector rfDetector,
 			@MoveResource IRefactoringDetector mDetector,
-			@RefactoringImplementaterCompAnnotation IFactorComponent component)
-	{
+			@RefactoringImplementaterCompAnnotation IFactorComponent component) {
 		this.queue = queue;
 		this.logger = logger;
-		this.detectorsList = list(rmDetector, emDetector, mDetector, rtDetector, 
-			rlvDetector);
+		this.detectorsList = list(rmDetector, emDetector, rfDetector, mDetector, 
+			rtDetector, rlvDetector);
 		this.bus = new EventBus();
 		bus.register(component);
 	}

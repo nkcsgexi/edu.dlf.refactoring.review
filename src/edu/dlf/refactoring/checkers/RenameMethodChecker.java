@@ -40,7 +40,7 @@ public class RenameMethodChecker implements IRefactoringChecker{
 			SourceChangeType.UPDATE).getSearchCriteria();
 	}
 	private final Equal<ASTNode> eqFunc = Equal.stringEqual.comap(ASTAnalyzer.
-			getContainingCompilationUnitName());
+		getContainingCompilationUnitName());
 		
 	private final Equal<List<ASTNode>> listEqFunc = Equal.stringEqual.comap
 			(new F<List<ASTNode>, String>() {
@@ -61,8 +61,6 @@ public class RenameMethodChecker implements IRefactoringChecker{
 		detected, IImplementedRefactoring implemented) {
 		List<ASTNode> namesBefore = detected.getEffectedNodeList(
 			DetectedRenameMethodRefactoring.SimpleNamesBefore);
-		List<ASTNode> namesAfter = detected.getEffectedNodeList(
-			DetectedRenameMethodRefactoring.SimpleNamesAfter);
 		List<ISourceChange> nameChanges = implemented.getSourceChanges().
 			bind(ChangeSearchUtils.searchFunc.flip().f(criteria).andThen(
 				ChangeSearchUtils.getLeafSourceChangeFunc().mapList()));
@@ -81,7 +79,7 @@ public class RenameMethodChecker implements IRefactoringChecker{
 
 		List<P2<List<ASTNode>, List<ASTNode>>> incorrectUpdates = FunctionalJavaUtil.
 			pairEqualElements(groupedBeforeManual, groupedBeforeAuto, 
-			listEqFunc).filter(filter);
+				listEqFunc).filter(filter);
 		if(missedUpdates.isEmpty() && additionalUpdates.isEmpty() && 
 			incorrectUpdates.isEmpty())
 			return new DefaultCheckingResult(true, detected);

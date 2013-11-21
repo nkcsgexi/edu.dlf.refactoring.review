@@ -42,6 +42,12 @@ public class ASTNode2ASTNodeUtils {
 					(Ord.intOrd.comap(ASTNode2IntegerUtils.getLength)).head();
 	}};
 	
+	public static F<ASTNode, ASTNode> getRootFunc = new F<ASTNode, ASTNode>() {
+		@Override
+		public ASTNode f(ASTNode node) {
+			return node.getRoot();
+	}};
+	
 	
 	public static final F2<ASTNode, StructuralPropertyDescriptor, List<ASTNode>> 
 		getStructuralPropertyFunc = new F2<ASTNode, StructuralPropertyDescriptor, 

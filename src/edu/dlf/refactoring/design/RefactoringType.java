@@ -5,6 +5,7 @@ public enum RefactoringType {
 		RenameMethod,
 		RenameType, 
 		RenameLocalVariable,
+		RenameField,
 		Move, 
 		ExtractSuperType
 }
