@@ -56,8 +56,7 @@ public class FieldDeclarationCalculator implements IASTNodeChangeCalculator{
 			public List<ASTNode> f(ASTNode field) {
 				return ASTAnalyzer.getStructuralNodeList(field, FieldDeclaration.
 					FRAGMENTS_PROPERTY);
-			}
-		};
+		}};
 		F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> mapper = 
 			ASTAnalyzer.getASTNodeMapper(Integer.MIN_VALUE, 
 				new F2<ASTNode, ASTNode, Integer>() {
@@ -74,7 +73,7 @@ public class FieldDeclarationCalculator implements IASTNodeChangeCalculator{
 				public ISourceChange f(P2<ASTNode, ASTNode> p) {
 					return vdfCalculator.CalculateASTNodeChange(new ASTNodePair
 						(p._1(), p._2()));
-				}}).toCollection());
+		}}).toCollection());
 		return container;
 	}
 

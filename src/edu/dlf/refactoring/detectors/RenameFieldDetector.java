@@ -11,7 +11,6 @@ import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.FieldDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
-import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationFragmentAnnotation;
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
@@ -35,17 +34,14 @@ public class RenameFieldDetector extends AbstractRefactoringDetector{
 		ChangeCriteriaBuilder builder,
 		@CompilationUnitAnnotation String cuLV,
 		@FieldDeclarationAnnotation String fieldDecLV,
-		@VariableDeclarationAnnotation String varDecLV,
 		@VariableDeclarationFragmentAnnotation String varDecFragLV,
 		@SimpleNameAnnotation String simpleNameLV) {
 		this.logger = logger;
 		this.cuLV = cuLV;
-		this.criteria = builder.addSingleChangeCriteria
-			(fieldDecLV, SourceChangeType.PARENT).
-			addSingleChangeCriteria(varDecLV, SourceChangeType.PARENT).
-				addSingleChangeCriteria(varDecFragLV, SourceChangeType.PARENT).
-					addSingleChangeCriteria(simpleNameLV, SourceChangeType.UPDATE).
-						getSearchCriteria();
+		this.criteria = builder.addSingleChangeCriteria(fieldDecLV, SourceChangeType.PARENT).
+			addSingleChangeCriteria(varDecFragLV, SourceChangeType.PARENT).
+				addSingleChangeCriteria(simpleNameLV, SourceChangeType.UPDATE).
+					getSearchCriteria();
 	}
 	
 	private final F2<String, ASTNode, List<ASTNode>> getSimpleNamesFunc =
@@ -67,6 +63,9 @@ public class RenameFieldDetector extends AbstractRefactoringDetector{
 				return 	SourceChangeUtils.getSelfAndDescendent(root).filter(filter);
 	}};
 	
+	private final F<ASTNode, Boolean> nodeNonNullFilter = FunctionalJavaUtil.
+		nonNullFilter((ASTNode)null);
+	
 	private final F<ISourceChange, List<ASTNode>> getChangedCUBefore = getCUChanges.
 		andThen(ChangeSearchUtils.getNodeBeforeFunc.mapList());
 	
@@ -77,9 +76,9 @@ public class RenameFieldDetector extends AbstractRefactoringDetector{
 		collectNodesFromNodes = new F2<F<ASTNode,List<ASTNode>>, List<ASTNode>, 
 			List<ASTNode>>() {
 			@Override
-			public List<ASTNode> f(F<ASTNode, List<ASTNode>> mapper, List<ASTNode> nodes) {
-				return nodes.map(mapper).foldLeft(FunctionalJavaUtil.listAppender
-					((ASTNode)null), FunctionalJavaUtil.createEmtpyList((ASTNode)null));
+			public List<ASTNode> f(F<ASTNode, List<ASTNode>> mapper, List<ASTNode> roots) {
+				return roots.map(mapper).foldLeft(FunctionalJavaUtil.listAppender
+					((ASTNode)null), FunctionalJavaUtil.createEmptyList((ASTNode)null));
 	}};
 	
 	private final F2<List<ASTNode>, List<ASTNode>, IDetectedRefactoring> 
@@ -92,17 +91,18 @@ public class RenameFieldDetector extends AbstractRefactoringDetector{
 	}};
 	
 	@Override
-	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
+	public List<IDetectedRefactoring> detectRefactoring(final ISourceChange change) {
 		List<ISourceChange> nameChanges = ChangeSearchUtils.searchFunc.f(change).andThen(
 			ChangeSearchUtils.getLeafSourceChangeFunc().mapList()).f(criteria);
+		logger.debug("Number of field name changes: " + nameChanges.length());
 		List<ASTNode> decNamesBefore = nameChanges.map(ChangeSearchUtils.getNodeBeforeFunc);
 		List<ASTNode> decNamesAfter = nameChanges.map(ChangeSearchUtils.getNodeAfterFunc);
 		List<F<ASTNode, List<ASTNode>>> beforeFinders = decNamesBefore.map
 			(ASTNode2StringUtils.resolveBindingKey.andThen(getSimpleNamesFunc.curry()));
 		List<F<ASTNode, List<ASTNode>>> afterFinders = decNamesAfter.map
 			(ASTNode2StringUtils.resolveBindingKey.andThen(getSimpleNamesFunc.curry()));
-		List<ASTNode> cusBefore = getChangedCUBefore.f(change);
-		List<ASTNode> cusAfter = getChangedCUAfter.f(change);
+		List<ASTNode> cusBefore = getChangedCUBefore.f(change).filter(nodeNonNullFilter);
+		List<ASTNode> cusAfter = getChangedCUAfter.f(change).filter(nodeNonNullFilter);
 		List<List<ASTNode>> changeNamesBefore = beforeFinders.map
 			(collectNodesFromNodes.flip().f(cusBefore));
 		List<List<ASTNode>> changedNamesAfter = afterFinders.map

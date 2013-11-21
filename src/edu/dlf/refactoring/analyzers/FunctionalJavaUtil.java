@@ -176,7 +176,16 @@ public class FunctionalJavaUtil {
 		}};
 	}
 	
-	public static <T> List<T> createEmtpyList(T t) {
+	public static <T> List<T> createEmptyList(T t) {
 		return List.nil();
+	}
+	
+	
+	public static <T> F<T, Boolean> nonNullFilter(T t) {
+		return new F<T, Boolean>(){
+			@Override
+			public Boolean f(T t) {
+				return t != null;
+		}};
 	}
 }

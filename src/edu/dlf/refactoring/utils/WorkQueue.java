@@ -44,9 +44,11 @@ public class WorkQueue
 	   }
 	   return buffer.toList();
     }
-    
 
     private class PoolWorker extends Thread {
+    	private PoolWorker() {
+    		this.setPriority(MAX_PRIORITY);
+		}
         public void run() {
             Runnable r;
             while (true) {
