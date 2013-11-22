@@ -9,9 +9,11 @@ import edu.dlf.refactoring.analyzers.ASTNode2ASTNodeUtils;
 import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
 import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
+import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IImplementedRefactoring;
 import edu.dlf.refactoring.design.IRefactoringChecker;
+import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.detectors.ChangeCriteriaBuilder;
 import edu.dlf.refactoring.detectors.ChangeSearchUtils;
@@ -61,9 +63,19 @@ public class RenameFieldChecker implements IRefactoringChecker {
 				andThen(getParentCUName).f(list);
 			logger.info(cuName + ":" + list.length()); 
 	}}; 
+	
+	private final Effect<ISourceChange> logChange = new Effect<ISourceChange>() {
+		@Override
+		public void e(ISourceChange change) {
+			String cuName = ASTNode2StringUtils.getCompilationUnitName.f
+				(change.getNodeBefore());
+			logger.info(cuName + "\n" + SourceChangeUtils.printChangeTree(change));
+	}};
+	
 	@Override
 	public ICheckingResult checkRefactoring(IDetectedRefactoring detected,
 		IImplementedRefactoring implemented) {
+		implemented.getSourceChanges().foreach(logChange);
 		List<ASTNode> autoNamesBefore = implemented.getSourceChanges().map
 			(ChangeSearchUtils.searchFunc.flip().f(criteria)).
 			foldLeft(FJUtils.listAppender((IChangeSearchResult)null), 

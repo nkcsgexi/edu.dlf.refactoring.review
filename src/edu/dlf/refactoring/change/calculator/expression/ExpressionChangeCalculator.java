@@ -7,11 +7,14 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.AssignmentAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.CastAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.FieldAccessAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.InfixExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodInvocationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.NameAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.PrePostFixExpressionAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.ThisAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.design.ASTNodePair;
@@ -26,6 +29,9 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 	private final IASTNodeChangeCalculator ppfCalculator;
 	private final IASTNodeChangeCalculator infCalculator;
 	private final IASTNodeChangeCalculator miCalculator;
+	private final IASTNodeChangeCalculator fieldAccessCal;
+	private final IASTNodeChangeCalculator castExpCal;
+	private final IASTNodeChangeCalculator thisExpCal;
 
 	@Inject
 	public ExpressionChangeCalculator(
@@ -35,7 +41,10 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 			@NameAnnotation IASTNodeChangeCalculator nCalculator,
 			@PrePostFixExpressionAnnotation IASTNodeChangeCalculator ppfCalculator,
 			@InfixExpressionAnnotation IASTNodeChangeCalculator infCalculator,
-			@MethodInvocationAnnotation IASTNodeChangeCalculator miCalculator)
+			@MethodInvocationAnnotation IASTNodeChangeCalculator miCalculator,
+			@FieldAccessAnnotation IASTNodeChangeCalculator fieldAccessCal,
+			@ThisAnnotation IASTNodeChangeCalculator thisExpCal,
+			@CastAnnotation IASTNodeChangeCalculator castExpCal)
 	{
 		this.asCalculator = asCalculator;
 		this.vdCalculator = vdCalculator;
@@ -43,6 +52,9 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 		this.ppfCalculator = ppfCalculator;
 		this.infCalculator = infCalculator;
 		this.miCalculator = miCalculator;
+		this.fieldAccessCal = fieldAccessCal;
+		this.thisExpCal = thisExpCal;
+		this.castExpCal = castExpCal;
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
 	
@@ -73,7 +85,7 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 		}
 		
 		if(expBefore.getNodeType() == ASTNode.SIMPLE_NAME || 
-				expBefore.getNodeType() == ASTNode.QUALIFIED_NAME)
+			expBefore.getNodeType() == ASTNode.QUALIFIED_NAME)
 		{
 			return this.nCalculator.CalculateASTNodeChange(pair);
 		}
@@ -93,7 +105,20 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 		{
 			return this.miCalculator.CalculateASTNodeChange(pair);
 		}
+		if(expBefore.getNodeType() == ASTNode.FIELD_ACCESS) 
+		{
+			return this.fieldAccessCal.CalculateASTNodeChange(pair);
+		}
+		if(expBefore.getNodeType() == ASTNode.THIS_EXPRESSION) 
+		{
+			return this.thisExpCal.CalculateASTNodeChange(pair);
+		}
 		
+		if(expBefore.getNodeType() == ASTNode.CAST_EXPRESSION) 
+		{
+			return this.castExpCal.CalculateASTNodeChange(pair);
+		}
+
 		return changeBuilder.createUnknownChange(pair);
 	}
 	

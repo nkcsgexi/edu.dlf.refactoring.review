@@ -36,10 +36,10 @@ public class QualifiedNameChangeCalculator implements IASTNodeChangeCalculator {
 		if(change != null)
 			return change;
 		SubChangeContainer container = this.changeBuilder.createSubchangeContainer(pair);
-		container.addSubChange(this.nCalculator.CalculateASTNodeChange(pair.selectByPropertyDescriptor
-				(QualifiedName.QUALIFIER_PROPERTY)));
-		container.addSubChange(this.snCalculator.CalculateASTNodeChange(pair.selectByPropertyDescriptor
-				(QualifiedName.NAME_PROPERTY)));
+		container.addSubChange(this.nCalculator.CalculateASTNodeChange(pair.
+			selectByPropertyDescriptor(QualifiedName.QUALIFIER_PROPERTY)));
+		container.addSubChange(this.snCalculator.CalculateASTNodeChange(pair.
+			selectByPropertyDescriptor(QualifiedName.NAME_PROPERTY)));
 		return container;
 	}
 

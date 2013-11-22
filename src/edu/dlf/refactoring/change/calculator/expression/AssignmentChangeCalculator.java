@@ -35,11 +35,10 @@ public class AssignmentChangeCalculator implements IASTNodeChangeCalculator{
 		SubChangeContainer container = this.changeBuilder.createSubchangeContainer(pair);
 		Assignment asBefore = (Assignment) pair.getNodeBefore();
 		Assignment asAfter = (Assignment) pair.getNodeAfter();
-		
-		ISourceChange leftChange = exCalculator.CalculateASTNodeChange(new ASTNodePair(asBefore.getLeftHandSide(),
-			asAfter.getLeftHandSide()));
-		ISourceChange rightChange = exCalculator.CalculateASTNodeChange(new ASTNodePair(asBefore.getRightHandSide(),
-			asAfter.getRightHandSide()));
+		ISourceChange leftChange = exCalculator.CalculateASTNodeChange
+			(new ASTNodePair(asBefore.getLeftHandSide(), asAfter.getLeftHandSide()));
+		ISourceChange rightChange = exCalculator.CalculateASTNodeChange
+			(new ASTNodePair(asBefore.getRightHandSide(),asAfter.getRightHandSide()));
 		container.addSubChange(leftChange);
 		container.addSubChange(rightChange);		
 		return container;

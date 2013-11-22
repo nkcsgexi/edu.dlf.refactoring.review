@@ -19,7 +19,9 @@ import edu.dlf.refactoring.change.calculator.ProjectChangeCalculator;
 import edu.dlf.refactoring.change.calculator.SourcePackageChangeCalculator;
 import edu.dlf.refactoring.change.calculator.TypeDeclarationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.AssignmentChangeCalculator;
+import edu.dlf.refactoring.change.calculator.expression.CastChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.ExpressionChangeCalculator;
+import edu.dlf.refactoring.change.calculator.expression.FieldAccessChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.InfixExpressionChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.MethodInvocationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.NameChangeCalculator;
@@ -27,6 +29,7 @@ import edu.dlf.refactoring.change.calculator.expression.PrePostFixExpressionChan
 import edu.dlf.refactoring.change.calculator.expression.QualifiedNameChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.SimpleNameChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.SingleVariableDeclarationChangeCalculator;
+import edu.dlf.refactoring.change.calculator.expression.ThisChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.TypeChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.VariableDeclarationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.VariableDeclarationFragmentChangeCalculator;
@@ -61,8 +64,11 @@ public class ChangeComponentInjector extends AbstractModule{
 	
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface InfixExpressionOperatorAnnotation{}
-	
+		
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface FieldAccessAnnotation{}
+	
+		@BindingAnnotation @Target({ FIELD, PARAMETER, 	METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface VariableDeclarationAnnotation {}
 		
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
@@ -73,7 +79,13 @@ public class ChangeComponentInjector extends AbstractModule{
 	
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface AssignmentAnnotation {}
+		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface CastAnnotation {}
 	
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface ThisAnnotation {}
+		
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface NameAnnotation {}
 	
@@ -202,6 +214,10 @@ public class ChangeComponentInjector extends AbstractModule{
 			bind(IASTNodeChangeCalculator.class).annotatedWith(PrePostFixExpressionAnnotation.class).to(PrePostFixExpressionChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(InfixExpressionAnnotation.class).to(InfixExpressionChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodInvocationAnnotation.class).to(MethodInvocationChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(FieldAccessAnnotation.class).to(FieldAccessChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(ThisAnnotation.class).to(ThisChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(CastAnnotation.class).to(CastChangeCalculator.class);
+			
 		}
 
 
@@ -219,7 +235,10 @@ public class ChangeComponentInjector extends AbstractModule{
 			bindConstant().annotatedWith(VariableDeclarationFragmentAnnotation.class).to("VariableDeclarationFragment");
 			bindConstant().annotatedWith(AssignmentAnnotation.class).to("Assignment");
 			bindConstant().annotatedWith(MethodInvocationAnnotation.class).to("MethodInvocation");
-	
+			bindConstant().annotatedWith(FieldAccessAnnotation.class).to("FieldAccess");
+			bindConstant().annotatedWith(CastAnnotation.class).to("CastExpression");
+			bindConstant().annotatedWith(ThisAnnotation.class).to("ThisExpression");
+			
 			bindConstant().annotatedWith(StatementAnnotation.class).to("Statement");
 			bindConstant().annotatedWith(ForStatementAnnotation.class).to("ForStatement");
 			bindConstant().annotatedWith(IfStatementAnnotation.class).to("IfStatement");
