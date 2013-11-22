@@ -5,7 +5,7 @@ import org.eclipse.jdt.core.IJavaElement;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
+import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import fj.Equal;
 import fj.P;
@@ -22,7 +22,7 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 			(JavaModelAnalyzer.getElementNameFunc);
 	
 	private final Equal<P2<IJavaElement, IJavaElement>> projectPEqual = 
-		FunctionalJavaUtil.extendEqualToProduct(projectEq, projectEq); 
+		FJUtils.extendEqualToProduct(projectEq, projectEq); 
 	
 	private List<P2<IJavaElement, IJavaElement>> comparedPairs = List.nil();
 
@@ -38,8 +38,8 @@ public class FakeCodeReviewInput implements ICodeReviewInput {
 
 	private List<P2<IJavaElement,IJavaElement>> getAllProjectPairs() {
 		List<IJavaElement> projects = JavaModelAnalyzer.getJavaProjectsInWorkSpace();
-		return projects.bind(projects, FunctionalJavaUtil.pairFunction((IJavaElement)null)).
-			removeAll(FunctionalJavaUtil.convertEqualToProduct(FunctionalJavaUtil.
+		return projects.bind(projects, FJUtils.pairFunction((IJavaElement)null)).
+			removeAll(FJUtils.convertEqualToProduct(FJUtils.
 				getReferenceEq((IJavaElement)null)));
 	}
 

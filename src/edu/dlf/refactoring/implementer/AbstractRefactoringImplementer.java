@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.ltk.core.refactoring.Change;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
-import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
+import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.design.ASTNodePair;
@@ -93,7 +93,7 @@ public abstract class AbstractRefactoringImplementer implements
 					F<IJavaElementDelta, List<IJavaElementDelta>>() {
 				@Override
 				public List<IJavaElementDelta> f(IJavaElementDelta delta) {
-					return FunctionalJavaUtil.createListFromArray(delta.
+					return FJUtils.createListFromArray(delta.
 						getAffectedChildren());
 			}};
 

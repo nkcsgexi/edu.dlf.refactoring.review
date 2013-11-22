@@ -7,7 +7,7 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
-import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
+import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationFragmentAnnotation;
@@ -69,7 +69,7 @@ public class RenameLocalVariableDetector extends AbstractRefactoringDetector{
 			getLeafSourceChangeFunc()).map(ChangeSearchUtils.getNodeBeforeFunc);
 		List<ASTNode> namesAfter = results.map(ChangeSearchUtils.
 			getLeafSourceChangeFunc()).map(ChangeSearchUtils.getNodeAfterFunc);
-		return namesBefore.zip(namesAfter).map(FunctionalJavaUtil.extendMapper2Product
+		return namesBefore.zip(namesAfter).map(FJUtils.extendMapper2Product
 			(getNamesWithSameBindingKey)).map(createDetectedRefactoring);
 	}
 

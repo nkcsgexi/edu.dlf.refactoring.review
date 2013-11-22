@@ -11,7 +11,7 @@ import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
-import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
+import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.design.ISourceChange;
 import fj.Effect;
@@ -61,7 +61,7 @@ public class ChangedLinesComputer {
 				(System.lineSeparator());
 			Patch patch = DiffUtils.diff(Arrays.asList(linesBefore), Arrays.
 				asList(linesAfter));
-			List<Delta> deltas = FunctionalJavaUtil.createListFromCollection(patch.
+			List<Delta> deltas = FJUtils.createListFromCollection(patch.
 				getDeltas());
 			deltas.foreach(new Effect<Delta>() {
 				@Override

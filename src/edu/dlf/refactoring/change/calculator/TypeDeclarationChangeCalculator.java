@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2ASTNodeUtils;
 import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
-import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
+import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.analyzers.XStringUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.FieldDeclarationAnnotation;
@@ -120,9 +120,9 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 
 	private Collection<ISourceChange> calculateFieldChanges(TypeDeclaration typeB, 
 			TypeDeclaration typeA) {
-		List<ASTNode> fieldsBefore = FunctionalJavaUtil.createListFromArray
+		List<ASTNode> fieldsBefore = FJUtils.createListFromArray
 			((ASTNode[])typeB.getFields());
-		List<ASTNode> fieldsAfter = FunctionalJavaUtil.createListFromArray
+		List<ASTNode> fieldsAfter = FJUtils.createListFromArray
 			((ASTNode[])typeA.getFields());
 		F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> mapper = 
 			ASTAnalyzer.getASTNodeMapper(Integer.MIN_VALUE, ASTAnalyzer.
@@ -148,9 +148,9 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 	
 	private Collection<ISourceChange> calculateMethodChanges(TypeDeclaration typeB,
 		TypeDeclaration typeA) {
-		final List<ASTNode> methodsBefore = FunctionalJavaUtil.createListFromArray
+		final List<ASTNode> methodsBefore = FJUtils.createListFromArray
 			((ASTNode[])typeB.getMethods());
-		final List<ASTNode> methodsAfter = FunctionalJavaUtil.createListFromArray
+		final List<ASTNode> methodsAfter = FJUtils.createListFromArray
 			((ASTNode[])typeA.getMethods());
 		List<ISourceChange> changes = mapper.f(methodsBefore, methodsAfter).
 			map(new F<P2<ASTNode, ASTNode>, ISourceChange>(){

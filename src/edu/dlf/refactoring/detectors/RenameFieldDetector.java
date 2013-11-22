@@ -7,7 +7,7 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
-import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
+import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.FieldDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
@@ -63,7 +63,7 @@ public class RenameFieldDetector extends AbstractRefactoringDetector{
 				return 	SourceChangeUtils.getSelfAndDescendent(root).filter(filter);
 	}};
 	
-	private final F<ASTNode, Boolean> nodeNonNullFilter = FunctionalJavaUtil.
+	private final F<ASTNode, Boolean> nodeNonNullFilter = FJUtils.
 		nonNullFilter((ASTNode)null);
 	
 	private final F<ISourceChange, List<ASTNode>> getChangedCUBefore = getCUChanges.
@@ -77,8 +77,8 @@ public class RenameFieldDetector extends AbstractRefactoringDetector{
 			List<ASTNode>>() {
 			@Override
 			public List<ASTNode> f(F<ASTNode, List<ASTNode>> mapper, List<ASTNode> roots) {
-				return roots.map(mapper).foldLeft(FunctionalJavaUtil.listAppender
-					((ASTNode)null), FunctionalJavaUtil.createEmptyList((ASTNode)null));
+				return roots.map(mapper).foldLeft(FJUtils.listAppender
+					((ASTNode)null), FJUtils.createEmptyList((ASTNode)null));
 	}};
 	
 	private final F2<List<ASTNode>, List<ASTNode>, IDetectedRefactoring> 

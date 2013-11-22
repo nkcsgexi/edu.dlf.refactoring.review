@@ -130,7 +130,7 @@ public class ASTAnalyzer {
 				return new F<ASTNode, List<ASTNode>>() {
 					@Override
 					public List<ASTNode> f(ASTNode node) {
-						return FunctionalJavaUtil.createListFromCollection
+						return FJUtils.createListFromCollection
 							(getAncestors(node)).filter(new F<ASTNode, Boolean>() {
 								@Override
 								public Boolean f(ASTNode node) {
@@ -145,7 +145,7 @@ public class ASTAnalyzer {
 				return new F<ASTNode, List<ASTNode>>() {
 					@Override
 					public List<ASTNode> f(final ASTNode node) {
-						return FunctionalJavaUtil.createListFromCollection
+						return FJUtils.createListFromCollection
 							(getAncestors(node)).filter(condition);
 	}};}};
 	
@@ -298,14 +298,14 @@ public class ASTAnalyzer {
 		new F<ASTNode, List<ASTNode>>() {
 		@Override
 		public List<ASTNode> f(ASTNode root) {
-			return FunctionalJavaUtil.createListFromCollection(getDecendents(root));
+			return FJUtils.createListFromCollection(getDecendents(root));
 		}};
 		
 	public static F<ASTNode, List<ASTNode>> getChildrenFunc = 
 		new F<ASTNode, List<ASTNode>>() {
 		@Override
 		public List<ASTNode> f(ASTNode arg0) {
-			return FunctionalJavaUtil.createListFromCollection(getChildren(arg0));
+			return FJUtils.createListFromCollection(getChildren(arg0));
 		}};
 	
 	public static boolean areASTNodeSame (ASTNode node1, ASTNode node2)

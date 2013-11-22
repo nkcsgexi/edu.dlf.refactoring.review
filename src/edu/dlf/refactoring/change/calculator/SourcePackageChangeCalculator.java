@@ -5,7 +5,7 @@ import org.eclipse.jdt.core.IJavaElement;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
+import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import edu.dlf.refactoring.analyzers.XStringUtils;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
@@ -82,15 +82,15 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 		similarPairs.foreach(calculateSubchange);
 		Equal<IJavaElement> eq = Equal.stringEqual.comap(JavaModelAnalyzer.
 			getElementNameFunc);
-		F<P2<IJavaElement, IJavaElement>, IJavaElement> getFirst = FunctionalJavaUtil.
+		F<P2<IJavaElement, IJavaElement>, IJavaElement> getFirst = FJUtils.
 			getFirstElementInPFunc((IJavaElement)null, (IJavaElement)null);
-		F<P2<IJavaElement, IJavaElement>, IJavaElement> getSecond = FunctionalJavaUtil.
+		F<P2<IJavaElement, IJavaElement>, IJavaElement> getSecond = FJUtils.
 			getSecondElementInPFunc((IJavaElement)null, (IJavaElement)null);
 		removedUnits = removedUnits.minus(eq, similarPairs.map(getFirst));
 		addedUnits = addedUnits.minus(eq, similarPairs.map(getSecond));
-		removedUnits.map(FunctionalJavaUtil.appendElementFunc((IJavaElement)null, 
+		removedUnits.map(FJUtils.appendElementFunc((IJavaElement)null, 
 			(IJavaElement)null)).foreach(calculateSubchange);
-		addedUnits.map(FunctionalJavaUtil.prependElementFunc((IJavaElement)null, 
+		addedUnits.map(FJUtils.prependElementFunc((IJavaElement)null, 
 			(IJavaElement)null)).foreach(calculateSubchange);
 		return change;
 	}

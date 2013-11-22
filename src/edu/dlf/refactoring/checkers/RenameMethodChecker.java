@@ -6,7 +6,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
-import edu.dlf.refactoring.analyzers.FunctionalJavaUtil;
+import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
@@ -52,8 +52,8 @@ public class RenameMethodChecker implements IRefactoringChecker{
 	private final Ord<ASTNode> ordFunc = Ord.stringOrd.comap(ASTAnalyzer.
 			getContainingCompilationUnitName());
 	
-	private final F<P2<List<ASTNode>, List<ASTNode>>, Boolean> filter = FunctionalJavaUtil.
-		convertEqualToProduct(Equal.intEqual.comap(FunctionalJavaUtil.
+	private final F<P2<List<ASTNode>, List<ASTNode>>, Boolean> filter = FJUtils.
+		convertEqualToProduct(Equal.intEqual.comap(FJUtils.
 			getListLengthFunc((ASTNode)null)));
 		
 	@Override
@@ -77,7 +77,7 @@ public class RenameMethodChecker implements IRefactoringChecker{
 		List<List<ASTNode>> additionalUpdates = groupedBeforeManual.minus(listEqFunc, 
 			groupedBeforeAuto);
 
-		List<P2<List<ASTNode>, List<ASTNode>>> incorrectUpdates = FunctionalJavaUtil.
+		List<P2<List<ASTNode>, List<ASTNode>>> incorrectUpdates = FJUtils.
 			pairEqualElements(groupedBeforeManual, groupedBeforeAuto, 
 				listEqFunc).filter(filter);
 		if(missedUpdates.isEmpty() && additionalUpdates.isEmpty() && 

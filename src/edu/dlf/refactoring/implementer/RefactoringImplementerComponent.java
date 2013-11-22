@@ -14,6 +14,7 @@ import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator.RefactoringCheckerCompAnnotation;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameField;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameLocalVariable;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
@@ -43,6 +44,7 @@ public class RefactoringImplementerComponent implements IFactorComponent,
 			@RenameMethod final IRefactoringImplementer rmImplementer,
 			@RenameType final IRefactoringImplementer rtImplementer,
 			@RenameLocalVariable final IRefactoringImplementer rlvImplementer,
+			@RenameField final IRefactoringImplementer rfImplemented,
 			@MoveResource final IRefactoringImplementer mvImplementer,
 			@RefactoringCheckerCompAnnotation final IFactorComponent nextComp) {
 		this.logger = logger;
@@ -52,6 +54,7 @@ public class RefactoringImplementerComponent implements IFactorComponent,
 		this.implementers.set(RefactoringType.RenameMethod, rmImplementer);
 		this.implementers.set(RefactoringType.RenameType, rtImplementer);
 		this.implementers.set(RefactoringType.RenameLocalVariable, rlvImplementer);
+		this.implementers.set(RefactoringType.RenameField, rfImplemented);
 		this.implementers.set(RefactoringType.Move, mvImplementer);
 		this.bus = new EventBus();
 		this.bus.register(nextComp);

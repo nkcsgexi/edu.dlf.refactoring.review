@@ -16,6 +16,7 @@ import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator.UICompAnnotation;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameField;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameLocalVariable;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
@@ -41,9 +42,9 @@ public class RefactoringCheckerComponent implements
 			@RenameMethod IRefactoringChecker rmChecker,
 			@RenameType IRefactoringChecker rtChecker,
 			@RenameLocalVariable IRefactoringChecker rlvChecker,
+			@RenameField IRefactoringChecker rfChecker,
 			@MoveResource IRefactoringChecker mChecker,
-			@UICompAnnotation IFactorComponent uiComponent)
-	{
+			@UICompAnnotation IFactorComponent uiComponent) {
 		this.queue = queue;
 		this.logger = logger;
 		this.map = HashMap.hashMap();
@@ -51,6 +52,7 @@ public class RefactoringCheckerComponent implements
 		this.map.set(RefactoringType.RenameMethod, rmChecker);
 		this.map.set(RefactoringType.RenameType, rtChecker);
 		this.map.set(RefactoringType.RenameLocalVariable, rlvChecker);
+		this.map.set(RefactoringType.RenameField, rfChecker);
 		this.map.set(RefactoringType.Move, mChecker);
 		this.bus = new EventBus();
 		this.bus.register(uiComponent);

@@ -5,6 +5,7 @@ import com.google.inject.AbstractModule;
 import edu.dlf.refactoring.design.IRefactoringImplementer;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameField;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameLocalVariable;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
@@ -17,6 +18,7 @@ public class ImplementerCompInjector extends AbstractModule{
 		bind(IRefactoringImplementer.class).annotatedWith(RenameMethod.class).to(RenameMethodImplementer.class);
 		bind(IRefactoringImplementer.class).annotatedWith(RenameType.class).to(RenameTypeImplementer.class);
 		bind(IRefactoringImplementer.class).annotatedWith(RenameLocalVariable.class).to(RenameLocalVariableImplementer.class);
+		bind(IRefactoringImplementer.class).annotatedWith(RenameField.class).to(RenameFieldImplementer.class);
 		bind(IRefactoringImplementer.class).annotatedWith(MoveResource.class).to(MoveRefactoringImplementer.class);
 	}
 

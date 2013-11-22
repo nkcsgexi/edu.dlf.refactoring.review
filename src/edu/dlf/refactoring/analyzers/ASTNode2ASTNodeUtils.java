@@ -31,7 +31,7 @@ public class ASTNode2ASTNodeUtils {
 		@Override
 		public List<ASTNode> f(ASTNode method) {
 			ASTNode body = (ASTNode) method.getStructuralProperty(MethodDeclaration.BODY_PROPERTY);
-			return FunctionalJavaUtil.createListFromCollection((java.util.List)body.
+			return FJUtils.createListFromCollection((java.util.List)body.
 					getStructuralProperty(Block.STATEMENTS_PROPERTY));
 	}};
 	
