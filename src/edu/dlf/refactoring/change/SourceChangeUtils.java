@@ -16,6 +16,7 @@ import edu.dlf.refactoring.utils.XList;
 import edu.dlf.refactoring.utils.XList.IAggregator;
 import fj.Equal;
 import fj.F;
+import fj.F2;
 import fj.data.List;
 import fj.data.List.Buffer;
 
@@ -88,7 +89,16 @@ public class SourceChangeUtils {
 		return results.toList();
 	}
 	
-
+	public static F2<ASTNode, ASTNode, ISourceChange> getChangeCalculator(
+		final IASTNodeChangeCalculator calculator)
+	{
+		return new F2<ASTNode, ASTNode, ISourceChange>() {
+			@Override
+			public ISourceChange f(ASTNode n0, ASTNode n1) {
+				return calculator.CalculateASTNodeChange(new ASTNodePair(n0, n1));
+		}};
+	}
+	
 
 	public static List<ISourceChange> getChildren(ISourceChange parent)
 	{

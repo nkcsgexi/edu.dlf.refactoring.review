@@ -42,6 +42,7 @@ import edu.dlf.refactoring.change.calculator.statement.KeyWordsStatementChangeCa
 import edu.dlf.refactoring.change.calculator.statement.ReturnAndThrowStatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.StatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.TryStatementChangeCalculator;
+import edu.dlf.refactoring.change.calculator.statement.VariableDeclarationStatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.WhileStatementChangeCalculator;
 
 public class ChangeComponentInjector extends AbstractModule{
@@ -143,6 +144,9 @@ public class ChangeComponentInjector extends AbstractModule{
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface ThrowStatementAnnotation {}
 		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface VariableDeclarationStatementAnnotation {}
+		
 		// Others
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface TypeDeclarationAnnotation {}
@@ -201,6 +205,8 @@ public class ChangeComponentInjector extends AbstractModule{
 			bind(IASTNodeChangeCalculator.class).annotatedWith(ContinueStatementAnnotation.class).to(KeyWordsStatementChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(ReturnStatementAnnotation.class).to(ReturnAndThrowStatementChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(ThrowStatementAnnotation.class).to(ReturnAndThrowStatementChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(VariableDeclarationStatementAnnotation.class).to(VariableDeclarationStatementChangeCalculator.class);
+			
 			
 			bind(IASTNodeChangeCalculator.class).annotatedWith(ExpressionAnnotation.class).to(ExpressionChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(AssignmentAnnotation.class).to(AssignmentChangeCalculator.class);
@@ -251,6 +257,7 @@ public class ChangeComponentInjector extends AbstractModule{
 			bindConstant().annotatedWith(BreakStatementAnnotation.class).to("BreakStatement");
 			bindConstant().annotatedWith(ReturnStatementAnnotation.class).to("ReturnStatement");
 			bindConstant().annotatedWith(ThrowStatementAnnotation.class).to("ThrowStatement");
+			bindConstant().annotatedWith(VariableDeclarationStatementAnnotation.class).to("VariableDeclarationStatement");
 			
 			bindConstant().annotatedWith(FieldDeclarationAnnotation.class).to("FieldDeclaration");
 			bindConstant().annotatedWith(TypeDeclarationAnnotation.class).to("TypeDeclaration");

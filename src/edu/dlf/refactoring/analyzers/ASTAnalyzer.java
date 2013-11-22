@@ -410,6 +410,17 @@ public class ASTAnalyzer {
 	}
 	
 	
+	public static F2<ASTNode, ASTNode, Integer> getDefaultASTNodeSimilarityScore
+		(final int maxScore) {
+		return new F2<ASTNode, ASTNode, Integer>() {
+			@Override
+			public Integer f(ASTNode n0, ASTNode n1) {
+				Double perc = XStringUtils.getSamePartPercentage.f(n0.toString(), 
+					n1.toString());
+				return (int)(perc * maxScore);
+		}};
+	}
+	
 	public static List<P2<ASTNode, ASTNode>> getSameNodePairs(List<ASTNode> list1, 
 		List<ASTNode> list2, final F2<ASTNode, ASTNode, Boolean> areSame) {
 		return list1.bind(list2, new F2<ASTNode, ASTNode, P2<ASTNode, ASTNode>>(){

@@ -17,6 +17,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.ReturnStatementAnnotat
 import edu.dlf.refactoring.change.ChangeComponentInjector.StatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ThrowStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TryStatementAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.WhileStatementAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
@@ -37,6 +38,7 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 	private final IASTNodeChangeCalculator csCalculator;
 	private final IASTNodeChangeCalculator rsCalculator;
 	private final IASTNodeChangeCalculator thsCalculator;
+	private final IASTNodeChangeCalculator varDecStaCal;
 	
 	@Inject
 	public StatementChangeCalculator(
@@ -51,7 +53,8 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 			@ReturnStatementAnnotation IASTNodeChangeCalculator rsCalculator,
 			@ThrowStatementAnnotation IASTNodeChangeCalculator thsCalculator,
 			@BlockAnnotation IASTNodeChangeCalculator blockCalculator, 
-			@ExpressionAnnotation IASTNodeChangeCalculator expressionCalculator) {
+			@ExpressionAnnotation IASTNodeChangeCalculator expressionCalculator,
+			@VariableDeclarationStatementAnnotation IASTNodeChangeCalculator varDecStaCal) {
 		this.ifCalculator = ifCalculator;
 		this.blockCalculator = blockCalculator;
 		this.expressionCalculator = expressionCalculator;
@@ -63,6 +66,7 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 		this.csCalculator = csCalculator;
 		this.rsCalculator = rsCalculator;
 		this.thsCalculator = thsCalculator;
+		this.varDecStaCal = varDecStaCal;
 		
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
@@ -99,6 +103,8 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 			return rsCalculator.CalculateASTNodeChange(pair);	
 		case ASTNode.THROW_STATEMENT:
 			return thsCalculator.CalculateASTNodeChange(pair);	
+		case ASTNode.VARIABLE_DECLARATION_STATEMENT:
+			return varDecStaCal.CalculateASTNodeChange(pair);
 		case ASTNode.EXPRESSION_STATEMENT:
 			SubChangeContainer container = this.changeBuilder.createSubchangeContainer(pair);
 			container.addSubChange(expressionCalculator.CalculateASTNodeChange(new ASTNodePair(
