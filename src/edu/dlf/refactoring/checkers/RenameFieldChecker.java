@@ -61,7 +61,7 @@ public class RenameFieldChecker implements IRefactoringChecker {
 		public void e(List<ASTNode> list) {
 			String cuName = FJUtils.getHeadFunc((ASTNode)null).
 				andThen(getParentCUName).f(list);
-			logger.info(cuName + ":" + list.length()); 
+			logger.debug(cuName + ":" + list.length()); 
 	}}; 
 	
 	private final Effect<ISourceChange> logChange = new Effect<ISourceChange>() {
@@ -69,13 +69,12 @@ public class RenameFieldChecker implements IRefactoringChecker {
 		public void e(ISourceChange change) {
 			String cuName = ASTNode2StringUtils.getCompilationUnitName.f
 				(change.getNodeBefore());
-			logger.info(cuName + "\n" + SourceChangeUtils.printChangeTree(change));
+			logger.debug(cuName + "\n" + SourceChangeUtils.printChangeTree(change));
 	}};
 	
 	@Override
 	public ICheckingResult checkRefactoring(IDetectedRefactoring detected,
 		IImplementedRefactoring implemented) {
-		implemented.getSourceChanges().foreach(logChange);
 		List<ASTNode> autoNamesBefore = implemented.getSourceChanges().map
 			(ChangeSearchUtils.searchFunc.flip().f(criteria)).
 			foldLeft(FJUtils.listAppender((IChangeSearchResult)null), 
@@ -86,9 +85,7 @@ public class RenameFieldChecker implements IRefactoringChecker {
 			DetectedRenameField.SimpleNamesBefore);
 		List<List<ASTNode>> autoGroups = autoNamesBefore.group(grouper).sort(sorter);
 		List<List<ASTNode>> manGroups = manualNamesBefore.group(grouper).sort(sorter);
-		logger.info("Auto:");
 		autoGroups.foreach(logChangeGroup);
-		logger.info("Manual:");
 		manGroups.foreach(logChangeGroup);	
 		if(autoGroups.length() == manGroups.length()) {
 			List<P2<List<ASTNode>, List<ASTNode>>> zipped = autoGroups.zip(manGroups);

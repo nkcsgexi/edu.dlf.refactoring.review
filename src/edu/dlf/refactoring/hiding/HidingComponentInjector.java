@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameField;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameLocalVariable;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
@@ -16,6 +17,7 @@ public class HidingComponentInjector extends AbstractModule{
 		bind(AbstractRefactoringHider.class).annotatedWith(RenameMethod.class).to(RenameMethodHider.class);
 		bind(AbstractRefactoringHider.class).annotatedWith(RenameType.class).to(RenameTypeHider.class);
 		bind(AbstractRefactoringHider.class).annotatedWith(RenameLocalVariable.class).to(RenameLocalVariableHider.class);
+		bind(AbstractRefactoringHider.class).annotatedWith(RenameField.class).to(RenameFieldHider.class);
 		bind(AbstractRefactoringHider.class).annotatedWith(MoveResource.class).to(MoveResourceHider.class);
 	}
 

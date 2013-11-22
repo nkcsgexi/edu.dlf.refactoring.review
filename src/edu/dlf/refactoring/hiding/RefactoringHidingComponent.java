@@ -13,6 +13,7 @@ import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameField;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameLocalVariable;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
@@ -45,6 +46,7 @@ public class RefactoringHidingComponent implements IFactorComponent{
 			@RenameMethod AbstractRefactoringHider rmHider,
 			@RenameType AbstractRefactoringHider rtHider,
 			@RenameLocalVariable AbstractRefactoringHider rlvHider,
+			@RenameField AbstractRefactoringHider rfHider,
 			@MoveResource AbstractRefactoringHider mrHider)
 	{
 		this.logger = logger;
@@ -54,6 +56,7 @@ public class RefactoringHidingComponent implements IFactorComponent{
 		allHiders.put(RefactoringType.RenameMethod, rmHider);
 		allHiders.put(RefactoringType.RenameType, rtHider);
 		allHiders.put(RefactoringType.RenameLocalVariable, rlvHider);
+		allHiders.put(RefactoringType.RenameField, rfHider);
 		allHiders.put(RefactoringType.Move, mrHider);
 	}
 	
