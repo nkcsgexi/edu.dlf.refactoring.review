@@ -69,13 +69,15 @@ public class RefactoringCheckerComponent implements
 					((P2)event)._1();
 				IImplementedRefactoring implemented = (ImplementedRefactoring)
 					((P2)event)._2();
-				Option<IRefactoringChecker> checkOp = map.get(detected.getRefactoringType());
+				Option<IRefactoringChecker> checkOp = map.get(detected.
+					getRefactoringType());
 				if(checkOp.isSome()) {
 					ICheckingResult result = checkOp.some().checkRefactoring
 						(detected, implemented);
 					bus.post(result);
 				} else {
-					logger.fatal("Missing checker for " + detected.getRefactoringType());
+					logger.fatal("Missing checker for " + detected.
+						getRefactoringType());
 				}
 		}});}
 		return null;

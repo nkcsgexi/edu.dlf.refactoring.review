@@ -35,4 +35,14 @@ public class DetectedRenameMethodRefactoring extends AbstractRefactoring{
 	public List<NodeListDescriptor> getNodeListDescritors() {
 		return List.single(SimpleNamesBefore).snoc(SimpleNamesAfter);
 	}
+	
+	@Override
+	protected List<NodesDescriptor> getBeforeNodesDescriptor() {
+		return List.single((NodesDescriptor)SimpleNamesBefore);
+	}
+
+	@Override
+	protected List<NodesDescriptor> getAfterNodesDescriptor() {
+		return List.single((NodesDescriptor)SimpleNamesAfter);
+	}
 }

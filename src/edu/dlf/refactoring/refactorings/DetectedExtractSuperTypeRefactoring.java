@@ -27,4 +27,15 @@ public class DetectedExtractSuperTypeRefactoring extends AbstractRefactoring{
 		return List.single(TypeReferencesDescriptor);
 	}
 
+	@Override
+	protected List<NodesDescriptor> getBeforeNodesDescriptor() {
+		return List.nil();
+	}
+
+	@Override
+	protected List<NodesDescriptor> getAfterNodesDescriptor() {
+		return List.single((NodesDescriptor)TypeReferencesDescriptor).snoc(
+			TypeReferencesDescriptor);
+	}
+
 }

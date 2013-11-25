@@ -1,6 +1,14 @@
 package edu.dlf.refactoring.ui;
 
 
+
+public class RefactoringComparator {
+	
+}
+
+/*package edu.dlf.refactoring.ui;
+
+
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
@@ -109,3 +117,4 @@ public class RefactoringComparator implements ICompListener{
 }
 
 
+*/

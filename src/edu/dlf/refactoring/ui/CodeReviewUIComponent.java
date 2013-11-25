@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.checkers.ICheckingResult;
+import edu.dlf.refactoring.checkers.RefactoringCheckerUtils;
 import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IDetectedRefactoring.NodeListDescriptor;
@@ -55,9 +56,9 @@ public class CodeReviewUIComponent implements IFactorComponent{
 	public CodeReviewUIComponent(@HidingCompAnnotation IFactorComponent hidingComponent)
 	{
 		this.hidingComponent = hidingComponent;
-		this.registerListener((ICompListener)ServiceLocator.ResolveType
+	/*	this.registerListener((ICompListener)ServiceLocator.ResolveType
 			(RefactoringComparator.class));
-	}
+	*/}
 	
 	public synchronized void updateViewedCode(ASTNode rootBefore, ASTNode rootAfter)
 	{
@@ -184,7 +185,7 @@ public class CodeReviewUIComponent implements IFactorComponent{
 				@Override
 				public List<P2<ICheckingResult, ASTNode>> 
 					f(final ICheckingResult result) {
-					List<ASTNode> nodes = getAllEffectedNodes(result.
+					List<ASTNode> nodes = RefactoringCheckerUtils.getAllEffectedNodes(result.
 							getDetectedRefactoring()).filter(new F<ASTNode, Boolean>(){
 						@Override
 						public Boolean f(ASTNode node) {
@@ -199,21 +200,7 @@ public class CodeReviewUIComponent implements IFactorComponent{
 							}});}});
 	}
 	
-	
-	private List<ASTNode> getAllEffectedNodes(final IDetectedRefactoring refactoring)
-	{
-		return refactoring.getNodeListDescritors().bind(new F<NodeListDescriptor, 
-				List<ASTNode>>(){
-			@Override
-			public List<ASTNode> f(NodeListDescriptor d) {
-				return refactoring.getEffectedNodeList(d);
-			}}).append(refactoring.getSingleNodeDescriptors().map(new 
-					F<SingleNodeDescriptor, ASTNode>(){
-				@Override
-				public ASTNode f(SingleNodeDescriptor d) {
-					return refactoring.getEffectedNode(d);
-				}}));
-	}
+
 	
 
 	public synchronized void clearContext()

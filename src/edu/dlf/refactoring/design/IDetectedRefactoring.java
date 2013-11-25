@@ -9,8 +9,11 @@ public interface IDetectedRefactoring extends IRefactoring {
 	List<ASTNode> getEffectedNodeList(NodeListDescriptor descriptor);
 	List<SingleNodeDescriptor> getSingleNodeDescriptors();
 	List<NodeListDescriptor> getNodeListDescritors();
+	List<ASTNode> getEffectedNodesBefore();
+	List<ASTNode> getEffectedNodesAfter();
 	RefactoringType getRefactoringType();
 	
-	interface SingleNodeDescriptor{}
-	interface NodeListDescriptor{}
+	interface NodesDescriptor{}
+	interface SingleNodeDescriptor extends NodesDescriptor{}
+	interface NodeListDescriptor extends NodesDescriptor{}
 }

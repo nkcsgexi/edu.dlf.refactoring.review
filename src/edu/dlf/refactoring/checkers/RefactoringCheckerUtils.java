@@ -2,6 +2,9 @@ package edu.dlf.refactoring.checkers;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
+import edu.dlf.refactoring.design.IDetectedRefactoring;
+import edu.dlf.refactoring.design.IDetectedRefactoring.NodeListDescriptor;
+import edu.dlf.refactoring.design.IDetectedRefactoring.SingleNodeDescriptor;
 import fj.F;
 import fj.F2;
 import fj.P2;
@@ -31,6 +34,23 @@ public class RefactoringCheckerUtils {
 				return !p._1();
 			}
 		});
+	}
+	
+	
+	public static List<ASTNode> getAllEffectedNodes(final IDetectedRefactoring 
+		refactoring)
+	{
+		return refactoring.getNodeListDescritors().bind(new F<NodeListDescriptor, 
+				List<ASTNode>>(){
+			@Override
+			public List<ASTNode> f(NodeListDescriptor d) {
+				return refactoring.getEffectedNodeList(d);
+			}}).append(refactoring.getSingleNodeDescriptors().map(new 
+					F<SingleNodeDescriptor, ASTNode>(){
+				@Override
+				public ASTNode f(SingleNodeDescriptor d) {
+					return refactoring.getEffectedNode(d);
+				}}));
 	}
 }
 

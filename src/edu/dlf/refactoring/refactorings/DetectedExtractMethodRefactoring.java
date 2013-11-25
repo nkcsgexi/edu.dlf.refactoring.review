@@ -43,5 +43,15 @@ public class DetectedExtractMethodRefactoring extends AbstractRefactoring{
 	public List<NodeListDescriptor> getNodeListDescritors() {
 		return List.single(ExtractedStatements);
 	}
+
+	@Override
+	protected List<NodesDescriptor> getBeforeNodesDescriptor() {
+		return List.single((NodesDescriptor)ExtractedStatements);
+	}
+
+	@Override
+	protected List<NodesDescriptor> getAfterNodesDescriptor() {
+		return List.single((NodesDescriptor)DeclaredMethod);
+	}
 	
 }

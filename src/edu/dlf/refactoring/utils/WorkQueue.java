@@ -32,6 +32,12 @@ public class WorkQueue
         }
     }
     
+    public int getQueueLength() {
+    	synchronized (queue) {
+    		return queue.size();
+    	}
+    }
+    
     public boolean isInQueueNow() {
     	long current = Thread.currentThread().getId();
     	return getAllWorkerID().find(Equal.longEqual.eq(current)).isSome();

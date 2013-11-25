@@ -36,4 +36,14 @@ public class DetectedMoveRefactoring extends AbstractRefactoring{
 		return List.nil();
 	}
 
+	@Override
+	protected List<NodesDescriptor> getBeforeNodesDescriptor() {
+		return List.single((NodesDescriptor)RemovedDeclarationDescriptor);
+	}
+
+	@Override
+	protected List<NodesDescriptor> getAfterNodesDescriptor() {
+		return List.single((NodesDescriptor)AddedDeclarationDescripter);
+	}
+
 }
