@@ -127,14 +127,17 @@ public class ManualRefactoringExternalConnector implements
 		final Buffer<ICheckingResult> buffer = Buffer.empty();
 		this.checkComp.registerListener(new ICompListener() {
 			@Override
-			public void callBack(Object output) {
-				ICheckingResult result = (ICheckingResult)output;
-				if(result.IsBehaviorPreserving()) buffer.snoc(result);
-				if(queue.getQueueLength() == 0) {
-					List<ICheckingResult> list = buffer.toList();
-					callBack.callBack(list.map(convert2RefactoringInfo).
-						toCollection());
-				}
+			public void callBack(final Object output) {
+				new Thread(){
+					@Override
+					public void run() {
+						ICheckingResult result = (ICheckingResult)output;
+						if(result.IsBehaviorPreserving()) buffer.snoc(result);
+						if(queue.getQueueLength() == 0) {
+							List<ICheckingResult> list = buffer.toList();
+							callBack.callBack(list.map(convert2RefactoringInfo).
+								toCollection());
+				}}}.start();
 		}});
 		this.changeComp.listen(pair);
 	}
