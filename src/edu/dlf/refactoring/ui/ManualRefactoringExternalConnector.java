@@ -120,7 +120,7 @@ public class ManualRefactoringExternalConnector implements
 	
 	
 	@Override
-	public void provideInput(final IProject before, final IProject after, 
+	public void startRefactoringDetection(final IProject before, final IProject after, 
 		final IManualRefactoringCallback callBack) {
 		JavaElementPair pair = new JavaElementPair(JavaCore.create(before), 
 			JavaCore.create(after));
