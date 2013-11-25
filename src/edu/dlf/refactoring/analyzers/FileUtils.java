@@ -9,8 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
 
-import javax.swing.filechooser.FileSystemView;
-
 import org.apache.log4j.Logger;
 
 import edu.dlf.refactoring.design.ServiceLocator;

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry exported="true" kind="lib" path="lib/aopalliance.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guava-14.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-assistedinject-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-grapher-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-jmx-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-jndi-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-multibindings-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-persist-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-servlet-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-spring-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-struts2-plugin-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-throwingproviders-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/javax.inject.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/diffutils-1.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-lang3-3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/functionaljava.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.4-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.4-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib" sourcepath="lib"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
