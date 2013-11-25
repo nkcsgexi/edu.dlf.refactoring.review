@@ -10,11 +10,13 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTNode2ASTNodeUtils;
+import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
 import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.checkers.ICheckingResult;
 import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.JavaElementPair;
+import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator.ChangeCompAnnotation;
 import edu.dlf.refactoring.design.ServiceLocator.RefactoringCheckerCompAnnotation;
 import edu.dlf.refactoring.utils.WorkQueue;
@@ -31,18 +33,20 @@ public class ManualRefactoringExternalConnector implements
 	private final WorkQueue queue;
 
 	@Inject
-	public ManualRefactoringExternalConnector(Logger logger,
+	public ManualRefactoringExternalConnector(
+		Logger logger,
 		WorkQueue queue,
 		@ChangeCompAnnotation IFactorComponent changeComp,
 		@RefactoringCheckerCompAnnotation IFactorComponent checkComp) {
-		this.logger = logger;
-		this.changeComp = changeComp;
-		this.checkComp = checkComp;
-		this.queue = queue;
+			this.logger = logger;
+			this.changeComp = changeComp;
+			this.checkComp = checkComp;
+			this.queue = queue;
 	}
 	
-	final Equal<ASTNode> grouper = FJUtils.getReferenceEq((ASTNode)null).
+	private final Equal<ASTNode> grouper = FJUtils.getReferenceEq((ASTNode)null).
 		comap(ASTNode2ASTNodeUtils.getRootFunc);
+	
 	
 	private final F<ASTNode, IManualRefactoringPosition> getNodePostion = 
 		new F<ASTNode, IManualRefactoringPosition>() {
@@ -55,11 +59,17 @@ public class ManualRefactoringExternalConnector implements
 					}
 					@Override
 					public String getPath() {
-						return null;
+						return ASTNode2StringUtils.getFilePath.f(node);
 					}
 					@Override
 					public int getLength() {
 						return node.getLength();
+					}
+					
+					@Override
+					public String toString() {
+						return getPath() + ": " + getStartOffset() + " " + 
+							getLength();
 					}
 	};}};
 	
@@ -68,21 +78,44 @@ public class ManualRefactoringExternalConnector implements
 	private final F<ICheckingResult, IManualRefactoringInfo> convert2RefactoringInfo = 
 		new F<ICheckingResult, IManualRefactoringInfo>() {
 			@Override
-			public IManualRefactoringInfo f(ICheckingResult result) {
-				final List<ASTNode> nodesBefore = result.getDetectedRefactoring().
-					getEffectedNodesBefore();
-				final List<ASTNode> nodesAfter = result.getDetectedRefactoring().
-					getEffectedNodesAfter();
+			public IManualRefactoringInfo f(final ICheckingResult result) {
+				final List<IManualRefactoringPosition> positionsBefore = result.
+					getDetectedRefactoring().getEffectedNodesBefore().map
+						(getNodePostion);
+				final List<IManualRefactoringPosition> positionsAfter = result.
+					getDetectedRefactoring().getEffectedNodesAfter().map
+						(getNodePostion);
 				return new IManualRefactoringInfo() {
 					@Override
-					public Collection<IManualRefactoringPosition> getRightRefactoringPostion() {
-						return nodesAfter.map(getNodePostion).toCollection();
+					public String toString() {
+						StringBuilder sb = new StringBuilder();
+						sb.append(getRefactoringType() + System.lineSeparator());
+						sb.append("Left files:" + System.lineSeparator());
+						for(IManualRefactoringPosition postion : getLeftRefactoringPostions())
+						{
+							sb.append(postion.getPath() + System.lineSeparator());
+						}
+						sb.append("Right files:" + System.lineSeparator());
+						for(IManualRefactoringPosition postion : getRightRefactoringPostions())
+						{
+							sb.append(postion.getPath() + System.lineSeparator());
+						}
+						return sb.toString();
 					}
 					@Override
-					public Collection<IManualRefactoringPosition> getLeftRefactoringPostion() {
-						return nodesBefore.map(getNodePostion).toCollection();
+					public Collection<IManualRefactoringPosition> 
+						getRightRefactoringPostions() {
+							return positionsAfter.toCollection();
 					}
-				};
+					@Override
+					public Collection<IManualRefactoringPosition> 
+						getLeftRefactoringPostions() {
+							return positionsBefore.toCollection();
+					}
+					@Override
+					public RefactoringType getRefactoringType() {
+						return result.getDetectedRefactoring().getRefactoringType();
+					}};
 	}};
 	
 	
@@ -99,7 +132,8 @@ public class ManualRefactoringExternalConnector implements
 				if(result.IsBehaviorPreserving()) buffer.snoc(result);
 				if(queue.getQueueLength() == 0) {
 					List<ICheckingResult> list = buffer.toList();
-					callBack.callBack(list.map(convert2RefactoringInfo).toCollection());
+					callBack.callBack(list.map(convert2RefactoringInfo).
+						toCollection());
 				}
 		}});
 		this.changeComp.listen(pair);

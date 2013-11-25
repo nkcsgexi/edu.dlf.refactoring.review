@@ -48,6 +48,14 @@ public class ASTNode2StringUtils {
 				(MethodDeclaration.NAME_PROPERTY).toString();
 	}};
 	
+	
+	public static F<ASTNode, String> getFilePath = new F<ASTNode, String>() {
+		@Override
+		public String f(ASTNode node) {
+			return ((CompilationUnit)node.getRoot()).getJavaElement().getPath().
+				toFile().getAbsolutePath();
+	}};
+	
 	public static F<ASTNode, String> getPreWhitespace = new F<ASTNode, String>() {
 		@Override
 		public String f(ASTNode node) {
