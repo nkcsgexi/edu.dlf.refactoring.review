@@ -1,9 +1,12 @@
 package edu.dlf.refactoring.analyzers;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -35,6 +38,15 @@ public class JavaModelAnalyzer {
 	private JavaModelAnalyzer() throws Exception
 	{
 		throw new Exception();
+	}
+	
+	
+	public static List<IProject> getAllProjectsInWorkSpace()
+	{
+	    IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	    IWorkspaceRoot root = workspace.getRoot();
+	    IProject[] projects = root.getProjects();
+	    return FJUtils.createListFromArray(projects);
 	}
 	
 	public static List<IJavaElement> getJavaProjectsInWorkSpace()

@@ -180,6 +180,14 @@ public class FJUtils {
 		return List.nil();
 	}
 	
+	public static <T, S> F<T, S> getTypeConverter(T t, S s) {
+		return new F<T, S>() {
+			@Override
+			public S f(T t) {
+				return (S)t;
+		}};
+	}
+	
 	
 	public static <T> F<T, Boolean> nonNullFilter(T t) {
 		return new F<T, Boolean>(){

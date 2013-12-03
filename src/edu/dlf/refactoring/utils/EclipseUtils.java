@@ -53,8 +53,10 @@ public class EclipseUtils {
 		@Override
 		public void e(String projectPath) {
 			try {
+			if(!projectPath.endsWith(".project"))
+				projectPath = projectPath + "/.project";
 			IProjectDescription description = ResourcesPlugin.getWorkspace().
-				loadProjectDescription(new Path(projectPath + "/.project"));
+				loadProjectDescription(new Path(projectPath));
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().
 				getProject(description.getName());
 			project.create(description, new NullProgressMonitor()); 
@@ -64,9 +66,30 @@ public class EclipseUtils {
 				logger.fatal("Import error: " + e);
 	}}};
 	
+	
+	public static final F<String, IProject> importGetProject = new F<String, IProject>(){
+		@Override
+		public IProject f(String projectPath) {
+			try {
+				if(!projectPath.endsWith(".project"))
+					projectPath = projectPath + "/.project";
+				IProjectDescription description = ResourcesPlugin.getWorkspace().
+					loadProjectDescription(new Path(projectPath));
+				IProject project = ResourcesPlugin.getWorkspace().getRoot().
+					getProject(description.getName());
+				project.create(description, new NullProgressMonitor()); 
+				project.open(new NullProgressMonitor());
+				allImportedProjects.set(projectPath, project);
+				return project;
+			} catch (Exception e) {
+				logger.fatal("Import error: " + e);
+				return null;
+			}
+		}};
+	
 	public static final F<String, String> getProjectNameByPath = new F<String, String>() {
 		@Override
-		public String f(final String path) {
+		public String f(String path) {
 			Option<IProject> projectFinder = allImportedProjects.get(path);
 			if(projectFinder.isNone()) {
 				logger.fatal("Cannot find project at: " + path);
@@ -89,8 +112,8 @@ public class EclipseUtils {
 						logger.fatal(e);
 	}}});}};
 	
-	public static final F<String, Option<IJavaElement>> findJavaProjecInWorkspacetByName =
-		new F<String, Option<IJavaElement>>() {
+	public static final F<String, Option<IJavaElement>> 
+		findJavaProjecInWorkspacetByName = new F<String, Option<IJavaElement>>() {
 			@Override
 			public Option<IJavaElement> f(final String name) {
 				return JavaModelAnalyzer.getJavaProjectsInWorkSpace().find(
@@ -120,8 +143,43 @@ public class EclipseUtils {
 			descripor.setName(newName);
 			project.move(descripor, true, new NullProgressMonitor());
 			} catch (Exception e) {
-				logger.fatal("Rename project error " + e);
+				logger.fatal("Rename project error: " + e);
 			}
 			return Unit.unit();
 	}};
+	
+	public static void removeAllProjects() {
+		JavaModelAnalyzer.getAllProjectsInWorkSpace().foreach(directlyRemoveProject);
+	}
+	
+	public static final F2<IProject, String, Unit> directlyRenameProject =
+		new F2<IProject, String, Unit>() {
+			@Override
+			public Unit f(IProject project, String newName) {
+			try{
+				IProjectDescription descripor = project.getDescription();
+				descripor.setName(newName);
+				project.move(descripor, true, new NullProgressMonitor());
+			} catch (Exception e) {
+				logger.fatal("Rename project error: " + e);
+			}
+			return Unit.unit();
+	}};
+	
+	public static final F<IProject, String> getProjectName = 
+		new F<IProject, String>() {
+		@Override
+		public String f(IProject project) {
+			return project.getName();
+	}};
+	
+	public static final Effect<IProject> directlyRemoveProject = 
+		new Effect<IProject>() {
+		@Override
+		public void e(IProject project) {
+			try {
+				project.delete(false, true, new NullProgressMonitor());
+			} catch (Exception e) {
+				logger.fatal("Remove project error: " + e);
+		}}};
 }

@@ -9,10 +9,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
 
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.log4j.Logger;
 
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.F;
+import fj.F2;
 import fj.data.List;
 
 public class FileUtils {
@@ -37,6 +40,22 @@ public class FileUtils {
 				logger.fatal(e);
 				return "";
 	}}}; 
+	
+	public static final F2<String, F<File, Boolean>, List<File>>   
+		searchFilesInDirectory = new F2<String, F<File,Boolean>, List<File>>() {
+			@Override
+			public List<File> f(String directory, F<File, Boolean> filter) {
+				IOFileFilter trueFilter = FileFilterUtils.trueFileFilter();
+				return FJUtils.createListFromCollection(org.apache.commons.io.FileUtils.
+					listFilesAndDirs(new File(directory), trueFilter , trueFilter)).
+						filter(filter);
+	}};
+	
+	public static final F<File, String> getPath = new F<File, String>() {
+		@Override
+		public String f(File file) {
+			return file.getAbsolutePath();
+	}};
 	
 	public static final F<String, List<String>> getSubDirectories = 
 		new F<String, List<String>>() {

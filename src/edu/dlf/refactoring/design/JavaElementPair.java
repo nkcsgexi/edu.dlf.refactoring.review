@@ -11,7 +11,7 @@ public class JavaElementPair implements IJavaElementPair{
 	{
 		this.beforeElement = beforeElement;
 		this.afterElement = afterElement;
-	};
+	}
 	
 	public IJavaElement getElementBefore()
 	{
