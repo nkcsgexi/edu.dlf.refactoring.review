@@ -39,13 +39,14 @@ public class MylynStudy extends WorkQueueItem {
 		this.changeComp = changeComp;
 	}
 	
-	private final F2<String, String, List<P2<IJavaProject, IJavaProject>>> 
-		importAndMapProjects = new F2<String, String, List<P2<IJavaProject, 
+	private final F2<Integer, P2<String, String>, List<P2<IJavaProject, IJavaProject>>> 
+		importAndMapProjects = new F2<Integer, P2<String, String>, List<P2<IJavaProject, 
 			IJavaProject>>>() {
 			@Override
-			public List<P2<IJavaProject, IJavaProject>> f(String dir1, String dir2) {
-				List<IProject> projects0 = importAllProjects.f(dir1, 0);
-				List<IProject> projects1 = importAllProjects.f(dir2, 1);
+			public List<P2<IJavaProject, IJavaProject>> f(Integer revision, 
+					 P2<String, String> dirP) {
+				List<IProject> projects0 = importAllProjects.f(dirP._1(), revision);
+				List<IProject> projects1 = importAllProjects.f(dirP._2(), revision + 1);
 				Equal<IProject> eq = Equal.stringEqual.comap(new F<IProject, String>(){
 					@Override
 					public String f(IProject p) {
@@ -90,11 +91,17 @@ public class MylynStudy extends WorkQueueItem {
 		pairs.foreach(new Effect<P2<String, String>>() {
 			@Override
 			public void e(P2<String, String> dirs) {
-				List<Object> projectPairs = importAndMapProjects.tuple().
+				List<Object> projectPairs = importAndMapProjects.f(getRevisionNumber()).
 					f(dirs).map(DesignUtils.convertProduct2JavaElementPair).map(
-						FJUtils.getTypeConverter((JavaElementPair)null, null));
+						FJUtils.getTypeConverter((JavaElementPair)null, (Object) null));
 				projectPairs.map(DesignUtils.feedComponent.flip().f(changeComp));
 		}});
+	}
+	
+	private int currentRevision = -2;
+	private int getRevisionNumber() {
+		currentRevision += 2;
+		return currentRevision;
 	}
 	
 }
