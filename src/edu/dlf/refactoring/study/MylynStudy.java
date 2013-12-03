@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.google.inject.Inject;
@@ -24,14 +25,15 @@ import fj.Ord;
 import fj.P2;
 import fj.data.List;
 
-public class MylynStudy extends WorkQueueItem {
+public class MylynStudy extends AbstractStudy {
 
 	private final Logger logger;
 	private final String root;
 	private final IFactorComponent changeComp;
 
 	@Inject
-	public MylynStudy(Logger logger,
+	public MylynStudy(
+		Logger logger,
 		@ChangeCompAnnotation IFactorComponent changeComp) {
 		super("Mylyn study");
 		this.logger = logger;
@@ -39,11 +41,11 @@ public class MylynStudy extends WorkQueueItem {
 		this.changeComp = changeComp;
 	}
 	
-	private final F2<Integer, P2<String, String>, List<P2<IJavaProject, IJavaProject>>> 
-		importAndMapProjects = new F2<Integer, P2<String, String>, List<P2<IJavaProject, 
-			IJavaProject>>>() {
+	private final F2<Integer, P2<String, String>, List<P2<IJavaElement, IJavaElement>>> 
+		importAndMapProjects = new F2<Integer, P2<String, String>, List<P2<IJavaElement, 
+				IJavaElement>>>() {
 			@Override
-			public List<P2<IJavaProject, IJavaProject>> f(Integer revision, 
+			public List<P2<IJavaElement, IJavaElement>> f(Integer revision, 
 					 P2<String, String> dirP) {
 				List<IProject> projects0 = importAllProjects.f(dirP._1(), revision);
 				List<IProject> projects1 = importAllProjects.f(dirP._2(), revision + 1);
@@ -55,7 +57,9 @@ public class MylynStudy extends WorkQueueItem {
 					}});;
 				return FJUtils.pairEqualElements(projects0, projects1, eq).map(
 					FJUtils.extendMapper2Product(EclipseUtils.
-						convertProject2JavaProject));
+						convertProject2JavaProject.andThen(FJUtils.
+							getTypeConverter((IJavaProject)null, 
+								(IJavaElement)null))));
 	}};
 
 	private final F2<String, Integer, List<IProject>> importAllProjects = 
@@ -80,22 +84,23 @@ public class MylynStudy extends WorkQueueItem {
 	}}; 
 	
 	@Override
-	protected void internalRun() {
+	protected void study() {
 		List<String> folders = FileUtils.getSubDirectories.f(root).filter
 			(new F<String, Boolean>(){
 			@Override
 			public Boolean f(String path) {
-				return path.contains("org.eclipse.mylyn.builds");
+				return path.contains("mylyn");
 		}}).sort(Ord.stringOrd);
 		List<P2<String, String>> pairs = folders.zip(folders.drop(1));
-		pairs.foreach(new Effect<P2<String, String>>() {
+		Effect<P2<String, String>> experiment = new Effect<P2<String, String>>() {
 			@Override
 			public void e(P2<String, String> dirs) {
 				List<Object> projectPairs = importAndMapProjects.f(getRevisionNumber()).
 					f(dirs).map(DesignUtils.convertProduct2JavaElementPair).map(
 						FJUtils.getTypeConverter((JavaElementPair)null, (Object) null));
 				projectPairs.map(DesignUtils.feedComponent.flip().f(changeComp));
-		}});
+		}};
+		experiment.e(pairs.head());
 	}
 	
 	private int currentRevision = -2;

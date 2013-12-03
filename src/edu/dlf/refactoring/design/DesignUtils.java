@@ -1,6 +1,6 @@
 package edu.dlf.refactoring.design;
 
-import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IJavaElement;
 
 import fj.F;
 import fj.F2;
@@ -13,11 +13,11 @@ public class DesignUtils {
 		throw new Exception();
 	}
 	
-	public static final F<P2<IJavaProject, IJavaProject>, JavaElementPair> 
-		convertProduct2JavaElementPair = new F<P2<IJavaProject,IJavaProject>, 
+	public static final F<P2<IJavaElement, IJavaElement>, JavaElementPair> 
+		convertProduct2JavaElementPair = new F<P2<IJavaElement,IJavaElement>, 
 			JavaElementPair>() {
 			@Override
-			public JavaElementPair f(P2<IJavaProject, IJavaProject> pair) {
+			public JavaElementPair f(P2<IJavaElement, IJavaElement> pair) {
 				return new JavaElementPair(pair._1(), pair._2());
 	}};
 	

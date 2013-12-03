@@ -13,6 +13,8 @@ import edu.dlf.refactoring.design.ComponentsRepository;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator;
+import edu.dlf.refactoring.study.CompareProjectsInWorkspaceStudy;
+import edu.dlf.refactoring.study.MylynStudy;
 import edu.dlf.refactoring.ui.ICodeReviewInput.InputType;
 import edu.dlf.refactoring.utils.EclipseUtils;
 import edu.dlf.refactoring.utils.WorkQueue;
@@ -47,6 +49,18 @@ public class RefReviewCommandHandler extends AbstractHandler {
 				logger.fatal(e);
 	}}}; 
 	
+	private final WorkQueueItem importWorkItem = new WorkQueueItem("ImportButton"){
+		@Override
+		public void internalRun() {
+			List<String> directories = FileUtils.getSubDirectories.
+				f(FileUtils.desktop).filter(new F<String, Boolean>() {
+					@Override
+					public Boolean f(String path) {
+						return path.contains("checking");
+			}});
+			directories.foreach(importProject);
+	}};
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String id = event.getCommand().getId();
@@ -67,17 +81,9 @@ public class RefReviewCommandHandler extends AbstractHandler {
 		}}});}
 		
 		if(id.equals("RefReview.import")) {
-			queue.execute(new WorkQueueItem("ImportButton"){
-				@Override
-				public void internalRun() {
-					List<String> directories = FileUtils.getSubDirectories.
-						f(FileUtils.desktop).filter(new F<String, Boolean>() {
-							@Override
-							public Boolean f(String path) {
-								return path.contains("checking");
-					}});
-					directories.foreach(importProject);
-		}});}
+			queue.execute((WorkQueueItem)(ServiceLocator.ResolveType(
+				CompareProjectsInWorkspaceStudy.class)));	
+		}
 		return null;
 	}
 }

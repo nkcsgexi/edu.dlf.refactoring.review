@@ -15,8 +15,7 @@ public class WorkQueue
     private final LinkedList<Runnable> queue;
     private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 
-    public WorkQueue(int nThreads)
-    {
+    public WorkQueue(int nThreads) {
         queue = new LinkedList<Runnable>();
         threads = new PoolWorker[nThreads];
         for (int i=0; i<nThreads; i++) {
