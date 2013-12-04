@@ -17,7 +17,6 @@ import edu.dlf.refactoring.design.ComponentsRepository;
 import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator;
-import fj.Effect;
 import fj.data.List;
 
 public class DiffTreeView extends ViewPart implements ICompListener{
@@ -26,16 +25,6 @@ public class DiffTreeView extends ViewPart implements ICompListener{
 	private final Logger logger;
 	private final ChangedLinesComputer computer;
 
-	private final Effect<ISourceChange> computerChangedLines = 
-		new Effect<ISourceChange>() {
-		@Override
-		public void e(ISourceChange change) {
-			computer.startCompute((ISourceChange)change);
-    		logger.debug("Changed lines: " + computer.getChangedLines());
-    		logger.debug("Added lines: " + computer.getAddedLines());
-    		logger.debug("Removed lines: " + computer.getRemovedLines());
-	}}; 
-	
 	public DiffTreeView() {
 		logger = ServiceLocator.ResolveType(Logger.class);
 		((ComponentsRepository)ServiceLocator.ResolveType(ComponentsRepository.
@@ -63,7 +52,7 @@ public class DiffTreeView extends ViewPart implements ICompListener{
 	@Override
 	public void callBack(final Object change) {
 		logger.info("Get change.");
-		computerChangedLines.e((ISourceChange)change);
+		computer.logChangedLines.e((ISourceChange)change);
 		Display.getDefault().asyncExec(new Runnable() {
 		    public void run() {
 		    	if(change instanceof ISourceChange){

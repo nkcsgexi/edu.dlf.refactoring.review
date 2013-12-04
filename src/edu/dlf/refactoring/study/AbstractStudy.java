@@ -19,18 +19,17 @@ public abstract class AbstractStudy extends WorkQueueItem {
 	@Override
 	protected void internalRun() {
 		study();
-		// clearWorkspace();
 	}
 
-	private void clearWorkspace() {
+	protected void clearWorkspace() {
 		List<IProject> projects = JavaModelAnalyzer.getAllProjectsInWorkSpace();
 		projects.foreach(new Effect<IProject>() {
 			@Override
 			public void e(IProject project) {
 				String newName = project.getName().replaceAll("\\d*$", "");
 				EclipseUtils.directlyRenameProject.f(project, newName);
+				EclipseUtils.directlyRemoveProject.e(project);
 		}});
-		EclipseUtils.removeAllProjects();
 	}
 	
 }

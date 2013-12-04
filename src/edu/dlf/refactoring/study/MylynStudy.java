@@ -16,7 +16,6 @@ import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator.ChangeCompAnnotation;
 import edu.dlf.refactoring.utils.EclipseUtils;
-import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.Effect;
 import fj.Equal;
 import fj.F;

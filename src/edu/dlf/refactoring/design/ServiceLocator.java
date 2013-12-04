@@ -137,8 +137,8 @@ public class ServiceLocator extends AbstractModule {
 		fa.setMaximumFileSize(Integer.MAX_VALUE);
 		fa.setName("FileLogger");
 		fa.setFile("/home/xige/Desktop/RefReviewer.log", true, true, 1);
-		fa.setLayout(new PatternLayout("%d %-5p [%c{1}] %m%n"));
-		fa.setThreshold(threshHold);
+		fa.setLayout(new PatternLayout(PATTERN));
+		fa.setThreshold(Level.DEBUG);
 		fa.setAppend(true);
 		fa.activateOptions();
 		Logger.getRootLogger().addAppender(fa);

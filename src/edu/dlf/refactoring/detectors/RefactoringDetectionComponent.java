@@ -8,6 +8,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.change.ChangedLinesComputer;
 import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IFactorComponent;
@@ -32,11 +33,13 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 	private final List<IRefactoringDetector> detectorsList;
 	private final EventBus bus;
 	private final WorkQueue queue;
+	private final ChangedLinesComputer lineComputer;
 
 	@Inject
 	public RefactoringDetectionComponent(
 			WorkQueue queue,
 			Logger logger,
+			ChangedLinesComputer lineComputer,
 			@RenameMethod IRefactoringDetector rmDetector,
 			@ExtractMethod IRefactoringDetector emDetector,
 			@RenameType IRefactoringDetector rtDetector,
@@ -49,6 +52,7 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 		this.detectorsList = list(rmDetector, emDetector, rfDetector, mDetector, 
 			rtDetector, rlvDetector);
 		this.bus = new EventBus();
+		this.lineComputer = lineComputer;
 		bus.register(component);
 	}
 	
@@ -58,9 +62,9 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 		queue.execute(new WorkQueueItem("Detection"){
 			@Override
 			public void internalRun() {
-				if(event instanceof ISourceChange)
-				{
+				if(event instanceof ISourceChange) {
 					logger.info("get event.");
+					lineComputer.logChangedLines.e((ISourceChange) event);
 					final ISourceChange change = (ISourceChange) event;
 					detectorsList.bind(new F<IRefactoringDetector, 
 							List<IDetectedRefactoring>>(){

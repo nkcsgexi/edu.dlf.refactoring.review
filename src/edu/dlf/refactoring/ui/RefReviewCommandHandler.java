@@ -13,6 +13,7 @@ import edu.dlf.refactoring.design.ComponentsRepository;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator;
+import edu.dlf.refactoring.study.ClearWorkSpace;
 import edu.dlf.refactoring.study.CompareProjectsInWorkspaceStudy;
 import edu.dlf.refactoring.study.MylynStudy;
 import edu.dlf.refactoring.ui.ICodeReviewInput.InputType;
@@ -84,6 +85,13 @@ public class RefReviewCommandHandler extends AbstractHandler {
 			queue.execute((WorkQueueItem)(ServiceLocator.ResolveType(
 				CompareProjectsInWorkspaceStudy.class)));	
 		}
+		
+		if(id.equals("RefReview.clearWorkspace")) {
+			queue.execute((WorkQueueItem)(ServiceLocator.ResolveType(
+				ClearWorkSpace.class)));	
+		}
+		
+	
 		return null;
 	}
 }

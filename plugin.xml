@@ -64,6 +64,12 @@
             id="RefReview.import"
             name="Import projects">
       </command>
+      <command
+            categoryId="RefReview"
+            defaultHandler="edu.dlf.refactoring.ui.RefReviewCommandHandler"
+            id="RefReview.clearWorkspace"
+            name="Clear workspace">
+      </command>
    </extension>
      <extension
          point="org.eclipse.ui.menus">
@@ -96,6 +102,12 @@
                   commandId="RefReview.import"
                   icon="img/soccer.jpg"
                   style="push">
+            </command>
+            <command
+                  commandId="RefReview.clearWorkspace"
+                  icon="img/1.png"
+                  style="push"
+                  tooltip="Clear workspace">
             </command>
          </toolbar>
       </menuContribution>

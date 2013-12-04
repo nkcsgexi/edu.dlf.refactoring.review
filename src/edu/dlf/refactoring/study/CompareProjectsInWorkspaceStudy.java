@@ -15,6 +15,7 @@ import fj.Effect;
 import fj.Equal;
 import fj.F;
 import fj.Ord;
+import fj.P2;
 import fj.Unit;
 import fj.data.List;
 
@@ -45,6 +46,14 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 	private final Ord<IJavaElement> projectOrd = Ord.stringOrd.comap
 		(getOriginalName);
 
+	private final Effect<P2<IJavaElement, IJavaElement>> printProjectPair =
+		new Effect<P2<IJavaElement,IJavaElement>>() {
+			@Override
+			public void e(P2<IJavaElement, IJavaElement> p) {
+				logger.info("Project before: " + p._1().getElementName());
+				logger.info("Project after: " + p._2().getElementName());		
+	}};
+	
 	@Override
 	protected void study() {
 		final List<IJavaElement> projects = JavaModelAnalyzer.
@@ -61,8 +70,11 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 					f(changeComp);
 				F<JavaElementPair, Object> converter = FJUtils.getTypeConverter
 					((JavaElementPair)null, (Object)null);
-				projects.zip(projects.drop(1)).map(DesignUtils.
-					convertProduct2JavaElementPair).map(converter.andThen(feeder));
+				List<P2<IJavaElement, IJavaElement>> projectPairs = projects.
+					zip(projects.drop(1));
+				projectPairs.foreach(printProjectPair);
+				projectPairs.map(DesignUtils.convertProduct2JavaElementPair).
+					map(converter.andThen(feeder));
 		}});
 	}
 

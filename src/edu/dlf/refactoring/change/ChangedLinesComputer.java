@@ -32,6 +32,16 @@ public class ChangedLinesComputer {
 		this.cuLevel = cuLevel;
 	}
 	
+	public final Effect<ISourceChange> logChangedLines = 
+		new Effect<ISourceChange>() {
+		@Override
+		public void e(ISourceChange change) {
+			startCompute((ISourceChange)change);
+    		logger.info("Changed lines: " + getChangedLines());
+    		logger.info("Added lines: " + getAddedLines());
+    		logger.info("Removed lines: " + getRemovedLines());
+	}}; 
+	
 	private F<ISourceChange, List<int[]>> getChangedLines = 
 		new F<ISourceChange, List<int[]>>() {
 		@Override
