@@ -369,11 +369,12 @@ public class JavaModelAnalyzer {
 					List<IJavaElement> list2) {
 				return list2.filter(new F<IJavaElement, Boolean>(){
 					@Override
-					public Boolean f(final IJavaElement element) {
+					public Boolean f(final IJavaElement element1) {
 						return list1.forall(new F<IJavaElement, Boolean>() {
 							@Override
-							public Boolean f(IJavaElement arg0) {
-								return !element.getElementName().equals(arg0);
+							public Boolean f(final IJavaElement element2) {
+								return !element1.getElementName().equals(element2.
+									getElementName());
 							}});
 					}});}};
 	}
@@ -387,11 +388,11 @@ public class JavaModelAnalyzer {
 					List<IJavaElement> list2) {
 				return list1.filter(new F<IJavaElement, Boolean>() {
 					@Override
-					public Boolean f(final IJavaElement arg0) {
+					public Boolean f(final IJavaElement element0) {
 						return list2.forall(new F<IJavaElement, Boolean>() {
 							@Override
-							public Boolean f(IJavaElement arg1) {
-								return !arg0.getElementName().equals(arg1.
+							public Boolean f(final IJavaElement element1) {
+								return !element0.getElementName().equals(element1.
 									getElementName());
 							}});}
 				});}};

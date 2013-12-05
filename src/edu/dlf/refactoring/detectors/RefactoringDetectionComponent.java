@@ -9,6 +9,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.change.ChangedLinesComputer;
+import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.ICompListener;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.IFactorComponent;
@@ -64,8 +65,9 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 			public void internalRun() {
 				if(event instanceof ISourceChange) {
 					logger.info("get event.");
-					lineComputer.logChangedLines.e((ISourceChange) event);
 					final ISourceChange change = (ISourceChange) event;
+					logger.info(SourceChangeUtils.printChangeTree(change));
+					lineComputer.logChangedLines.e(change);
 					detectorsList.bind(new F<IRefactoringDetector, 
 							List<IDetectedRefactoring>>(){
 						@Override

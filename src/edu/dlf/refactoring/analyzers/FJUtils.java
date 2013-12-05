@@ -188,6 +188,18 @@ public class FJUtils {
 		}};
 	}
 	
+	public static <T> List<T> getSubList(List<T> list, final int start, final 
+		int end) {
+		// where end - start is the length
+		return list.zipIndex().filter(new F<P2<T,Integer>, Boolean>() {
+			@Override
+			public Boolean f(P2<T, Integer> pair) {
+				int index = pair._2();
+				return index >= start && index < end;
+			}
+		}).map(getFirstElementInPFunc((T)null, (Integer)null));
+	}
+	
 	
 	public static <T> F<T, Boolean> nonNullFilter(T t) {
 		return new F<T, Boolean>(){

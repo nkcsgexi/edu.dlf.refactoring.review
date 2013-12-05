@@ -40,8 +40,8 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 	
 	@Override
 	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
-		logger.debug("Compare packages: " + pair.getElementBefore().getElementName() + " " 
-				+ pair.getElementAfter().getElementName());
+		logger.info("Compare packages: " + pair.getElementBefore().getElementName() 
+				+ ":" + pair.getElementAfter().getElementName());
 		final SubChangeContainer change = new SubChangeContainer(this.paLevel, pair);
 		JavaModelAnalyzer.getSameNameElementPairsFunction().f(JavaModelAnalyzer.
 			getICompilationUnit(pair.getElementBefore()), JavaModelAnalyzer.

@@ -4,24 +4,16 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.analyzers.FileUtils;
-import edu.dlf.refactoring.design.DesignUtils;
 import edu.dlf.refactoring.design.IFactorComponent;
-import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator.ChangeCompAnnotation;
 import edu.dlf.refactoring.utils.EclipseUtils;
-import fj.Effect;
-import fj.Equal;
 import fj.F;
 import fj.F2;
 import fj.Ord;
-import fj.P2;
 import fj.data.List;
 
 public class ImportSubjects extends AbstractStudy {
@@ -29,12 +21,13 @@ public class ImportSubjects extends AbstractStudy {
 	private final Logger logger;
 	private final String root;
 	private final IFactorComponent changeComp;
-
+	private static final String projectName = "FBReaderJ";
+	
 	@Inject
 	public ImportSubjects(
 		Logger logger,
 		@ChangeCompAnnotation IFactorComponent changeComp) {
-		super("Mylyn study");
+		super(projectName + " study");
 		this.logger = logger;
 		this.root = FileUtils.desktop;
 		this.changeComp = changeComp;
@@ -67,7 +60,7 @@ public class ImportSubjects extends AbstractStudy {
 			(new F<String, Boolean>(){
 			@Override
 			public Boolean f(String path) {
-				return path.contains("mylyn");
+				return path.contains(projectName);
 		}}).sort(Ord.stringOrd);
 		folders.zipIndex().bind(importAllProjects.tuple());
 	}

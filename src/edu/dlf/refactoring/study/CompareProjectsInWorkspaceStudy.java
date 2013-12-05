@@ -23,6 +23,8 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 
 	private final IFactorComponent changeComp;
 	private final Logger logger;
+	private final int pairStart = 0;
+	private final int pairEnd = 1;
 	
 	@Inject
 	public CompareProjectsInWorkspaceStudy(
@@ -92,8 +94,7 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 				DesignUtils.convertProduct2JavaElementPair.andThen(converter).
 					andThen(feeder).f(pair);
 		}};
-		
-		allPairs.take(10).take(10).foreach(handlePair);
+		FJUtils.getSubList(allPairs, pairStart, pairEnd).foreach(handlePair);
 	}
 
 }
