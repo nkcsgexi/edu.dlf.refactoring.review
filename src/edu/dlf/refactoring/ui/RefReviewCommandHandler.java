@@ -15,7 +15,7 @@ import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.study.ClearWorkSpace;
 import edu.dlf.refactoring.study.CompareProjectsInWorkspaceStudy;
-import edu.dlf.refactoring.study.MylynStudy;
+import edu.dlf.refactoring.study.ImportSubjects;
 import edu.dlf.refactoring.ui.ICodeReviewInput.InputType;
 import edu.dlf.refactoring.utils.EclipseUtils;
 import edu.dlf.refactoring.utils.WorkQueue;
@@ -82,6 +82,11 @@ public class RefReviewCommandHandler extends AbstractHandler {
 		}}});}
 		
 		if(id.equals("RefReview.import")) {
+			queue.execute((WorkQueueItem)(ServiceLocator.ResolveType(
+				ImportSubjects.class)));	
+		}
+		
+		if(id.equals("RefReview.startStudy")) {
 			queue.execute((WorkQueueItem)(ServiceLocator.ResolveType(
 				CompareProjectsInWorkspaceStudy.class)));	
 		}

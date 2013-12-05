@@ -62,20 +62,38 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 			group(projectEq);
 		final Ord<IJavaElement> timeOrd = Ord.stringOrd.comap(JavaModelAnalyzer.
 			getElementNameFunc);
-		groups.foreach(new Effect<List<IJavaElement>>() {
+		final F<List<IJavaElement>, List<P2<IJavaElement, IJavaElement>>> 
+			pairProjects = new F<List<IJavaElement>, List<P2<IJavaElement, 
+					IJavaElement>>>() {
+				@Override
+				public List<P2<IJavaElement, IJavaElement>> f(List<IJavaElement> 
+						projects) {
+					projects = projects.sort(timeOrd);
+					F<Object, Unit> feeder = DesignUtils.feedComponent.flip().
+						f(changeComp);
+					F<JavaElementPair, Object> converter = FJUtils.getTypeConverter
+						((JavaElementPair)null, (Object)null);
+					List<P2<IJavaElement, IJavaElement>> projectPairs = projects.
+						zip(projects.drop(1));
+					return projectPairs;
+		}};
+		final List<P2<IJavaElement, IJavaElement>> allPairs = groups.bind
+			(pairProjects);
+		
+		final Effect<P2<IJavaElement, IJavaElement>> handlePair = 
+			new Effect<P2<IJavaElement, IJavaElement>>() {
 			@Override
-			public void e(List<IJavaElement> projects) {
-				projects = projects.sort(timeOrd);
-				F<Object, Unit> feeder = DesignUtils.feedComponent.flip().
-					f(changeComp);
+			public void e(P2<IJavaElement, IJavaElement> pair) {
+				printProjectPair.e(pair);
 				F<JavaElementPair, Object> converter = FJUtils.getTypeConverter
 					((JavaElementPair)null, (Object)null);
-				List<P2<IJavaElement, IJavaElement>> projectPairs = projects.
-					zip(projects.drop(1));
-				projectPairs.foreach(printProjectPair);
-				projectPairs.map(DesignUtils.convertProduct2JavaElementPair).
-					map(converter.andThen(feeder));
-		}});
+				F<Object, Unit> feeder = DesignUtils.feedComponent.flip().
+					f(changeComp);
+				DesignUtils.convertProduct2JavaElementPair.andThen(converter).
+					andThen(feeder).f(pair);
+		}};
+		
+		allPairs.take(10).take(10).foreach(handlePair);
 	}
 
 }

@@ -24,14 +24,14 @@ import fj.Ord;
 import fj.P2;
 import fj.data.List;
 
-public class MylynStudy extends AbstractStudy {
+public class ImportSubjects extends AbstractStudy {
 
 	private final Logger logger;
 	private final String root;
 	private final IFactorComponent changeComp;
 
 	@Inject
-	public MylynStudy(
+	public ImportSubjects(
 		Logger logger,
 		@ChangeCompAnnotation IFactorComponent changeComp) {
 		super("Mylyn study");
@@ -39,27 +39,6 @@ public class MylynStudy extends AbstractStudy {
 		this.root = FileUtils.desktop;
 		this.changeComp = changeComp;
 	}
-	
-	private final F2<Integer, P2<String, String>, List<P2<IJavaElement, IJavaElement>>> 
-		importAndMapProjects = new F2<Integer, P2<String, String>, List<P2<IJavaElement, 
-				IJavaElement>>>() {
-			@Override
-			public List<P2<IJavaElement, IJavaElement>> f(Integer revision, 
-					 P2<String, String> dirP) {
-				List<IProject> projects0 = importAllProjects.f(dirP._1(), revision);
-				List<IProject> projects1 = importAllProjects.f(dirP._2(), revision + 1);
-				Equal<IProject> eq = Equal.stringEqual.comap(new F<IProject, String>(){
-					@Override
-					public String f(IProject p) {
-						String name = p.getName();
-						return name.substring(0, name.length() - 1);
-					}});;
-				return FJUtils.pairEqualElements(projects0, projects1, eq).map(
-					FJUtils.extendMapper2Product(EclipseUtils.
-						convertProject2JavaProject.andThen(FJUtils.
-							getTypeConverter((IJavaProject)null, 
-								(IJavaElement)null))));
-	}};
 
 	private final F2<String, Integer, List<IProject>> importAllProjects = 
 		new F2<String, Integer, List<IProject>>() {
@@ -90,22 +69,6 @@ public class MylynStudy extends AbstractStudy {
 			public Boolean f(String path) {
 				return path.contains("mylyn");
 		}}).sort(Ord.stringOrd);
-		List<P2<String, String>> pairs = folders.zip(folders.drop(1));
-		Effect<P2<String, String>> experiment = new Effect<P2<String, String>>() {
-			@Override
-			public void e(P2<String, String> dirs) {
-				List<Object> projectPairs = importAndMapProjects.f(getRevisionNumber()).
-					f(dirs).map(DesignUtils.convertProduct2JavaElementPair).map(
-						FJUtils.getTypeConverter((JavaElementPair)null, (Object) null));
-				projectPairs.map(DesignUtils.feedComponent.flip().f(changeComp));
-		}};
-		experiment.e(pairs.head());
+		folders.zipIndex().bind(importAllProjects.tuple());
 	}
-	
-	private int currentRevision = -2;
-	private int getRevisionNumber() {
-		currentRevision += 2;
-		return currentRevision;
-	}
-	
 }

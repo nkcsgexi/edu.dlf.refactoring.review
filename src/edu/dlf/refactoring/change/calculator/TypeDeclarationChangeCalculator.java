@@ -91,11 +91,11 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 	}
 	
 	private final F<P2<ASTNode, ASTNode>, ISourceChange> calculateChange = 
-			new F<P2<ASTNode,ASTNode>, ISourceChange>() {
-			@Override
-			public ISourceChange f(P2<ASTNode, ASTNode> pair) {
-				return typeCalculator.CalculateASTNodeChange(ASTAnalyzer.
-					getP2PairConverter().f(pair));
+		new F<P2<ASTNode,ASTNode>, ISourceChange>() {
+		@Override
+		public ISourceChange f(P2<ASTNode, ASTNode> pair) {
+			return typeCalculator.CalculateASTNodeChange(ASTAnalyzer.
+				getP2PairConverter().f(pair));
 	}};
 		
 	private final F<ASTNode, List<ASTNode>> getSuperTypes = new F<ASTNode, List<ASTNode>>() {
