@@ -18,6 +18,8 @@ import fj.data.List.Buffer;
 
 public class SourceChangeUtils {
 
+	private static final Logger logger = ServiceLocator.ResolveType(Logger.class);
+	
 	private SourceChangeUtils() throws Exception
 	{	
 		throw new Exception();
@@ -216,6 +218,11 @@ public class SourceChangeUtils {
 	private static List<String> internalPrintChangeTree(ISourceChange change) 
 	{
 		try{
+			if(change.getSourceChangeType() == SourceChangeType.UNKNOWN) {
+				logger.fatal("Unkown node:");
+				logger.fatal(change.getNodeBefore());
+				logger.fatal(change.getNodeAfter());
+			}
 			if(change.getSourceChangeType() == SourceChangeType.PARENT)
 			{
 				SubChangeContainer container = (SubChangeContainer) change;

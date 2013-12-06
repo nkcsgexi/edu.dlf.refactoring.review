@@ -80,7 +80,8 @@ public class FJUtils {
 		}};
 	}
 	
-	public static <T> F<P2<T, T>, Boolean> convertEqualToProduct(final Equal<T> eq) {
+	public static <T> F<P2<T, T>, Boolean> convertEqualToProduct(final 
+		Equal<T> eq) {
 		return new F<P2<T,T>, Boolean>() {
 			@Override
 			public Boolean f(P2<T, T> pair) {
@@ -88,8 +89,8 @@ public class FJUtils {
 		}};
 	}
 	
-	public static <T, S> F<P2<T, T>, P2<S, S>> extendMapper2Product(final F<T, S> mapper) 
-	{
+	public static <T, S> F<P2<T, T>, P2<S, S>> extendMapper2Product(final F<T, S> 
+		mapper) {
 		return new F<P2<T,T>, P2<S,S>>() {
 			@Override
 			public P2<S, S> f(P2<T, T> p) {
@@ -215,5 +216,20 @@ public class FJUtils {
 			public T f(List<T> list) {
 				return list.head();
 		}};
+	}
+	
+	public static <T> F<T, Boolean> getIsNullFilter(T t) {
+		return new F<T, Boolean>() {
+			@Override
+			public Boolean f(T t) {
+				return t == null;
+		}};
+	}
+	
+	public static <T> List<P2<T, T>> getSamePairs(List<T> list1, List<T> list2, 
+			Equal<T> eq) {
+		List<P2<T, T>> allPairs = list1.bind(list1, pairFunction((T)null));
+		return allPairs.filter(eq.eq().tuple());
+		
 	}
 }

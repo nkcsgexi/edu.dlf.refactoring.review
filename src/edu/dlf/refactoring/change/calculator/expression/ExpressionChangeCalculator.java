@@ -5,6 +5,9 @@ import org.eclipse.jdt.core.dom.Expression;
 
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.analyzers.ASTAnalyzer;
+import edu.dlf.refactoring.analyzers.ASTNode2IntegerUtils;
+import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.AssignmentAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CastAnnotation;
@@ -19,6 +22,11 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnn
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
+import fj.Equal;
+import fj.F;
+import fj.F2;
+import fj.P2;
+import fj.data.List;
 
 public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 
@@ -44,8 +52,7 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 			@MethodInvocationAnnotation IASTNodeChangeCalculator miCalculator,
 			@FieldAccessAnnotation IASTNodeChangeCalculator fieldAccessCal,
 			@ThisAnnotation IASTNodeChangeCalculator thisExpCal,
-			@CastAnnotation IASTNodeChangeCalculator castExpCal)
-	{
+			@CastAnnotation IASTNodeChangeCalculator castExpCal) {
 		this.asCalculator = asCalculator;
 		this.vdCalculator = vdCalculator;
 		this.nCalculator = nCalculator;
@@ -57,6 +64,28 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 		this.castExpCal = castExpCal;
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
+	
+	private final F<ASTNode, List<ASTNode>> getDecExpressions = ASTAnalyzer.
+		getAllDecendantsFunc.andThen(new F<List<ASTNode>, List<ASTNode>>() {
+			@Override
+			public List<ASTNode> f(List<ASTNode> decendants) {
+				return decendants.filter(new F<ASTNode, Boolean>() {
+					@Override
+					public Boolean f(ASTNode node) {
+						return node instanceof Expression;
+			}});
+	}});
+	
+	private final Equal<ASTNode> typeEq = Equal.intEqual.comap
+		(ASTNode2IntegerUtils.getKind);
+	
+	private final Equal<List<ASTNode>> listTypeEq = typeEq.comap(FJUtils.
+		getHeadFunc((ASTNode)null));
+	
+	private final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> 
+		expMapper = ASTAnalyzer.getASTNodeMapper(6, ASTAnalyzer.
+				getDefaultASTNodeSimilarityScore(10));
+	
 	
 	
 	@Override
@@ -71,6 +100,14 @@ public class ExpressionChangeCalculator implements IASTNodeChangeCalculator{
 		
 		if(expBefore.getNodeType() != expAfter.getNodeType())
 		{
+			List<List<ASTNode>> groupsBefore = getDecExpressions.f(expBefore).
+				snoc(expBefore).group(typeEq);
+			List<List<ASTNode>> groupsAfter = getDecExpressions.f(expAfter).
+				snoc(expAfter).group(typeEq);
+			List<P2<List<ASTNode>, List<ASTNode>>> groupPairs = FJUtils.
+				getSamePairs(groupsBefore, groupsAfter, listTypeEq);
+			List<P2<ASTNode, ASTNode>> pairs = groupPairs.bind(expMapper.tuple());
+			
 			return changeBuilder.createUnknownChange(pair);
 		}
 		
