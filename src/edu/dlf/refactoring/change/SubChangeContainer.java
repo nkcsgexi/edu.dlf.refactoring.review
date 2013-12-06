@@ -14,6 +14,8 @@ import fj.data.List;
 public class SubChangeContainer extends AbstractSourceChange{
 
 	private List<ISourceChange> subChanges = List.nil();
+	private final Equal<ISourceChange> sourceRefEq = FJUtils.getReferenceEq
+		((ISourceChange)null);
 	
 	public SubChangeContainer(String changeLevel, IASTNodePair pair)
 	{
@@ -47,10 +49,9 @@ public class SubChangeContainer extends AbstractSourceChange{
 	
 	
 	public Void removeSubChanges(Collection<ISourceChange> toRemove)
-	{
-		final Equal<ISourceChange> eq = FJUtils.getReferenceEq((ISourceChange)null);
+	{	
 		for(ISourceChange remove : toRemove) {
-			F<ISourceChange, Boolean> filter = eq.eq(remove);
+			F<ISourceChange, Boolean> filter = sourceRefEq.eq(remove);
 			subChanges = subChanges.removeAll(filter);
 		}
 		return null;

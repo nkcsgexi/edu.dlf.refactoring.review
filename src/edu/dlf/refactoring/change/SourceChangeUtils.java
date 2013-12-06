@@ -1,19 +1,15 @@
 package edu.dlf.refactoring.change;
 
-import java.util.Collection;
-
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 
-import com.google.common.base.Function;
-
+import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
 import edu.dlf.refactoring.utils.XList;
-import edu.dlf.refactoring.utils.XList.IAggregator;
 import fj.Equal;
 import fj.F;
 import fj.F2;
@@ -208,47 +204,47 @@ public class SourceChangeUtils {
 	
 	public static String printChangeTree(ISourceChange change)
 	{		
-		return internalPrintChangeTree(change).aggregate(new IAggregator<String, String>(){
-			@Override
-			public String aggregate(String s1, String s2) {
-				return s1 + System.lineSeparator() + s2;
-			}});
+		return internalPrintChangeTree(change).foldLeft(
+			new F2<StringBuilder, String, StringBuilder>() {
+				@Override
+				public StringBuilder f(StringBuilder sb, String s) {
+					return sb.append(s + System.lineSeparator());
+				}
+		}, new StringBuilder()).toString();
 	}
 
-	private static XList<String> internalPrintChangeTree(ISourceChange change) 
+	private static List<String> internalPrintChangeTree(ISourceChange change) 
 	{
 		try{
 			if(change.getSourceChangeType() == SourceChangeType.PARENT)
 			{
 				SubChangeContainer container = (SubChangeContainer) change;
-				XList<ISourceChange> children = new XList<ISourceChange>(container.
+				List<ISourceChange> children = FJUtils.createListFromArray(container.
 					getSubSourceChanges());
-				XList<String> subLines = children.selectMany(new Function<ISourceChange, 
-						Collection<String>>(){
+				List<String> subLines = children.bind(new F<ISourceChange, 
+					List<String>>(){
 					@Override
-					public Collection<String> apply(ISourceChange arg0) {
-						return internalPrintChangeTree(arg0);
+					public List<String> f(ISourceChange c) {
+						return internalPrintChangeTree(c);
 					}});
-				XList<String> lines = subLines.select(new Function<String, String>(){
+				List<String> lines = subLines.map(new F<String, String>(){
 					@Override
-					public String apply(String s) {
+					public String f(String s) {
 						return '\t' + s;
 					}});	
-				lines.add(0, change.getSourceChangeLevel());
-				return lines;
+				return lines.cons(change.getSourceChangeLevel());
 			}
 			
 			if(change.getSourceChangeType() == SourceChangeType.NULL)
-				return XList.CreateList();
+				return List.nil();
 			
-			XList<String> temp = new XList<String>();
-			temp.add(change.getSourceChangeLevel() + ":" + change.getSourceChangeType().toString());
-			return temp;
+			return List.single(change.getSourceChangeLevel() + ":" + change.
+					getSourceChangeType().toString());
 		}catch(Exception e)
 		{
 			Logger logger = ServiceLocator.ResolveType(Logger.class);
 			logger.fatal(e);
-			return new XList<String>();
+			return List.nil();
 		}
 	}
 }
