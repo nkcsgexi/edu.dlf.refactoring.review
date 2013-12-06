@@ -47,7 +47,9 @@ public class SourceChangeUtils {
 	
 	public static ISourceChange pruneSourceChange(ISourceChange change)
 	{
-		pruneSubChanges(change);
+		boolean isNull = !pruneSubChanges(change);
+		if(isNull)
+			return null;
 		return change;
 	}
 	

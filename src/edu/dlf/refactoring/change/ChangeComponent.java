@@ -61,10 +61,10 @@ public class ChangeComponent implements IFactorComponent{
 					logger.debug("Get event.");
 					JavaElementPair change = (JavaElementPair) event;
 					if(change.getElementBefore() instanceof IJavaProject)
-						bus.post(SourceChangeUtils.pruneSourceChange(
+						postEvent(SourceChangeUtils.pruneSourceChange(
 							projectCalculator.CalculateJavaModelChange(change)));
 					if(change.getElementBefore() instanceof ICompilationUnit)
-						bus.post(SourceChangeUtils.pruneSourceChange(
+						postEvent(SourceChangeUtils.pruneSourceChange(
 							icuCalculator.CalculateJavaModelChange(change)));
 					logger.debug("Handled event.");
 				}
@@ -74,10 +74,15 @@ public class ChangeComponent implements IFactorComponent{
 					ISourceChange change = SourceChangeUtils.
 						pruneSourceChange(cuCalculator.CalculateASTNodeChange
 							((ASTNodePair) event));
-					bus.post(change);
+					postEvent(change);
 					logger.info("Handled event.");
 				}}});
 		return null;
+	}
+	
+	private void postEvent(ISourceChange change) {
+		if(change != null)
+			bus.post(change);
 	}
 
 	@Override

@@ -51,14 +51,14 @@ public class SubChangeContainer extends AbstractSourceChange{
 		final Equal<ISourceChange> eq = FJUtils.getReferenceEq((ISourceChange)null);
 		for(ISourceChange remove : toRemove) {
 			F<ISourceChange, Boolean> filter = eq.eq(remove);
-			subChanges = subChanges.dropWhile(filter);
+			subChanges = subChanges.removeAll(filter);
 		}
 		return null;
 	}
 
 	@Override
 	public boolean hasSubChanges() {
-		return subChanges.isNotEmpty();
+		return subChanges.length() > 0;
 	}
 
 	@Override
