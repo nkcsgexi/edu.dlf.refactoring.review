@@ -10,6 +10,7 @@ import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
 import edu.dlf.refactoring.analyzers.XStringUtils;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SourcePackageAnnotation;
+import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.IJavaModelChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.design.ISourceChange;
@@ -26,6 +27,7 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 	private final IJavaModelChangeCalculator cuCalculator;
 	private final String paLevel;
 	private final Logger logger;
+	private final ChangeBuilder changeBuilder;
 	
 	@Inject
 	public SourcePackageChangeCalculator(
@@ -36,25 +38,39 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 		this.paLevel = paLevel;
 		this.cuCalculator = cuCalculator;
 		this.logger = logger;
+		this.changeBuilder = new ChangeBuilder(paLevel);
 	}
+	
+	final Equal<IJavaElement> eq = Equal.stringEqual.comap(JavaModelAnalyzer.
+			getElementNameFunc);
+	
+	final F<P2<IJavaElement, IJavaElement>, IJavaElement> getFirst = FJUtils.
+			getFirstElementInPFunc((IJavaElement)null, (IJavaElement)null);
+	
+	final F<P2<IJavaElement, IJavaElement>, IJavaElement> getSecond = FJUtils.
+			getSecondElementInPFunc((IJavaElement)null, (IJavaElement)null);
 	
 	@Override
 	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
 		logger.info("Compare packages: " + pair.getElementBefore().getElementName() 
 				+ ":" + pair.getElementAfter().getElementName());
 		final SubChangeContainer change = new SubChangeContainer(this.paLevel, pair);
+		final Effect<P2<IJavaElement, IJavaElement>> calculateSubchange = 
+				new Effect<P2<IJavaElement, IJavaElement>>() {
+				@Override
+				public void e(P2<IJavaElement, IJavaElement> p) {
+					change.addSubChange(cuCalculator.CalculateJavaModelChange(
+						new JavaElementPair(p._1(), p._2())));
+		}};
+		
 		JavaModelAnalyzer.getSameNameElementPairsFunction().f(JavaModelAnalyzer.
 			getICompilationUnit(pair.getElementBefore()), JavaModelAnalyzer.
-				getICompilationUnit(pair.getElementAfter())).foreach(
-					new Effect<P2<IJavaElement, IJavaElement>>() {
-					@Override
-					public void e(P2<IJavaElement, IJavaElement> p) {
-						change.addSubChange(cuCalculator.CalculateJavaModelChange
-							(new JavaElementPair(p._1(), p._2())));
-		}});
+				getICompilationUnit(pair.getElementAfter())).foreach(calculateSubchange);
+		
 		List<IJavaElement> addedUnits = JavaModelAnalyzer.getAddedElementsFunction().
 			f(JavaModelAnalyzer.getICompilationUnit(pair.getElementBefore()), 
 				JavaModelAnalyzer.getICompilationUnit(pair.getElementAfter()));
+		
 		List<IJavaElement> removedUnits = JavaModelAnalyzer.getRemovedElementsFunction().
 			f(JavaModelAnalyzer.getICompilationUnit(pair.getElementBefore()), 
 				JavaModelAnalyzer.getICompilationUnit(pair.getElementAfter()));
@@ -71,21 +87,7 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 				return score;
 		}});
 		
-		Effect<P2<IJavaElement, IJavaElement>> calculateSubchange = 
-			new Effect<P2<IJavaElement, IJavaElement>>() {
-			@Override
-			public void e(P2<IJavaElement, IJavaElement> p) {
-				change.addSubChange(cuCalculator.CalculateJavaModelChange(
-					new JavaElementPair(p._1(), p._2())));
-		}};
-	
 		similarPairs.foreach(calculateSubchange);
-		Equal<IJavaElement> eq = Equal.stringEqual.comap(JavaModelAnalyzer.
-			getElementNameFunc);
-		F<P2<IJavaElement, IJavaElement>, IJavaElement> getFirst = FJUtils.
-			getFirstElementInPFunc((IJavaElement)null, (IJavaElement)null);
-		F<P2<IJavaElement, IJavaElement>, IJavaElement> getSecond = FJUtils.
-			getSecondElementInPFunc((IJavaElement)null, (IJavaElement)null);
 		removedUnits = removedUnits.minus(eq, similarPairs.map(getFirst));
 		addedUnits = addedUnits.minus(eq, similarPairs.map(getSecond));
 		removedUnits.map(FJUtils.appendElementFunc((IJavaElement)null, 

@@ -23,8 +23,7 @@ import fj.data.List.Buffer;
 public class SourceChangeUtils {
 
 	private SourceChangeUtils() throws Exception
-	{
-		
+	{	
 		throw new Exception();
 	}
 	
@@ -189,28 +188,20 @@ public class SourceChangeUtils {
 			return false;
 		if(change.getSourceChangeType() == SourceChangeType.PARENT)
 		{
-			XList<ISourceChange> uselessChildren = new XList<ISourceChange>();
-			XList<ISourceChange> children = new XList<ISourceChange>
-				(((SubChangeContainer) change).getSubSourceChanges());
-			for(ISourceChange kid : children)
-			{
-				if(pruneSubChanges(kid) == false)
-				{
-					uselessChildren.add(kid);
+			List<ISourceChange> uselessChildren = List.nil();
+			ISourceChange[] children = (((SubChangeContainer) change).
+				getSubSourceChanges());
+			for(ISourceChange kid : children) {
+				if(pruneSubChanges(kid) == false) {
+					uselessChildren = uselessChildren.snoc(kid);
 				}
-			}
-			
-			if(uselessChildren.size() == children.size())
-			{
-				return false;
-			}
-			else
-			{
-				((SubChangeContainer) change).removeSubChanges(uselessChildren);
-				return true;
-			}
+			}	
+			((SubChangeContainer) change).removeSubChanges(uselessChildren.
+				toCollection());
+			return change.hasSubChanges();
 		}
-		return true;
+		else 
+			return true;
 	}
 	
 	public static String printChangeTree(ISourceChange change)

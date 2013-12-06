@@ -2,15 +2,18 @@ package edu.dlf.refactoring.change;
 
 import java.util.Collection;
 
+import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.design.IASTNodePair;
 import edu.dlf.refactoring.design.IJavaElementPair;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.AbstractSourceChange;
-import edu.dlf.refactoring.utils.XList;
+import fj.Equal;
+import fj.F;
+import fj.data.List;
 
 public class SubChangeContainer extends AbstractSourceChange{
 
-	private final XList<ISourceChange> subChanges = XList.CreateList();
+	private List<ISourceChange> subChanges = List.nil();
 	
 	public SubChangeContainer(String changeLevel, IASTNodePair pair)
 	{
@@ -25,7 +28,7 @@ public class SubChangeContainer extends AbstractSourceChange{
 	public void addSubChange(ISourceChange subChange)
 	{
 		((AbstractSourceChange) subChange).setParentChange(this);
-		this.subChanges.add(subChange);
+		subChanges = subChanges.snoc(subChange);
 	}
 	
 	
@@ -33,30 +36,29 @@ public class SubChangeContainer extends AbstractSourceChange{
 	{
 		for(ISourceChange c : changes)
 		{
-			((AbstractSourceChange) c).setParentChange(this);
+			subChanges = subChanges.snoc(c);
 		}
-		this.subChanges.addAll(changes);
 	}
 	
 	public ISourceChange[] getSubSourceChanges()
 	{
-		return this.subChanges.toArray(new ISourceChange[0]);
+		return subChanges.toCollection().toArray(new ISourceChange[0]);
 	}
 	
 	
 	public Void removeSubChanges(Collection<ISourceChange> toRemove)
 	{
-		for(ISourceChange rm : toRemove)
-		{
-			subChanges.remove(toRemove);
+		final Equal<ISourceChange> eq = FJUtils.getReferenceEq((ISourceChange)null);
+		for(ISourceChange remove : toRemove) {
+			F<ISourceChange, Boolean> filter = eq.eq(remove);
+			subChanges = subChanges.dropWhile(filter);
 		}
-		
 		return null;
 	}
 
 	@Override
 	public boolean hasSubChanges() {
-		return subChanges.any();
+		return subChanges.isNotEmpty();
 	}
 
 	@Override
