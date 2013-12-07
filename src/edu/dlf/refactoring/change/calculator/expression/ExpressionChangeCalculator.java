@@ -19,8 +19,10 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.PrePostFixExpressionAn
 import edu.dlf.refactoring.change.ChangeComponentInjector.ThisAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
+import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
+import fj.F2;
 import fj.P2;
 import fj.data.List;
 
@@ -61,6 +63,9 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
 	
+	private final F2<ASTNode, ASTNode, ISourceChange> expChangeCalculationFunc = 
+			getChangeCalculationFunc(this);
+	
 	@Override
 	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
 		ISourceChange change = changeBuilder.buildSimpleChange(pair);
@@ -79,10 +84,13 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 				snoc(expAfter).group(typeEq);
 			List<P2<List<ASTNode>, List<ASTNode>>> groupPairs = FJUtils.
 				getSamePairs(groupsBefore, groupsAfter, listTypeEq);
-			List<P2<ASTNode, ASTNode>> pairs = groupPairs.bind(similarNodeMapper.tuple()).
-				filter(areBothNotNull).sort(orderByCombinedASTNodeLength).reverse();
-			
-			return changeBuilder.createUnknownChange(pair);
+			List<P2<ASTNode, ASTNode>> nodePairs = removeSubPairs(groupPairs.bind
+				(similarNodeMapper.tuple()).filter(areBothNotNull));
+			SubChangeContainer container = changeBuilder.
+				createSubchangeContainer(pair);
+			container.addMultiSubChanges(nodePairs.sort(orderByFirstNodeStart).
+				map(expChangeCalculationFunc.tuple()).toCollection());
+			return container;
 		}
 		
 		if(expBefore.getNodeType() == ASTNode.ASSIGNMENT)
