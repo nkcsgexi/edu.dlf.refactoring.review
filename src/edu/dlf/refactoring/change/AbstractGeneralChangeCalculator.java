@@ -40,18 +40,18 @@ public abstract class AbstractGeneralChangeCalculator implements
 			return node instanceof Statement;
 	}};
 	
-	protected final F<ASTNode, List<ASTNode>> getDecExpressions = ASTAnalyzer.
+	protected final F<ASTNode, List<ASTNode>> getDecendantExpressions = ASTAnalyzer.
 		getAllDecendantsFunc.andThen(new F<List<ASTNode>, List<ASTNode>>() {
 			@Override
 			public List<ASTNode> f(List<ASTNode> decendants) {
 				return decendants.filter(isExpression);
 	}});
 	
-	protected final F<ASTNode, List<ASTNode>> getDecStatements = ASTAnalyzer.
+	protected final F<ASTNode, List<ASTNode>> getDecendantStatements = ASTAnalyzer.
 		getAllDecendantsFunc.andThen(new F<List<ASTNode>, List<ASTNode>>() {
 			@Override
 			public List<ASTNode> f(List<ASTNode> decendants) {
-				return decendants.filter(isExpression);
+				return decendants.filter(isStatement);
 	}});
 		
 	protected final Equal<ASTNode> typeEq = Equal.intEqual.comap
@@ -64,7 +64,7 @@ public abstract class AbstractGeneralChangeCalculator implements
 		similarNodeMapper = ASTAnalyzer.getASTNodeMapper(6, ASTAnalyzer.
 			getDefaultASTNodeSimilarityScore(10));
 	
-	protected final Ord<P2<ASTNode, ASTNode>> orderByCombinedASTNodeLength = Ord.
+	private final Ord<P2<ASTNode, ASTNode>> orderByCombinedASTNodeLength = Ord.
 		intOrd.comap(new F<P2<ASTNode, ASTNode>, Integer>() {
 			@Override
 			public Integer f(P2<ASTNode, ASTNode> pair) {
@@ -106,8 +106,6 @@ public abstract class AbstractGeneralChangeCalculator implements
 			public ISourceChange f(ASTNode nodeBefore, ASTNode nodeAfter) {
 				return calculator.CalculateASTNodeChange(new ASTNodePair(nodeBefore, 
 					nodeAfter));
-		}};
-	}
-	
+	}};}
 	
 }

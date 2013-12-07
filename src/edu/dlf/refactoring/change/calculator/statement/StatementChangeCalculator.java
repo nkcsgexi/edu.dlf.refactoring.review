@@ -5,6 +5,8 @@ import org.eclipse.jdt.core.dom.ExpressionStatement;
 
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.analyzers.FJUtils;
+import edu.dlf.refactoring.change.AbstractGeneralChangeCalculator;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BreakStatementAnnotation;
@@ -23,8 +25,11 @@ import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
+import fj.F2;
+import fj.P2;
+import fj.data.List;
 
-public class StatementChangeCalculator implements IASTNodeChangeCalculator {
+public class StatementChangeCalculator extends AbstractGeneralChangeCalculator {
 
 	private final IASTNodeChangeCalculator blockCalculator;
 	private final IASTNodeChangeCalculator ifCalculator;
@@ -67,9 +72,12 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 		this.rsCalculator = rsCalculator;
 		this.thsCalculator = thsCalculator;
 		this.varDecStaCal = varDecStaCal;
-		
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
+	
+	
+	private final F2<ASTNode, ASTNode, ISourceChange> statementChangeCalFunc = 
+		getChangeCalculationFunc(this);
 
 	@Override
 	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
@@ -79,7 +87,22 @@ public class StatementChangeCalculator implements IASTNodeChangeCalculator {
 			return change;
 		
 		if(pair.getNodeBefore().getNodeType() != pair.getNodeAfter().getNodeType())
-			return this.changeBuilder.createUnknownChange(pair);
+		{
+			List<List<ASTNode>> groupsBefore = getDecendantStatements.f(pair.
+				getNodeBefore()).snoc(pair.getNodeBefore()).group(typeEq);
+			List<List<ASTNode>> groupsAfter = getDecendantStatements.f(pair.
+				getNodeAfter()).snoc(pair.getNodeAfter()).group(typeEq);
+			List<P2<List<ASTNode>, List<ASTNode>>> groupPairs = FJUtils.
+				getSamePairs(groupsBefore, groupsAfter, listTypeEq);
+			List<P2<ASTNode, ASTNode>> nodePairs = removeSubPairs(groupPairs.bind
+				(similarNodeMapper.tuple()).filter(areBothNotNull));
+			SubChangeContainer container = changeBuilder.
+				createSubchangeContainer(pair);
+			container.addMultiSubChanges(nodePairs.sort(orderByFirstNodeStart).
+				map(statementChangeCalFunc.tuple()).toCollection());
+			return container.hasSubChanges() ? container : changeBuilder.
+				createUnknownChange(pair);
+		}
 		
 		switch(pair.getNodeBefore().getNodeType())
 		{
