@@ -80,7 +80,7 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 			List<P2<List<ASTNode>, List<ASTNode>>> groupPairs = FJUtils.
 				getSamePairs(groupsBefore, groupsAfter, listTypeEq);
 			List<P2<ASTNode, ASTNode>> pairs = groupPairs.bind(similarNodeMapper.tuple()).
-				filter(areBothNotNull).sort(orderByFirstASTNodeLength).reverse();
+				filter(areBothNotNull).sort(orderByCombinedASTNodeLength).reverse();
 			
 			return changeBuilder.createUnknownChange(pair);
 		}

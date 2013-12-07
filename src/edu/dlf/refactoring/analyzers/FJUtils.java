@@ -230,6 +230,24 @@ public class FJUtils {
 			Equal<T> eq) {
 		List<P2<T, T>> allPairs = list1.bind(list1, pairFunction((T)null));
 		return allPairs.filter(eq.eq().tuple());
-		
 	}
+	
+	public static <T> F<T, Boolean> andPredicates(final F<T, Boolean> p1, 
+		final F<T, Boolean> p2) {
+		return new F<T, Boolean>() {
+			@Override
+			public Boolean f(T t) {
+				return p1.f(t) && p2.f(t);
+		}};
+	}
+	
+	public static <T> F<T, Boolean> orPredicates(final F<T, Boolean> p1, 
+		final F<T, Boolean> p2) {
+		return new F<T, Boolean>() {
+			@Override
+			public Boolean f(T t) {
+				return p1.f(t) || p2.f(t);
+		}};
+	}
+	
 }
