@@ -76,8 +76,7 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 		expBefore = (Expression) pair.getNodeBefore();
 		expAfter = (Expression) pair.getNodeAfter();
 		
-		if(expBefore.getNodeType() != expAfter.getNodeType())
-		{
+		if(expBefore.getNodeType() != expAfter.getNodeType()) {
 			List<List<ASTNode>> groupsBefore = getDecendantExpressions.f(expBefore).
 				snoc(expBefore).group(typeEq);
 			List<List<ASTNode>> groupsAfter = getDecendantExpressions.f(expAfter).
@@ -90,8 +89,9 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 				createSubchangeContainer(pair);
 			container.addMultiSubChanges(nodePairs.sort(orderByFirstNodeStart).
 				map(expChangeCalculationFunc.tuple()).toCollection());
-			return container.hasSubChanges() ? container : changeBuilder.
-				createUnknownChange(pair);
+			container = pruneSourceChangeContainer(container);
+			return container == null ? changeBuilder.createUnknownChange(pair) 
+				: container;
 		}
 		
 		if(expBefore.getNodeType() == ASTNode.ASSIGNMENT)

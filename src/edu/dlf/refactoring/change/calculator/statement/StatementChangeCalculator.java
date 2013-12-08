@@ -1,5 +1,6 @@
 package edu.dlf.refactoring.change.calculator.statement;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 
@@ -8,6 +9,7 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.change.AbstractGeneralChangeCalculator;
 import edu.dlf.refactoring.change.ChangeBuilder;
+import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BreakStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ContinueStatementAnnotation;
@@ -44,9 +46,11 @@ public class StatementChangeCalculator extends AbstractGeneralChangeCalculator {
 	private final IASTNodeChangeCalculator rsCalculator;
 	private final IASTNodeChangeCalculator thsCalculator;
 	private final IASTNodeChangeCalculator varDecStaCal;
+	private final Logger logger;
 	
 	@Inject
 	public StatementChangeCalculator(
+			Logger logger,
 			@StatementAnnotation String changeLevel,
 			@IfStatementAnnotation IASTNodeChangeCalculator ifCalculator,
 			@ForStatementAnnotation IASTNodeChangeCalculator fsCalculator,
@@ -60,6 +64,7 @@ public class StatementChangeCalculator extends AbstractGeneralChangeCalculator {
 			@BlockAnnotation IASTNodeChangeCalculator blockCalculator, 
 			@ExpressionAnnotation IASTNodeChangeCalculator expressionCalculator,
 			@VariableDeclarationStatementAnnotation IASTNodeChangeCalculator varDecStaCal) {
+		this.logger = logger;
 		this.ifCalculator = ifCalculator;
 		this.blockCalculator = blockCalculator;
 		this.expressionCalculator = expressionCalculator;
@@ -100,8 +105,9 @@ public class StatementChangeCalculator extends AbstractGeneralChangeCalculator {
 				createSubchangeContainer(pair);
 			container.addMultiSubChanges(nodePairs.sort(orderByFirstNodeStart).
 				map(statementChangeCalFunc.tuple()).toCollection());
-			return container.hasSubChanges() ? container : changeBuilder.
-				createUnknownChange(pair);
+			container = pruneSourceChangeContainer(container);
+			return container == null ? changeBuilder.createUnknownChange(pair) : 
+				container ;
 		}
 		
 		switch(pair.getNodeBefore().getNodeType())

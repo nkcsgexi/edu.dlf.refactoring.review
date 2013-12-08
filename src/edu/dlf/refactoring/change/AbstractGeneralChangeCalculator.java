@@ -108,4 +108,8 @@ public abstract class AbstractGeneralChangeCalculator implements
 					nodeAfter));
 	}};}
 	
+	protected SubChangeContainer pruneSourceChangeContainer(SubChangeContainer 
+		container) {
+		return (SubChangeContainer) SourceChangeUtils.pruneSourceChange(container);
+	}
 }
