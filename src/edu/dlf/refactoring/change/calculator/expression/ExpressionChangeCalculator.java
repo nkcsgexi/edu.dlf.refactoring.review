@@ -1,7 +1,10 @@
 package edu.dlf.refactoring.change.calculator.expression;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 
 import com.google.inject.Inject;
 
@@ -25,6 +28,7 @@ import edu.dlf.refactoring.design.ISourceChange;
 import fj.F2;
 import fj.P2;
 import fj.data.List;
+import static fj.data.List.list; 
 
 public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 
@@ -38,9 +42,11 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 	private final IASTNodeChangeCalculator fieldAccessCal;
 	private final IASTNodeChangeCalculator castExpCal;
 	private final IASTNodeChangeCalculator thisExpCal;
+	private final Logger logger;
 
 	@Inject
 	public ExpressionChangeCalculator(
+			Logger logger,
 			@ExpressionAnnotation String changeLevel,
 			@VariableDeclarationAnnotation IASTNodeChangeCalculator vdCalculator,			
 			@AssignmentAnnotation IASTNodeChangeCalculator asCalculator,
@@ -51,6 +57,7 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 			@FieldAccessAnnotation IASTNodeChangeCalculator fieldAccessCal,
 			@ThisAnnotation IASTNodeChangeCalculator thisExpCal,
 			@CastAnnotation IASTNodeChangeCalculator castExpCal) {
+		this.logger = logger;
 		this.asCalculator = asCalculator;
 		this.vdCalculator = vdCalculator;
 		this.nCalculator = nCalculator;
@@ -77,6 +84,8 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 		expAfter = (Expression) pair.getNodeAfter();
 		
 		if(expBefore.getNodeType() != expAfter.getNodeType()) {
+			logger.debug("Before expression: " + pair.getNodeBefore());
+			logger.debug("After expression: " + pair.getNodeAfter());
 			List<List<ASTNode>> groupsBefore = getDecendantExpressions.f(expBefore).
 				snoc(expBefore).group(typeEq);
 			List<List<ASTNode>> groupsAfter = getDecendantExpressions.f(expAfter).
@@ -138,6 +147,29 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 		{
 			return this.castExpCal.CalculateASTNodeChange(pair);
 		}
+		
+		if(expBefore.getNodeType() == ASTNode.PARENTHESIZED_EXPRESSION) {
+			ASTNodePair internalPair = pair.selectByPropertyDescriptor
+				(ParenthesizedExpression.EXPRESSION_PROPERTY);
+			return this.CalculateASTNodeChange(internalPair);
+		}
+		
+		if(expBefore.getNodeType() == ASTNode.CONDITIONAL_EXPRESSION) {
+			SubChangeContainer container = changeBuilder.createSubchangeContainer
+				(pair);
+			List<ASTNodePair> internalPairs = list(
+				pair.selectByPropertyDescriptor
+					(ConditionalExpression.EXPRESSION_PROPERTY),
+				pair.selectByPropertyDescriptor
+					(ConditionalExpression.THEN_EXPRESSION_PROPERTY),
+				pair.selectByPropertyDescriptor
+					(ConditionalExpression.ELSE_EXPRESSION_PROPERTY));
+			container.addMultiSubChanges(internalPairs.map(ASTNodePair.
+				splitPairFunc.andThen(expChangeCalculationFunc.tuple())).
+					toCollection());
+			return container;
+		}
+		
 
 		return changeBuilder.createUnknownChange(pair);
 	}

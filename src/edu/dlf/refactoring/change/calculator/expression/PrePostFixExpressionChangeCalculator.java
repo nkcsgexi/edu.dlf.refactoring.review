@@ -34,13 +34,16 @@ public class PrePostFixExpressionChangeCalculator implements IASTNodeChangeCalcu
 		ISourceChange change = changeBuilder.buildSimpleChange(pair);
 		if(change != null)
 			return change;
-		SubChangeContainer container = this.changeBuilder.createSubchangeContainer(pair);
-		container.addSubChange(exCalculator.CalculateASTNodeChange(pair.select(new Function<ASTNode, ASTNode>(){
+		SubChangeContainer container = this.changeBuilder.
+			createSubchangeContainer(pair);
+		container.addSubChange(exCalculator.CalculateASTNodeChange(pair.
+			select(new Function<ASTNode, ASTNode>(){
 			@Override
 			public ASTNode apply(ASTNode node) {
-				return (ASTNode) (node.getNodeType() == ASTNode.PREFIX_EXPRESSION ? node.getStructuralProperty
-						(PrefixExpression.OPERAND_PROPERTY) : node.getStructuralProperty
-							(PostfixExpression.OPERAND_PROPERTY));
+				return (ASTNode) (node.getNodeType() == ASTNode.PREFIX_EXPRESSION 
+					? node.getStructuralProperty(PrefixExpression.OPERAND_PROPERTY) 
+						: node.getStructuralProperty(PostfixExpression.
+							OPERAND_PROPERTY));
 			}})));
 		return container;
 	}

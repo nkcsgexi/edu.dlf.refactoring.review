@@ -93,6 +93,8 @@ public class StatementChangeCalculator extends AbstractGeneralChangeCalculator {
 		
 		if(pair.getNodeBefore().getNodeType() != pair.getNodeAfter().getNodeType())
 		{
+			logger.debug("Before statement: " + pair.getNodeBefore());
+			logger.debug("After statement: " + pair.getNodeAfter());
 			List<List<ASTNode>> groupsBefore = getDecendantStatements.f(pair.
 				getNodeBefore()).snoc(pair.getNodeBefore()).group(typeEq);
 			List<List<ASTNode>> groupsAfter = getDecendantStatements.f(pair.

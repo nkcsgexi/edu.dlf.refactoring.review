@@ -24,7 +24,7 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 	private final IFactorComponent changeComp;
 	private final Logger logger;
 	private final int pairStart = 0;
-	private final int pairEnd = 100;
+	private final int pairEnd = 10;
 	
 	@Inject
 	public CompareProjectsInWorkspaceStudy(

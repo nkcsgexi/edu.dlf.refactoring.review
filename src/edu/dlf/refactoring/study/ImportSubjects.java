@@ -41,16 +41,18 @@ public class ImportSubjects extends AbstractStudy {
 				new F<File, Boolean>() {
 				@Override
 				public Boolean f(File file) {
-					return file.getAbsolutePath().endsWith(".project");
+					return file.getName().equals(".project") && !file.
+						getAbsolutePath().contains("bin");
 			}});
 			List<IProject> importedProjects = files.map(FileUtils.getPath.
-				andThen(EclipseUtils.importGetProject));
+				andThen(EclipseUtils.importGetProject));	
 			importedProjects.zip(importedProjects.map(EclipseUtils.getProjectName).
 				map(new F<String, String>(){
 				@Override
 				public String f(String oldName) {
 					return oldName + count;
 				}})).foreach(EclipseUtils.directlyRenameProject.tuple());
+			
 			return importedProjects;
 	}}; 
 	

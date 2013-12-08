@@ -10,6 +10,8 @@ import com.google.common.base.Function;
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.utils.XList;
 import fj.F;
+import fj.P;
+import fj.P2;
 
 public class ASTNodePair implements IASTNodePair{
 
@@ -22,6 +24,13 @@ public class ASTNodePair implements IASTNodePair{
 		this.nodeAfter = nodeAfter;
 	}
 
+	public final static F<ASTNodePair, P2<ASTNode, ASTNode>> splitPairFunc =
+		new F<ASTNodePair, P2<ASTNode,ASTNode>>() {
+			@Override
+			public P2<ASTNode, ASTNode> f(ASTNodePair pair) {
+				return P.p(pair.getNodeBefore(), pair.getNodeAfter());
+	}};
+	
 	@Override
 	public ASTNode getNodeBefore() {
 		return nodeBefore;
