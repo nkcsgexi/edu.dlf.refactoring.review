@@ -228,7 +228,7 @@ public class FJUtils {
 	
 	public static <T> List<P2<T, T>> getSamePairs(List<T> list1, List<T> list2, 
 			Equal<T> eq) {
-		List<P2<T, T>> allPairs = list1.bind(list1, pairFunction((T)null));
+		List<P2<T, T>> allPairs = list1.bind(list2, pairFunction((T)null));
 		return allPairs.filter(eq.eq().tuple());
 	}
 	

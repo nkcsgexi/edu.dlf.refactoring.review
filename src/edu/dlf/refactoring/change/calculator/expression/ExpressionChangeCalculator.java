@@ -98,11 +98,12 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 			List<P2<List<ASTNode>, List<ASTNode>>> groupPairs = FJUtils.
 				getSamePairs(groupsBefore, groupsAfter, listTypeEq);
 			List<P2<ASTNode, ASTNode>> nodePairs = removeSubPairs(groupPairs.bind
-				(similarNodeMapper.tuple()).filter(areBothNotNull));
+				(similarNodeMapper.tuple()).filter(areBothNotNull)).
+					sort(orderByFirstNodeStart);
 			SubChangeContainer container = changeBuilder.
 				createSubchangeContainer(pair);
-			container.addMultiSubChanges(nodePairs.sort(orderByFirstNodeStart).
-				map(expChangeCalculationFunc.tuple()).toCollection());
+			container.addMultiSubChanges(nodePairs.map(expChangeCalculationFunc.
+				tuple()).toCollection());
 			container = pruneSourceChangeContainer(container);
 			return container == null ? changeBuilder.createUnknownChange(pair) 
 				: container;
