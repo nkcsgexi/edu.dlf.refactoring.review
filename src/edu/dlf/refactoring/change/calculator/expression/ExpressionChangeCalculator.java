@@ -4,6 +4,7 @@ import static fj.data.List.list;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
@@ -20,6 +21,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.FieldAccessAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.InfixExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.InstanceOfExpressionAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.LiteralAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodInvocationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.NameAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.PrePostFixExpressionAnnotation;
@@ -28,8 +30,10 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnn
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.change.SubChangeContainer;
+import edu.dlf.refactoring.change.UpdateASTNodeChange;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
+import fj.Equal;
 import fj.F2;
 import fj.P2;
 import fj.data.List;
@@ -49,11 +53,13 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 	private final Logger logger;
 	private final IASTNodeChangeCalculator creatorCal;
 	private final IASTNodeChangeCalculator instanceOfCal;
+	private final String literalLV;
 
 	@Inject
 	public ExpressionChangeCalculator(
 			Logger logger,
 			@ExpressionAnnotation String changeLevel,
+			@LiteralAnnotation String literalLV,
 			@InstanceOfExpressionAnnotation IASTNodeChangeCalculator instanceOfCal,
 			@VariableDeclarationAnnotation IASTNodeChangeCalculator vdCalculator,			
 			@AssignmentAnnotation IASTNodeChangeCalculator asCalculator,
@@ -78,10 +84,16 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 		this.creatorCal = creatorCal;
 		this.instanceOfCal = instanceOfCal;
 		this.changeBuilder = new ChangeBuilder(changeLevel);
+		this.literalLV = literalLV;
 	}
 	
 	private final F2<ASTNode, ASTNode, ISourceChange> expChangeCalculationFunc = 
 			SourceChangeUtils.getChangeCalculationFunc(this);
+	
+	private final List<Integer> literalTypes = List.list(ASTNode.STRING_LITERAL,
+		ASTNode.NULL_LITERAL, ASTNode.NUMBER_LITERAL, ASTNode.CHARACTER_LITERAL,
+		ASTNode.BOOLEAN_LITERAL);
+	
 	
 	@Override
 	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
@@ -92,6 +104,13 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 		Expression expBefore, expAfter;
 		expBefore = (Expression) pair.getNodeBefore();
 		expAfter = (Expression) pair.getNodeAfter();
+		
+		if(literalTypes.find(Equal.intEqual.eq().f(expBefore.getNodeType())).isSome()
+		 && literalTypes.find(Equal.intEqual.eq().f(expAfter.getNodeType())).isSome())
+		{
+			return new UpdateASTNodeChange(pair, literalLV);
+		}
+		
 		
 		if(expBefore.getNodeType() != expAfter.getNodeType()) {
 			logger.debug("Before expression: " + pair.getNodeBefore());
@@ -188,7 +207,6 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 		{
 			return this.castExpCal.CalculateASTNodeChange(pair);
 		}
-		
 
 		return changeBuilder.createUnknownChange(pair);
 	}

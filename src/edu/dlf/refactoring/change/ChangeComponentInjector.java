@@ -61,7 +61,7 @@ public class ChangeComponentInjector extends AbstractModule{
 		// Expressions
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface ExpressionAnnotation {}
-		
+	
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface InstanceOfExpressionAnnotation {}
 		

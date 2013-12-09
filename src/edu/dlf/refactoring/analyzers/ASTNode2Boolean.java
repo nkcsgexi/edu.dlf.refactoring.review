@@ -10,7 +10,7 @@ public class ASTNode2Boolean {
 		throw new Exception();
 	}
 	
-	public static F2<ASTNode, ASTNode, Boolean> isFirstAncestorOfSecond =
+	public static final F2<ASTNode, ASTNode, Boolean> isFirstAncestorOfSecond =
 		new F2<ASTNode, ASTNode, Boolean>() {
 			@Override
 			public Boolean f(ASTNode first, ASTNode second) {
@@ -19,4 +19,12 @@ public class ASTNode2Boolean {
 				return ASTAnalyzer.getAllDecendantsFunc.f(first).find(finder).
 					isSome();
 	}};
+	
+	public static final F2<ASTNode, Integer, Boolean> isASTNodeTypeRight = 
+		new F2<ASTNode, Integer, Boolean>() {
+			@Override
+			public Boolean f(ASTNode node, Integer type) {
+				return node.getNodeType() == type;
+	}};
+	
 }
