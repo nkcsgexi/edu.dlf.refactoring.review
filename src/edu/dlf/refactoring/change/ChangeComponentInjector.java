@@ -43,6 +43,8 @@ import edu.dlf.refactoring.change.calculator.statement.IfStatementChangeCalculat
 import edu.dlf.refactoring.change.calculator.statement.KeyWordsStatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.ReturnAndThrowStatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.StatementChangeCalculator;
+import edu.dlf.refactoring.change.calculator.statement.SwitchCaseChangeCalculator;
+import edu.dlf.refactoring.change.calculator.statement.SwitchStatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.TryStatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.VariableDeclarationStatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.WhileStatementChangeCalculator;
@@ -155,6 +157,12 @@ public class ChangeComponentInjector extends AbstractModule{
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface VariableDeclarationStatementAnnotation {}
 		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface SwitchCaseStatementAnnotation {}
+		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface SwitchStatementAnnotation {}
+		
 		// Others
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface TypeDeclarationAnnotation {}
@@ -203,6 +211,9 @@ public class ChangeComponentInjector extends AbstractModule{
 			
 			bind(IASTNodeChangeCalculator.class).annotatedWith(IfStatementAnnotation.class).to(IfStatementChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(StatementAnnotation.class).to(StatementChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(SwitchStatementAnnotation.class).to(SwitchStatementChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(SwitchCaseStatementAnnotation.class).to(SwitchCaseChangeCalculator.class);
+			
 			bind(IASTNodeChangeCalculator.class).annotatedWith(BlockAnnotation.class).to(BlockChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(ForStatementAnnotation.class).to(ForStatementChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(WhileStatementAnnotation.class).to(WhileStatementChangeCalculator.class);
@@ -258,6 +269,8 @@ public class ChangeComponentInjector extends AbstractModule{
 			bindConstant().annotatedWith(ThisAnnotation.class).to("ThisExpression");
 			
 			bindConstant().annotatedWith(StatementAnnotation.class).to("Statement");
+			bindConstant().annotatedWith(SwitchStatementAnnotation.class).to("SwichStatement");
+			bindConstant().annotatedWith(SwitchCaseStatementAnnotation.class).to("SwitchCaseStatement");
 			bindConstant().annotatedWith(ForStatementAnnotation.class).to("ForStatement");
 			bindConstant().annotatedWith(IfStatementAnnotation.class).to("IfStatement");
 			bindConstant().annotatedWith(WhileStatementAnnotation.class).to("WhileStatement");
