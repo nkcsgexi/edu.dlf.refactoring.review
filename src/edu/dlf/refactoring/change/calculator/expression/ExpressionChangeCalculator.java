@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.change.calculator.expression;
 
+import static fj.data.List.list;
+
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
@@ -17,6 +19,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.ClassInstanceCreationA
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.FieldAccessAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.InfixExpressionAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.InstanceOfExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodInvocationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.NameAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.PrePostFixExpressionAnnotation;
@@ -30,7 +33,6 @@ import edu.dlf.refactoring.design.ISourceChange;
 import fj.F2;
 import fj.P2;
 import fj.data.List;
-import static fj.data.List.list; 
 
 public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 
@@ -46,11 +48,13 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 	private final IASTNodeChangeCalculator thisExpCal;
 	private final Logger logger;
 	private final IASTNodeChangeCalculator creatorCal;
+	private final IASTNodeChangeCalculator instanceOfCal;
 
 	@Inject
 	public ExpressionChangeCalculator(
 			Logger logger,
 			@ExpressionAnnotation String changeLevel,
+			@InstanceOfExpressionAnnotation IASTNodeChangeCalculator instanceOfCal,
 			@VariableDeclarationAnnotation IASTNodeChangeCalculator vdCalculator,			
 			@AssignmentAnnotation IASTNodeChangeCalculator asCalculator,
 			@NameAnnotation IASTNodeChangeCalculator nCalculator,
@@ -72,6 +76,7 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 		this.thisExpCal = thisExpCal;
 		this.castExpCal = castExpCal;
 		this.creatorCal = creatorCal;
+		this.instanceOfCal = instanceOfCal;
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
 	
@@ -141,9 +146,12 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 			return this.asCalculator.CalculateASTNodeChange(pair);
 		}
 		
-		if(expBefore.getNodeType() == ASTNode.VARIABLE_DECLARATION_EXPRESSION)
-		{
+		if(expBefore.getNodeType() == ASTNode.VARIABLE_DECLARATION_EXPRESSION) {
 			return this.vdCalculator.CalculateASTNodeChange(pair);
+		}
+		
+		if(expBefore.getNodeType() == ASTNode.INSTANCEOF_EXPRESSION) {
+			return this.instanceOfCal.CalculateASTNodeChange(pair);
 		}
 		
 		if(expBefore.getNodeType() == ASTNode.SIMPLE_NAME || 
