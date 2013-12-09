@@ -1,6 +1,9 @@
 package edu.dlf.refactoring.analyzers;
 
+import java.util.ArrayList;
 import java.util.Collection;
+
+import com.google.common.collect.Lists;
 
 import fj.Equal;
 import fj.F;
@@ -250,4 +253,23 @@ public class FJUtils {
 		}};
 	}
 	
+	public static <T> F<T, Boolean> negatePredicate(final F<T, Boolean> p) {
+		return new F<T, Boolean>() {
+			@Override
+			public Boolean f(T t) {
+				return !p.f(t);
+		}};
+	}
+	
+	public static <T> F<List<T>, Boolean> isEmpty(final T t) {
+		return new F<List<T>, Boolean>() {
+			@Override
+			public Boolean f(List<T> list) {
+				return list.isEmpty();
+		}};
+	}
+	
+	public static <T> java.util.List<T> toJavaList(final List<T> list) {
+		return Lists.newArrayList(list.toCollection());
+	}
 }

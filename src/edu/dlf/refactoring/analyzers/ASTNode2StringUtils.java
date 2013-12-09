@@ -35,6 +35,14 @@ public class ASTNode2StringUtils {
 				+ node.getLength());
 	}};
 	
+	public static F<ASTNode, String> astNodeToStringFunc = new F<ASTNode, String>() {
+		@Override
+		public String f(ASTNode node) {
+			return node.toString();
+		}
+	};
+	
+	
 	public static F<ASTNode, String> getCompilationUnitName =new F<ASTNode, String>() {
 		@Override
 		public String f(ASTNode node) {
