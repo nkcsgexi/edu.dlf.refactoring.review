@@ -1,6 +1,5 @@
 package edu.dlf.refactoring.design;
 
-import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
@@ -8,10 +7,13 @@ import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import com.google.common.base.Function;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
+import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.utils.XList;
 import fj.F;
+import fj.F2;
 import fj.P;
 import fj.P2;
+import fj.data.List;
 
 public class ASTNodePair implements IASTNodePair{
 
@@ -31,6 +33,13 @@ public class ASTNodePair implements IASTNodePair{
 				return P.p(pair.getNodeBefore(), pair.getNodeAfter());
 	}};
 	
+	public final static F2<ASTNode, ASTNode, ASTNodePair> createPairFunc = 
+		new F2<ASTNode, ASTNode, ASTNodePair>() {
+			@Override
+			public ASTNodePair f(ASTNode n1, ASTNode n2) {
+				return new ASTNodePair(n1, n2);
+	}};
+	
 	@Override
 	public ASTNode getNodeBefore() {
 		return nodeBefore;
@@ -47,6 +56,25 @@ public class ASTNodePair implements IASTNodePair{
 				func.apply(nodeAfter));
 	}
 	
+	public List<ASTNodePair> selectNodePairByChildrenDescriptor(final 
+		StructuralPropertyDescriptor descriptor) {
+		List<ASTNode> beforeList = FJUtils.createListFromCollection
+			((java.util.List<ASTNode>) this.nodeBefore.getStructuralProperty
+				(descriptor));
+		List<ASTNode> afterList = FJUtils.createListFromCollection
+			((java.util.List<ASTNode>) this.nodeAfter.getStructuralProperty
+				(descriptor));	
+		List<ASTNode> shorterList = beforeList.length() > afterList.length() 
+			? afterList : beforeList;
+		Boolean beforeIsShorter = shorterList == beforeList;
+		int count = Math.abs(beforeList.length() - afterList.length());
+		for(int i = 0 ; i < count; i ++)
+			shorterList = shorterList.snoc(null);
+		if(beforeIsShorter)
+			return shorterList.zip(afterList).map(createPairFunc.tuple());
+		else
+			return beforeList.zip(shorterList).map(createPairFunc.tuple());
+	}
 	
 	public ASTNodePair selectByPropertyDescriptor(final StructuralPropertyDescriptor 
 			descriptor)
@@ -65,9 +93,9 @@ public class ASTNodePair implements IASTNodePair{
 	
 	public XList[] selectChildrenByDescriptor(final StructuralPropertyDescriptor descriptor)
 	{
-		XList<ASTNode> beforeList = new XList<ASTNode>((List)this.getNodeBefore().
+		XList<ASTNode> beforeList = new XList<ASTNode>((java.util.List)this.getNodeBefore().
 				getStructuralProperty(descriptor));
-		XList<ASTNode> afterList = new XList<ASTNode>((List)this.getNodeAfter().
+		XList<ASTNode> afterList = new XList<ASTNode>((java.util.List)this.getNodeAfter().
 				getStructuralProperty(descriptor));
 		return new XList[]{beforeList, afterList};
 	}

@@ -20,6 +20,7 @@ import edu.dlf.refactoring.change.calculator.SourcePackageChangeCalculator;
 import edu.dlf.refactoring.change.calculator.TypeDeclarationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.AssignmentChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.CastChangeCalculator;
+import edu.dlf.refactoring.change.calculator.expression.ClassInstanceCreateCalculator;
 import edu.dlf.refactoring.change.calculator.expression.ExpressionChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.FieldAccessChangeCalculator;
 import edu.dlf.refactoring.change.calculator.expression.InfixExpressionChangeCalculator;
@@ -59,6 +60,9 @@ public class ChangeComponentInjector extends AbstractModule{
 		// Expressions
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface ExpressionAnnotation {}
+		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface ClassInstanceCreationAnnotation {}
 
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface InfixExpressionAnnotation {}
@@ -209,6 +213,7 @@ public class ChangeComponentInjector extends AbstractModule{
 			
 			
 			bind(IASTNodeChangeCalculator.class).annotatedWith(ExpressionAnnotation.class).to(ExpressionChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(ClassInstanceCreationAnnotation.class).to(ClassInstanceCreateCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(AssignmentAnnotation.class).to(AssignmentChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(VariableDeclarationAnnotation.class).to(VariableDeclarationChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(SingleVariableDeclarationAnnotation.class).to(SingleVariableDeclarationChangeCalculator.class);
@@ -236,6 +241,7 @@ public class ChangeComponentInjector extends AbstractModule{
 			bindConstant().annotatedWith(SimpleNameAnnotation.class).to("SimpleName");
 			bindConstant().annotatedWith(TypeAnnotation.class).to("Type");
 			bindConstant().annotatedWith(ExpressionAnnotation.class).to("Expression");
+			bindConstant().annotatedWith(ClassInstanceCreationAnnotation.class).to("ClassInstanceCreation");
 			bindConstant().annotatedWith(VariableDeclarationAnnotation.class).to("VariableDeclaration");
 			bindConstant().annotatedWith(SingleVariableDeclarationAnnotation.class).to("SingleVariableDeclaration");
 			bindConstant().annotatedWith(VariableDeclarationFragmentAnnotation.class).to("VariableDeclarationFragment");

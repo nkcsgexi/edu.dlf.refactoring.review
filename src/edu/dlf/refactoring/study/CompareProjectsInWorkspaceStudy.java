@@ -23,8 +23,8 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 
 	private final IFactorComponent changeComp;
 	private final Logger logger;
-	private final int pairStart = 0;
-	private final int pairEnd = 10;
+	private final int pairStart = 7;
+	private final int pairEnd = 12;
 	
 	@Inject
 	public CompareProjectsInWorkspaceStudy(

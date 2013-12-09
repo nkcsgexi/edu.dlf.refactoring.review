@@ -13,6 +13,7 @@ import edu.dlf.refactoring.change.AbstractGeneralChangeCalculator;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.AssignmentAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CastAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.ClassInstanceCreationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.FieldAccessAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.InfixExpressionAnnotation;
@@ -22,6 +23,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.PrePostFixExpressionAn
 import edu.dlf.refactoring.change.ChangeComponentInjector.ThisAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
+import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
@@ -43,6 +45,7 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 	private final IASTNodeChangeCalculator castExpCal;
 	private final IASTNodeChangeCalculator thisExpCal;
 	private final Logger logger;
+	private final IASTNodeChangeCalculator creatorCal;
 
 	@Inject
 	public ExpressionChangeCalculator(
@@ -51,6 +54,7 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 			@VariableDeclarationAnnotation IASTNodeChangeCalculator vdCalculator,			
 			@AssignmentAnnotation IASTNodeChangeCalculator asCalculator,
 			@NameAnnotation IASTNodeChangeCalculator nCalculator,
+			@ClassInstanceCreationAnnotation IASTNodeChangeCalculator creatorCal,
 			@PrePostFixExpressionAnnotation IASTNodeChangeCalculator ppfCalculator,
 			@InfixExpressionAnnotation IASTNodeChangeCalculator infCalculator,
 			@MethodInvocationAnnotation IASTNodeChangeCalculator miCalculator,
@@ -67,11 +71,12 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 		this.fieldAccessCal = fieldAccessCal;
 		this.thisExpCal = thisExpCal;
 		this.castExpCal = castExpCal;
+		this.creatorCal = creatorCal;
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
 	
 	private final F2<ASTNode, ASTNode, ISourceChange> expChangeCalculationFunc = 
-			getChangeCalculationFunc(this);
+			SourceChangeUtils.getChangeCalculationFunc(this);
 	
 	@Override
 	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
@@ -101,6 +106,33 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 			container = pruneSourceChangeContainer(container);
 			return container == null ? changeBuilder.createUnknownChange(pair) 
 				: container;
+		}
+		
+		if(expBefore.getNodeType() == ASTNode.PARENTHESIZED_EXPRESSION) {
+			ASTNodePair internalPair = pair.selectByPropertyDescriptor
+				(ParenthesizedExpression.EXPRESSION_PROPERTY);
+			return this.CalculateASTNodeChange(internalPair);
+		}
+		
+		if(expBefore.getNodeType() == ASTNode.CONDITIONAL_EXPRESSION) {
+			SubChangeContainer container = changeBuilder.createSubchangeContainer
+				(pair);
+			List<ASTNodePair> internalPairs = list(
+				pair.selectByPropertyDescriptor
+					(ConditionalExpression.EXPRESSION_PROPERTY),
+				pair.selectByPropertyDescriptor
+					(ConditionalExpression.THEN_EXPRESSION_PROPERTY),
+				pair.selectByPropertyDescriptor
+					(ConditionalExpression.ELSE_EXPRESSION_PROPERTY));
+			container.addMultiSubChanges(internalPairs.map(ASTNodePair.
+				splitPairFunc.andThen(expChangeCalculationFunc.tuple())).
+					toCollection());
+			return container;
+		}
+	
+		if(expBefore.getNodeType() == ASTNode.CLASS_INSTANCE_CREATION) 
+		{
+			return this.creatorCal.CalculateASTNodeChange(pair);
 		}
 		
 		if(expBefore.getNodeType() == ASTNode.ASSIGNMENT)
@@ -146,28 +178,6 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 		if(expBefore.getNodeType() == ASTNode.CAST_EXPRESSION) 
 		{
 			return this.castExpCal.CalculateASTNodeChange(pair);
-		}
-		
-		if(expBefore.getNodeType() == ASTNode.PARENTHESIZED_EXPRESSION) {
-			ASTNodePair internalPair = pair.selectByPropertyDescriptor
-				(ParenthesizedExpression.EXPRESSION_PROPERTY);
-			return this.CalculateASTNodeChange(internalPair);
-		}
-		
-		if(expBefore.getNodeType() == ASTNode.CONDITIONAL_EXPRESSION) {
-			SubChangeContainer container = changeBuilder.createSubchangeContainer
-				(pair);
-			List<ASTNodePair> internalPairs = list(
-				pair.selectByPropertyDescriptor
-					(ConditionalExpression.EXPRESSION_PROPERTY),
-				pair.selectByPropertyDescriptor
-					(ConditionalExpression.THEN_EXPRESSION_PROPERTY),
-				pair.selectByPropertyDescriptor
-					(ConditionalExpression.ELSE_EXPRESSION_PROPERTY));
-			container.addMultiSubChanges(internalPairs.map(ASTNodePair.
-				splitPairFunc.andThen(expChangeCalculationFunc.tuple())).
-					toCollection());
-			return container;
 		}
 		
 

@@ -82,7 +82,7 @@ public class StatementChangeCalculator extends AbstractGeneralChangeCalculator {
 	
 	
 	private final F2<ASTNode, ASTNode, ISourceChange> statementChangeCalFunc = 
-		getChangeCalculationFunc(this);
+		SourceChangeUtils.getChangeCalculationFunc(this);
 
 	@Override
 	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {

@@ -98,15 +98,7 @@ public abstract class AbstractGeneralChangeCalculator implements
 		}
 		return result.toList();
 	}
-	
-	protected F2<ASTNode, ASTNode, ISourceChange> getChangeCalculationFunc
-		(final IASTNodeChangeCalculator calculator) {
-		return new F2<ASTNode, ASTNode, ISourceChange>() {
-			@Override
-			public ISourceChange f(ASTNode nodeBefore, ASTNode nodeAfter) {
-				return calculator.CalculateASTNodeChange(new ASTNodePair(nodeBefore, 
-					nodeAfter));
-	}};}
+
 	
 	protected SubChangeContainer pruneSourceChangeContainer(SubChangeContainer 
 		container) {
