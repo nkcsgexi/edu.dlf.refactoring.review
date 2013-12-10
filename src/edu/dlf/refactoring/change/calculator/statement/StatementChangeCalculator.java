@@ -13,6 +13,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BreakStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ContinueStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.DoStatementAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.EnhancedForStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ForStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.IfStatementAnnotation;
@@ -47,6 +48,7 @@ public class StatementChangeCalculator extends AbstractGeneralChangeCalculator {
 	private final IASTNodeChangeCalculator thsCalculator;
 	private final IASTNodeChangeCalculator varDecStaCal;
 	private final Logger logger;
+	private final IASTNodeChangeCalculator enhancedForCal;
 	
 	@Inject
 	public StatementChangeCalculator(
@@ -54,6 +56,7 @@ public class StatementChangeCalculator extends AbstractGeneralChangeCalculator {
 			@StatementAnnotation String changeLevel,
 			@IfStatementAnnotation IASTNodeChangeCalculator ifCalculator,
 			@ForStatementAnnotation IASTNodeChangeCalculator fsCalculator,
+			@EnhancedForStatementAnnotation IASTNodeChangeCalculator enhancedForCal,
 			@DoStatementAnnotation IASTNodeChangeCalculator dsCalculator,
 			@WhileStatementAnnotation IASTNodeChangeCalculator wsCalculator,
 			@TryStatementAnnotation IASTNodeChangeCalculator tsCalculator,		
@@ -77,6 +80,7 @@ public class StatementChangeCalculator extends AbstractGeneralChangeCalculator {
 		this.rsCalculator = rsCalculator;
 		this.thsCalculator = thsCalculator;
 		this.varDecStaCal = varDecStaCal;
+		this.enhancedForCal = enhancedForCal;
 		this.changeBuilder = new ChangeBuilder(changeLevel);
 	}
 	
@@ -120,6 +124,8 @@ public class StatementChangeCalculator extends AbstractGeneralChangeCalculator {
 			return blockCalculator.CalculateASTNodeChange(pair);
 		case ASTNode.FOR_STATEMENT:
 			return fsCalculator.CalculateASTNodeChange(pair);
+		case ASTNode.ENHANCED_FOR_STATEMENT:
+			return enhancedForCal.CalculateASTNodeChange(pair);
 		case ASTNode.WHILE_STATEMENT:
 			return wsCalculator.CalculateASTNodeChange(pair);
 		case ASTNode.DO_STATEMENT:

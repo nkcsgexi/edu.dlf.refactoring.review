@@ -110,7 +110,6 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 			return new UpdateASTNodeChange(pair, literalLV);
 		}
 		
-		
 		if(expBefore.getNodeType() != expAfter.getNodeType()) {
 			logger.debug("Before expression: " + pair.getNodeBefore());
 			logger.debug("After expression: " + pair.getNodeAfter());
@@ -132,13 +131,8 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 				: container;
 		}
 		
-		if(expBefore.getNodeType() == ASTNode.PARENTHESIZED_EXPRESSION) {
-			ASTNodePair internalPair = pair.selectByPropertyDescriptor
-				(ParenthesizedExpression.EXPRESSION_PROPERTY);
-			return this.CalculateASTNodeChange(internalPair);
-		}
-		
-		if(expBefore.getNodeType() == ASTNode.CONDITIONAL_EXPRESSION) {
+		switch(expBefore.getNodeType()) {
+		case ASTNode.CONDITIONAL_EXPRESSION:
 			SubChangeContainer container = changeBuilder.createSubchangeContainer
 				(pair);
 			List<ASTNodePair> internalPairs = list(
@@ -152,9 +146,10 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 				splitPairFunc.andThen(expChangeCalculationFunc.tuple())).
 					toCollection());
 			return container;
-		}
-	
-		switch(expBefore.getNodeType()) {
+		case  ASTNode.PARENTHESIZED_EXPRESSION:
+			ASTNodePair internalPair = pair.selectByPropertyDescriptor
+				(ParenthesizedExpression.EXPRESSION_PROPERTY);
+			return CalculateASTNodeChange(internalPair);
 		case ASTNode.CLASS_INSTANCE_CREATION:
 			return this.creatorCal.CalculateASTNodeChange(pair);
 		case ASTNode.ASSIGNMENT:
