@@ -7,7 +7,7 @@ import org.eclipse.jdt.core.dom.TryStatement;
 import com.google.common.base.Function;
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.analyzers.XStringUtils;
+import edu.dlf.refactoring.analyzers.DlfStringUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CatchClauseAnnotation;
@@ -53,7 +53,7 @@ public class TryStatementChangeCalculator implements IASTNodeChangeCalculator{
 			public int calculateDistance(ASTNode before, ASTNode after) {
 				String e1 = before.getStructuralProperty(CatchClause.EXCEPTION_PROPERTY).toString();
 				String e2 = after.getStructuralProperty(CatchClause.EXCEPTION_PROPERTY).toString();
-				return XStringUtils.distance(e1, e2);
+				return DlfStringUtils.distance(e1, e2);
 			}
 		}).map(catches[0], catches[1]).select(new Function<ASTNodePair, ISourceChange>(){
 			@Override

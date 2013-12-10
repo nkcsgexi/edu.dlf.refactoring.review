@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
-import edu.dlf.refactoring.analyzers.XStringUtils;
+import edu.dlf.refactoring.analyzers.DlfStringUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeDeclarationAnnotation;
@@ -80,7 +80,7 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 				public int calculateDistance(ASTNode before, ASTNode after) {
 					String nb = before.getStructuralProperty(TypeDeclaration.NAME_PROPERTY).toString();
 					String na = after.getStructuralProperty(TypeDeclaration.NAME_PROPERTY).toString();
-					return XStringUtils.distance(nb, na);
+					return DlfStringUtils.distance(nb, na);
 			}});
 			
 			container.addMultiSubChanges(mapper.map(new XList<ASTNode>(typesBefore), 

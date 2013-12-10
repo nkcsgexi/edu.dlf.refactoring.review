@@ -7,7 +7,7 @@ import org.eclipse.jdt.core.dom.FieldDeclaration;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
-import edu.dlf.refactoring.analyzers.XStringUtils;
+import edu.dlf.refactoring.analyzers.DlfStringUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.FieldDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeAnnotation;
@@ -62,7 +62,7 @@ public class FieldDeclarationCalculator implements IASTNodeChangeCalculator{
 				new F2<ASTNode, ASTNode, Integer>() {
 			@Override
 			public Integer f(ASTNode n1, ASTNode n2) {
-				return 0 - XStringUtils.distance(n1.toString(), n2.toString());
+				return 0 - DlfStringUtils.distance(n1.toString(), n2.toString());
 			}
 		});
 		

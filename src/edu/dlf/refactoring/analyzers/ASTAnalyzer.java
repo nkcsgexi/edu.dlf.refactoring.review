@@ -217,8 +217,8 @@ public class ASTAnalyzer {
 			return true;
 		if(before == null || after == null)
 			return false;
-		String bs = XStringUtils.RemoveWhiteSpace(before.toString());
-		String as = XStringUtils.RemoveWhiteSpace(after.toString());
+		String bs = DlfStringUtils.RemoveWhiteSpace(before.toString());
+		String as = DlfStringUtils.RemoveWhiteSpace(after.toString());
 		return as.equals(bs);
 	}
 	
@@ -255,8 +255,8 @@ public class ASTAnalyzer {
 		return new IDistanceCalculator(){
 			@Override
 			public int calculateDistance(ASTNode before, ASTNode after) {
-				return XStringUtils.distance(XStringUtils.RemoveWhiteSpace(before.toString()),
-						XStringUtils.RemoveWhiteSpace(after.toString()));
+				return DlfStringUtils.distance(DlfStringUtils.RemoveWhiteSpace(before.toString()),
+						DlfStringUtils.RemoveWhiteSpace(after.toString()));
 			}};
 	}
 	
@@ -415,7 +415,7 @@ public class ASTAnalyzer {
 		return new F2<ASTNode, ASTNode, Integer>() {
 			@Override
 			public Integer f(ASTNode n0, ASTNode n1) {
-				Double perc = XStringUtils.getSamePartPercentage.f(n0.toString(), 
+				Double perc = DlfStringUtils.getSamePartPercentage.f(n0.toString(), 
 					n1.toString());
 				return (int)(perc * maxScore);
 		}};
@@ -428,7 +428,7 @@ public class ASTAnalyzer {
 		public Integer f(ASTNode n0, ASTNode n1) {
 			String s0 = getStringFunc.f(n0);
 			String s1 = getStringFunc.f(n1);
-			return (int)(XStringUtils.getCommonWordsPercentage.f(s0, s1) * 
+			return (int)(DlfStringUtils.getCommonWordsPercentage.f(s0, s1) * 
 				maxScore);
 	}};
 }
@@ -551,7 +551,7 @@ public class ASTAnalyzer {
 		return new F2<ASTNode, ASTNode, Integer>() {
 			@Override
 			public Integer f(ASTNode n1, ASTNode n2) {
-				return 0 - XStringUtils.distance(n1.toString(), n2.toString());
+				return 0 - DlfStringUtils.distance(n1.toString(), n2.toString());
 			}};
 	}
 

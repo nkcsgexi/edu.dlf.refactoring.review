@@ -7,7 +7,7 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
-import edu.dlf.refactoring.analyzers.XStringUtils;
+import edu.dlf.refactoring.analyzers.DlfStringUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SourcePackageAnnotation;
@@ -82,7 +82,7 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 			public Integer f(IJavaElement arg0, IJavaElement arg1) {
 				String n1 = arg0.getElementName();
 				String n2 = arg1.getElementName();
-				int score = (int) (XStringUtils.getSamePartPercentage.f(n1, n2) * 10);
+				int score = (int) (DlfStringUtils.getSamePartPercentage.f(n1, n2) * 10);
 				logger.debug("Name similarity score: " + score);
 				return score;
 		}});

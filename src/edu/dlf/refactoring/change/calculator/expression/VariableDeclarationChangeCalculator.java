@@ -10,7 +10,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import com.google.common.base.Function;
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.analyzers.XStringUtils;
+import edu.dlf.refactoring.analyzers.DlfStringUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationAnnotation;
@@ -65,7 +65,7 @@ public class VariableDeclarationChangeCalculator implements IASTNodeChangeCalcul
 			IASTNodeMapStrategy mapper = new SimilarityASTNodeMapStrategy(new IDistanceCalculator(){
 				@Override
 				public int calculateDistance(ASTNode before, ASTNode after) {
-					return XStringUtils.distance(
+					return DlfStringUtils.distance(
 						before.getStructuralProperty(VariableDeclarationFragment.NAME_PROPERTY).toString(),
 						after.getStructuralProperty(VariableDeclarationFragment.NAME_PROPERTY).toString());
 			}});

@@ -8,7 +8,7 @@ import difflib.Delta.TYPE;
 import difflib.DiffUtils;
 import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
 import edu.dlf.refactoring.analyzers.FJUtils;
-import edu.dlf.refactoring.analyzers.XStringUtils;
+import edu.dlf.refactoring.analyzers.DlfStringUtils;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import fj.F;
@@ -29,7 +29,7 @@ public abstract class AbstractMultipleStatementsChangeCalculator implements
 	private final F<String, String> spaceRemover = new F<String, String>(){
 		@Override
 		public String f(String text) {
-			return XStringUtils.RemoveWhiteSpace(text);
+			return DlfStringUtils.RemoveWhiteSpace(text);
 	}};
 	
 	private final F<ASTNode, ASTNodePair> createAddPair = FJUtils.prependElementFunc

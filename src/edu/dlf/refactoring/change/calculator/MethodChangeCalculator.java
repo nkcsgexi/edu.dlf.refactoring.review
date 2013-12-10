@@ -9,7 +9,7 @@ import com.google.common.base.Function;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
-import edu.dlf.refactoring.analyzers.XStringUtils;
+import edu.dlf.refactoring.analyzers.DlfStringUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
@@ -94,7 +94,7 @@ public class MethodChangeCalculator implements IASTNodeChangeCalculator {
 		return new SimilarityASTNodeMapStrategy(new IDistanceCalculator(){
 			@Override
 			public int calculateDistance(ASTNode before, ASTNode after) {
-				return XStringUtils.distance(getSingleVariableName.f(before), 
+				return DlfStringUtils.distance(getSingleVariableName.f(before), 
 					getSingleVariableName.f(after));
 		}});
 	}

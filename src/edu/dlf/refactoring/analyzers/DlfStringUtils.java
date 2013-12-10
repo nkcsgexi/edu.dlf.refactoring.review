@@ -7,9 +7,9 @@ import fj.F;
 import fj.F2;
 import fj.data.List;
 
-public class XStringUtils {
+public class DlfStringUtils {
 	
-	private XStringUtils() throws Exception
+	private DlfStringUtils() throws Exception
 	{
 		throw new Exception();
 	}
@@ -27,7 +27,7 @@ public class XStringUtils {
 		new F2<String, String, Double>() {
 			@Override
 			public Double f(String s1, String s2) {
-				double dis = XStringUtils.distance(s1, s2);
+				double dis = DlfStringUtils.distance(s1, s2);
 				double base = Math.max(s1.length(), s2.length());
 				return 1.0 - dis/base;
 	}}; 
