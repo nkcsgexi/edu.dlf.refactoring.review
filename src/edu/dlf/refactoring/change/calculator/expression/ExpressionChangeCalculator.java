@@ -4,7 +4,6 @@ import static fj.data.List.list;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
@@ -155,63 +154,35 @@ public class ExpressionChangeCalculator extends AbstractGeneralChangeCalculator{
 			return container;
 		}
 	
-		if(expBefore.getNodeType() == ASTNode.CLASS_INSTANCE_CREATION) 
-		{
+		switch(expBefore.getNodeType()) {
+		case ASTNode.CLASS_INSTANCE_CREATION:
 			return this.creatorCal.CalculateASTNodeChange(pair);
-		}
-		
-		if(expBefore.getNodeType() == ASTNode.ASSIGNMENT)
-		{
+		case ASTNode.ASSIGNMENT:
 			return this.asCalculator.CalculateASTNodeChange(pair);
-		}
-		
-		if(expBefore.getNodeType() == ASTNode.VARIABLE_DECLARATION_EXPRESSION) {
+		case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
 			return this.vdCalculator.CalculateASTNodeChange(pair);
-		}
-		
-		if(expBefore.getNodeType() == ASTNode.INSTANCEOF_EXPRESSION) {
+		case ASTNode.INSTANCEOF_EXPRESSION:
 			return this.instanceOfCal.CalculateASTNodeChange(pair);
-		}
-		
-		if(expBefore.getNodeType() == ASTNode.SIMPLE_NAME || 
-			expBefore.getNodeType() == ASTNode.QUALIFIED_NAME)
-		{
-			return this.nCalculator.CalculateASTNodeChange(pair);
-		}
-		
-		if(expBefore.getNodeType() == ASTNode.PREFIX_EXPRESSION || 
-				expBefore.getNodeType() == ASTNode.POSTFIX_EXPRESSION)
-		{
+		case ASTNode.PREFIX_EXPRESSION:
 			return this.ppfCalculator.CalculateASTNodeChange(pair);
-		}
-		
-		if(expBefore.getNodeType() == ASTNode.INFIX_EXPRESSION)
-		{
-			return this.infCalculator.CalculateASTNodeChange(pair);
-		}
-		
-		if(expBefore.getNodeType() == ASTNode.METHOD_INVOCATION)
-		{
+		case ASTNode.POSTFIX_EXPRESSION:
+			return this.ppfCalculator.CalculateASTNodeChange(pair);
+		case ASTNode.SIMPLE_NAME:
+			return this.nCalculator.CalculateASTNodeChange(pair);
+		case ASTNode.QUALIFIED_NAME:
+			return this.nCalculator.CalculateASTNodeChange(pair);
+		case ASTNode.INFIX_EXPRESSION:
+			return this.infCalculator.CalculateASTNodeChange(pair);	
+		case ASTNode.METHOD_INVOCATION:
 			return this.miCalculator.CalculateASTNodeChange(pair);
-		}
-		if(expBefore.getNodeType() == ASTNode.FIELD_ACCESS) 
-		{
+		case ASTNode.FIELD_ACCESS: 
 			return this.fieldAccessCal.CalculateASTNodeChange(pair);
-		}
-		if(expBefore.getNodeType() == ASTNode.THIS_EXPRESSION) 
-		{
+		case ASTNode.THIS_EXPRESSION: 	
 			return this.thisExpCal.CalculateASTNodeChange(pair);
-		}
-		
-		if(expBefore.getNodeType() == ASTNode.CAST_EXPRESSION) 
-		{
+		case ASTNode.CAST_EXPRESSION: 	
 			return this.castExpCal.CalculateASTNodeChange(pair);
+		default: 
+			return changeBuilder.createUnknownChange(pair);
 		}
-
-		return changeBuilder.createUnknownChange(pair);
 	}
-	
-	
-
-
 }

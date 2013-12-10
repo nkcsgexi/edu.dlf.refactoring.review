@@ -5,10 +5,10 @@ import org.eclipse.jdt.core.dom.InstanceofExpression;
 
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.InstanceOfExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeAnnotation;
-import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.design.ASTNodePair;

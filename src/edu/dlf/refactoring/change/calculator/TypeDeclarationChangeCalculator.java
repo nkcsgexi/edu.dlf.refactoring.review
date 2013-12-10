@@ -108,7 +108,7 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			SourceChangeUtils.getChangeCalculationFunc(typeCalculator).tuple();
 		final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> 
 			superTypeMapper = ASTAnalyzer.getASTNodeMapper(4, ASTAnalyzer.
-				getDefaultASTNodeSimilarityScore(10));
+				getDefaultASTNodeSimilarityScoreFunc(10));
 		return superTypeMapper.f(getSuperTypes.f(typeB), getSuperTypes.f(typeA)).map
 			(calculateChange).toCollection();
 	}
@@ -136,24 +136,30 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			andThen(FJUtils.getHeadFunc((ASTNode)null));
 	
 	private final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> 
-		methodsMapper = ASTAnalyzer.getASTNodeMapper(4, new F2<ASTNode, ASTNode, 
-			Integer>() {
+		methodNameSimilarityMapper = ASTAnalyzer.getASTNodeMapper(4, 
+			new F2<ASTNode, ASTNode, 
+		Integer>() {
 			@Override
 			public Integer f(ASTNode method1, ASTNode method2) {
 				ASTNode name1 = getMethodName.f(method1);
 				ASTNode name2 = getMethodName.f(method2);
-				return ASTAnalyzer.getDefaultASTNodeSimilarityScore(10).f(name1, 
+				return ASTAnalyzer.getDefaultASTNodeSimilarityScoreFunc(10).f(name1, 
 					name2);
 	}}); 
 	
+	private final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> 
+		methodNameCamelCaseMapper = ASTAnalyzer.getASTNodeMapper(5,
+			ASTAnalyzer.getCommonWordsASTNodeSimilarityScoreFunc(10, 
+				ASTNode2StringUtils.getMethodNameFunc));	
+				
 	private Collection<ISourceChange> calculateMethodChanges(TypeDeclaration typeB,
 		TypeDeclaration typeA) {
 		final List<ASTNode> methodsBefore = FJUtils.createListFromArray
 			((ASTNode[])typeB.getMethods());
 		final List<ASTNode> methodsAfter = FJUtils.createListFromArray
 			((ASTNode[])typeA.getMethods());
-		List<ISourceChange> changes = methodsMapper.f(methodsBefore, methodsAfter).
-			map(new F<P2<ASTNode, ASTNode>, ISourceChange>(){
+		List<ISourceChange> changes = methodNameCamelCaseMapper.f(methodsBefore, 
+			methodsAfter).map(new F<P2<ASTNode, ASTNode>, ISourceChange>(){
 			@Override
 			public ISourceChange f(P2<ASTNode, ASTNode> pair) {
 				logger.debug(ASTNode2StringUtils.getMethodNameFunc.f(pair._1()) 

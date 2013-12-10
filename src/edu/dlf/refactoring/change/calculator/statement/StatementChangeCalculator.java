@@ -9,7 +9,6 @@ import com.google.inject.Inject;
 import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.change.AbstractGeneralChangeCalculator;
 import edu.dlf.refactoring.change.ChangeBuilder;
-import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BlockAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BreakStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ContinueStatementAnnotation;
@@ -24,6 +23,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.TryStatementAnnotation
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationStatementAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.WhileStatementAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
+import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;

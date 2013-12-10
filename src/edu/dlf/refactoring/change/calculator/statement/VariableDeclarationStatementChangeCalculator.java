@@ -55,7 +55,7 @@ public class VariableDeclarationStatementChangeCalculator implements
 		List<ASTNode> fragsAfter = List.iterableList(twoLists[1]);
 		F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> mapper = 
 			ASTAnalyzer.getASTNodeMapper(Integer.MIN_VALUE, ASTAnalyzer.
-				getDefaultASTNodeSimilarityScore(10));
+				getDefaultASTNodeSimilarityScoreFunc(10));
 		container.addMultiSubChanges(mapper.f(fragsBefore, fragsAfter).
 			map(SourceChangeUtils.getChangeCalculator(decFragCal).tuple()).
 				toCollection());

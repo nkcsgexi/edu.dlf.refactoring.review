@@ -8,8 +8,6 @@ import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2Boolean;
 import edu.dlf.refactoring.analyzers.ASTNode2IntegerUtils;
 import edu.dlf.refactoring.analyzers.FJUtils;
-import edu.dlf.refactoring.design.ASTNodePair;
-import edu.dlf.refactoring.design.ISourceChange;
 import fj.Equal;
 import fj.F;
 import fj.F2;
@@ -62,7 +60,7 @@ public abstract class AbstractGeneralChangeCalculator implements
 		
 	protected final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> 
 		similarNodeMapper = ASTAnalyzer.getASTNodeMapper(6, ASTAnalyzer.
-			getDefaultASTNodeSimilarityScore(10));
+			getDefaultASTNodeSimilarityScoreFunc(10));
 	
 	private final Ord<P2<ASTNode, ASTNode>> orderByCombinedASTNodeLength = Ord.
 		intOrd.comap(new F<P2<ASTNode, ASTNode>, Integer>() {

@@ -5,8 +5,8 @@ import org.eclipse.jdt.core.dom.CastExpression;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.change.ChangeComponentInjector.CastAnnotation;
 import edu.dlf.refactoring.change.ChangeBuilder;
+import edu.dlf.refactoring.change.ChangeComponentInjector.CastAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;

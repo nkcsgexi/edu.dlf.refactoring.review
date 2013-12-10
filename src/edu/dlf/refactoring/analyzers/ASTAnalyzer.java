@@ -410,7 +410,7 @@ public class ASTAnalyzer {
 	}
 	
 	
-	public static F2<ASTNode, ASTNode, Integer> getDefaultASTNodeSimilarityScore
+	public static F2<ASTNode, ASTNode, Integer> getDefaultASTNodeSimilarityScoreFunc
 		(final int maxScore) {
 		return new F2<ASTNode, ASTNode, Integer>() {
 			@Override
@@ -420,6 +420,19 @@ public class ASTAnalyzer {
 				return (int)(perc * maxScore);
 		}};
 	}
+	
+	public static F2<ASTNode, ASTNode, Integer> getCommonWordsASTNodeSimilarityScoreFunc
+		(final int maxScore, final F<ASTNode, String> getStringFunc) {
+		return new F2<ASTNode, ASTNode, Integer>() {
+		@Override
+		public Integer f(ASTNode n0, ASTNode n1) {
+			String s0 = getStringFunc.f(n0);
+			String s1 = getStringFunc.f(n1);
+			return (int)(XStringUtils.getCommonWordsPercentage.f(s0, s1) * 
+				maxScore);
+	}};
+}
+	
 	
 	public static List<P2<ASTNode, ASTNode>> getSameNodePairs(List<ASTNode> list1, 
 		List<ASTNode> list2, final F2<ASTNode, ASTNode, Boolean> areSame) {

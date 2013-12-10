@@ -1,6 +1,5 @@
 package edu.dlf.refactoring.analyzers;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import com.google.common.collect.Lists;
@@ -272,4 +271,5 @@ public class FJUtils {
 	public static <T> java.util.List<T> toJavaList(final List<T> list) {
 		return Lists.newArrayList(list.toCollection());
 	}
+	
 }
