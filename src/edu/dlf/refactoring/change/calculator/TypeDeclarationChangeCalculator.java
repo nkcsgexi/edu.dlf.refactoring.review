@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import com.google.common.base.Function;
@@ -14,7 +15,6 @@ import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2ASTNodeUtils;
 import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
 import edu.dlf.refactoring.analyzers.FJUtils;
-import edu.dlf.refactoring.analyzers.XStringUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.FieldDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
@@ -22,6 +22,7 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeDeclarationAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
+import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
@@ -89,14 +90,6 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			return changeBuilder.createUnknownChange(pair);
 		}
 	}
-	
-	private final F<P2<ASTNode, ASTNode>, ISourceChange> calculateChange = 
-		new F<P2<ASTNode,ASTNode>, ISourceChange>() {
-		@Override
-		public ISourceChange f(P2<ASTNode, ASTNode> pair) {
-			return typeCalculator.CalculateASTNodeChange(ASTAnalyzer.
-				getP2PairConverter().f(pair));
-	}};
 		
 	private final F<ASTNode, List<ASTNode>> getSuperTypes = new F<ASTNode, List<ASTNode>>() {
 		@Override
@@ -111,10 +104,12 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 	
 	private Collection<ISourceChange> calculateSuperTypeChanges(TypeDeclaration 
 		typeB, TypeDeclaration typeA) {
-		F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> mapper = 
-			ASTAnalyzer.getASTNodeMapper(4, ASTAnalyzer.
-				getASTNodeDefaultSimilarityScoreCalculator());
-		return mapper.f(getSuperTypes.f(typeB), getSuperTypes.f(typeA)).map
+		final F<P2<ASTNode, ASTNode>, ISourceChange> calculateChange = 
+			SourceChangeUtils.getChangeCalculationFunc(typeCalculator).tuple();
+		final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> 
+			superTypeMapper = ASTAnalyzer.getASTNodeMapper(4, ASTAnalyzer.
+				getDefaultASTNodeSimilarityScore(10));
+		return superTypeMapper.f(getSuperTypes.f(typeB), getSuperTypes.f(typeA)).map
 			(calculateChange).toCollection();
 	}
 
@@ -136,15 +131,20 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 		}}).toCollection();
 	}
 	
+	private final F<ASTNode, ASTNode> getMethodName = ASTNode2ASTNodeUtils.
+		getStructuralPropertyFunc.flip().f(MethodDeclaration.NAME_PROPERTY).
+			andThen(FJUtils.getHeadFunc((ASTNode)null));
+	
 	private final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> 
-		mapper = ASTAnalyzer.getASTNodeMapper(4, new F2<ASTNode, ASTNode, Integer>() {
+		methodsMapper = ASTAnalyzer.getASTNodeMapper(4, new F2<ASTNode, ASTNode, 
+			Integer>() {
 			@Override
-			public Integer f(ASTNode before, ASTNode after) {
-				String name1 = ASTNode2StringUtils.getMethodNameFunc.f(before);
-				String name2 = ASTNode2StringUtils.getMethodNameFunc.f(after);
-				Double score = XStringUtils.getSamePartPercentage.f(name1, name2);
-				return (int)(score * 10);
-	}});
+			public Integer f(ASTNode method1, ASTNode method2) {
+				ASTNode name1 = getMethodName.f(method1);
+				ASTNode name2 = getMethodName.f(method2);
+				return ASTAnalyzer.getDefaultASTNodeSimilarityScore(10).f(name1, 
+					name2);
+	}}); 
 	
 	private Collection<ISourceChange> calculateMethodChanges(TypeDeclaration typeB,
 		TypeDeclaration typeA) {
@@ -152,7 +152,7 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			((ASTNode[])typeB.getMethods());
 		final List<ASTNode> methodsAfter = FJUtils.createListFromArray
 			((ASTNode[])typeA.getMethods());
-		List<ISourceChange> changes = mapper.f(methodsBefore, methodsAfter).
+		List<ISourceChange> changes = methodsMapper.f(methodsBefore, methodsAfter).
 			map(new F<P2<ASTNode, ASTNode>, ISourceChange>(){
 			@Override
 			public ISourceChange f(P2<ASTNode, ASTNode> pair) {

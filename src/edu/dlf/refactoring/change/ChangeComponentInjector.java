@@ -267,6 +267,8 @@ public class ChangeComponentInjector extends AbstractModule{
 			bindConstant().annotatedWith(FieldAccessAnnotation.class).to("FieldAccess");
 			bindConstant().annotatedWith(CastAnnotation.class).to("CastExpression");
 			bindConstant().annotatedWith(ThisAnnotation.class).to("ThisExpression");
+			bindConstant().annotatedWith(LiteralAnnotation.class).to("Literal");
+			
 			
 			bindConstant().annotatedWith(StatementAnnotation.class).to("Statement");
 			bindConstant().annotatedWith(SwitchStatementAnnotation.class).to("SwichStatement");
@@ -286,7 +288,7 @@ public class ChangeComponentInjector extends AbstractModule{
 			
 			bindConstant().annotatedWith(FieldDeclarationAnnotation.class).to("FieldDeclaration");
 			bindConstant().annotatedWith(TypeDeclarationAnnotation.class).to("TypeDeclaration");
-			bindConstant().annotatedWith(MethodDeclarationAnnotation.class).to("Method");
+			bindConstant().annotatedWith(MethodDeclarationAnnotation.class).to("MethodDeclaration");
 			bindConstant().annotatedWith(CompilationUnitAnnotation.class).to("CompilationUnit");
 			bindConstant().annotatedWith(SourcePackageAnnotation.class).to("SourcePackage");
 			bindConstant().annotatedWith(JavaProjectAnnotation.class).to("JavaProject");

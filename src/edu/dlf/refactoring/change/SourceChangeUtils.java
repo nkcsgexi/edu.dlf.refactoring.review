@@ -251,12 +251,12 @@ public class SourceChangeUtils {
 					}});	
 				return lines.cons(change.getSourceChangeLevel());
 			}
-			
 			if(change.getSourceChangeType() == SourceChangeType.NULL)
 				return List.nil();
 			
 			return List.single(change.getSourceChangeLevel() + ":" + change.
-					getSourceChangeType().toString());
+				getSourceChangeType().toString() + change.getNodeBefore() + 
+					change.getNodeAfter());
 		}catch(Exception e)
 		{
 			Logger logger = ServiceLocator.ResolveType(Logger.class);
