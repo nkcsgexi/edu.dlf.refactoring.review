@@ -261,7 +261,7 @@ public class FJUtils {
 		}};
 	}
 	
-	public static <T> F<List<T>, Boolean> isEmpty(final T t) {
+	public static <T> F<List<T>, Boolean> isListEmpty(final T t) {
 		return new F<List<T>, Boolean>() {
 			@Override
 			public Boolean f(List<T> list) {
