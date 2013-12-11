@@ -9,8 +9,7 @@ import fj.data.List;
 
 public class DlfStringUtils {
 	
-	private DlfStringUtils() throws Exception
-	{
+	private DlfStringUtils() throws Exception {
 		throw new Exception();
 	}
 
