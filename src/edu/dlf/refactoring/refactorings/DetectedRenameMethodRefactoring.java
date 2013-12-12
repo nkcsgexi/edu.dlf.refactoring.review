@@ -3,8 +3,11 @@ package edu.dlf.refactoring.refactorings;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 
+import difflib.Delta.TYPE;
 import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator;
+import fj.P;
+import fj.P2;
 import fj.data.List;
 
 
@@ -44,5 +47,10 @@ public class DetectedRenameMethodRefactoring extends AbstractRefactoring{
 	@Override
 	protected List<NodesDescriptor> getAfterNodesDescriptor() {
 		return List.single((NodesDescriptor)SimpleNamesAfter);
+	}
+
+	@Override
+	protected List<P2<NodesDescriptor, TYPE>> getNodeTypesForCountingDelta() {
+		return List.single(P.p((NodesDescriptor)SimpleNamesBefore, TYPE.CHANGE));
 	}
 }

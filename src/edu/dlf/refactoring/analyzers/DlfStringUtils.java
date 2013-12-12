@@ -57,6 +57,12 @@ public class DlfStringUtils {
 			return FJUtils.createListFromArray(words);
 	}}; 
 	
+	public static F<String, Integer> getLinesCount = new F<String, Integer>() {
+		@Override
+		public Integer f(String s) {
+			String[] lines = s.split("\r\n|\r|\n");
+			return  lines.length;
+	}};
 	
 	public static F<StringBuilder, F<String, StringBuilder>> stringCombiner = 
 		new F<StringBuilder, F<String, StringBuilder>>(){

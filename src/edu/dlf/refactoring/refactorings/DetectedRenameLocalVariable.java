@@ -2,7 +2,10 @@ package edu.dlf.refactoring.refactorings;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
+import difflib.Delta.TYPE;
 import edu.dlf.refactoring.design.RefactoringType;
+import fj.P;
+import fj.P2;
 import fj.data.List;
 
 public class DetectedRenameLocalVariable extends AbstractRefactoring{
@@ -35,6 +38,11 @@ public class DetectedRenameLocalVariable extends AbstractRefactoring{
 	@Override
 	protected List<NodesDescriptor> getAfterNodesDescriptor() {
 		return List.single((NodesDescriptor)SimpleNamesAfter);
+	}
+
+	@Override
+	protected List<P2<NodesDescriptor, TYPE>> getNodeTypesForCountingDelta() {
+		return List.list(P.p((NodesDescriptor) SimpleNamesBefore, TYPE.CHANGE));
 	}
 
 }

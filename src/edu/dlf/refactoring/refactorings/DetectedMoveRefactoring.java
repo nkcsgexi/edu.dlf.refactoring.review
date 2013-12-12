@@ -4,8 +4,11 @@ package edu.dlf.refactoring.refactorings;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 
+import difflib.Delta.TYPE;
 import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator;
+import fj.P;
+import fj.P2;
 import fj.data.List;
 
 public class DetectedMoveRefactoring extends AbstractRefactoring{
@@ -44,6 +47,13 @@ public class DetectedMoveRefactoring extends AbstractRefactoring{
 	@Override
 	protected List<NodesDescriptor> getAfterNodesDescriptor() {
 		return List.single((NodesDescriptor)AddedDeclarationDescripter);
+	}
+
+	@Override
+	protected List<P2<NodesDescriptor, TYPE>> getNodeTypesForCountingDelta() {
+		return List.list(
+			P.p((NodesDescriptor)RemovedDeclarationDescriptor, TYPE.DELETE), 
+			P.p((NodesDescriptor)AddedDeclarationDescripter, TYPE.INSERT));
 	}
 
 }
