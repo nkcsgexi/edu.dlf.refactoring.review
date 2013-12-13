@@ -6,6 +6,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
+import edu.dlf.refactoring.analyzers.ASTNodeMapperUtils;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.FieldDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
@@ -118,7 +119,7 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 			f(changeLevel)).map(getAfterNode);
 		List<ASTNode> removedDec = getLowestChanges.f(cuChanges, getRemoveCriteria.
 			f(changeLevel)).map(getBeforeNode);
-		return ASTAnalyzer.getSameNodePairs(removedDec, addedDec, 
+		return ASTNodeMapperUtils.getSameNodePairs(removedDec, addedDec, 
 			areNodesSame).map(new F<P2<ASTNode, ASTNode>, IDetectedRefactoring>() {
 				@Override
 				public IDetectedRefactoring f(P2<ASTNode, ASTNode> p) {

@@ -1,12 +1,15 @@
 package edu.dlf.refactoring.design;
 
 
+import java.util.Collection;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 
 import com.google.common.base.Function;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
+import edu.dlf.refactoring.analyzers.ASTNode2ASTNodeUtils;
 import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.utils.XList;
 import fj.F;
@@ -58,12 +61,10 @@ public class ASTNodePair implements IASTNodePair{
 	
 	public List<ASTNodePair> selectNodePairByChildrenDescriptor(final 
 		StructuralPropertyDescriptor descriptor) {
-		List<ASTNode> beforeList = FJUtils.createListFromCollection
-			((java.util.List<ASTNode>) this.nodeBefore.getStructuralProperty
-				(descriptor));
-		List<ASTNode> afterList = FJUtils.createListFromCollection
-			((java.util.List<ASTNode>) this.nodeAfter.getStructuralProperty
-				(descriptor));	
+		P2<List<ASTNode>, List<ASTNode>> lists = getSubASTNodeByDescriptor
+			(descriptor);
+		List<ASTNode> beforeList = lists._1();
+		List<ASTNode> afterList = lists._2();
 		List<ASTNode> shorterList = beforeList.length() > afterList.length() 
 			? afterList : beforeList;
 		Boolean beforeIsShorter = shorterList == beforeList;
@@ -76,9 +77,18 @@ public class ASTNodePair implements IASTNodePair{
 			return beforeList.zip(shorterList).map(createPairFunc.tuple());
 	}
 	
+	public P2<List<ASTNode>, List<ASTNode>> getSubASTNodeByDescriptor(final 
+		StructuralPropertyDescriptor descriptor) {
+		final F<ASTNode, List<ASTNode>> selector = ASTNode2ASTNodeUtils.
+				getStructuralPropertyFunc.flip().f(descriptor);
+		List<ASTNode> beforeList = selector.f(nodeBefore);
+		List<ASTNode> afterList = selector.f(nodeAfter);
+		return P.p(beforeList, afterList);
+	}
+	
+	
 	public ASTNodePair selectByPropertyDescriptor(final StructuralPropertyDescriptor 
-			descriptor)
-	{
+			descriptor) {
 		return select(new Function<ASTNode,ASTNode>(){
 			@Override
 			public ASTNode apply(ASTNode node){

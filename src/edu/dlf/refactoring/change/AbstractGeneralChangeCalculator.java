@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.dom.Statement;
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2Boolean;
 import edu.dlf.refactoring.analyzers.ASTNode2IntegerUtils;
+import edu.dlf.refactoring.analyzers.ASTNodeMapperUtils;
 import edu.dlf.refactoring.analyzers.FJUtils;
 import fj.Equal;
 import fj.F;
@@ -59,8 +60,8 @@ public abstract class AbstractGeneralChangeCalculator implements
 		getHeadFunc((ASTNode)null));
 		
 	protected final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> 
-		similarNodeMapper = ASTAnalyzer.getASTNodeMapper(6, ASTAnalyzer.
-			getDefaultASTNodeSimilarityScoreFunc(10));
+		similarNodeMapper = ASTNodeMapperUtils.getASTNodeMapper(6, ASTNodeMapperUtils.
+			getASTNodeSimilarityFunc(10));
 	
 	private final Ord<P2<ASTNode, ASTNode>> orderByCombinedASTNodeLength = Ord.
 		intOrd.comap(new F<P2<ASTNode, ASTNode>, Integer>() {

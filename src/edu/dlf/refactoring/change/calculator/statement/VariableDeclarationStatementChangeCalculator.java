@@ -6,7 +6,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.analyzers.ASTAnalyzer;
+import edu.dlf.refactoring.analyzers.ASTNodeMapperUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.VariableDeclarationFragmentAnnotation;
@@ -54,8 +54,8 @@ public class VariableDeclarationStatementChangeCalculator implements
 		List<ASTNode> fragsBefore = List.iterableList(twoLists[0]);
 		List<ASTNode> fragsAfter = List.iterableList(twoLists[1]);
 		F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> mapper = 
-			ASTAnalyzer.getASTNodeMapper(Integer.MIN_VALUE, ASTAnalyzer.
-				getDefaultASTNodeSimilarityScoreFunc(10));
+			ASTNodeMapperUtils.getASTNodeMapper(Integer.MIN_VALUE, ASTNodeMapperUtils.
+				getASTNodeSimilarityFunc(10));
 		container.addMultiSubChanges(mapper.f(fragsBefore, fragsAfter).
 			map(SourceChangeUtils.getChangeCalculator(decFragCal).tuple()).
 				toCollection());

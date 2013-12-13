@@ -81,8 +81,7 @@ abstract class AbstractRefactoring implements IDetectedRefactoring
 				@Override
 				public Boolean f(P2<TYPE, Integer> p0, P2<TYPE, Integer> p1) {
 					return p0._1() == p1._1();
-				}
-		}.curry());
+		}}.curry());
 		return deltaTypes.zip(lineSpans).group(grouper).map(
 			new F<List<P2<TYPE,Integer>>, P2<TYPE, Integer>>() {
 				@Override

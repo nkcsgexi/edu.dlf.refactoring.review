@@ -6,6 +6,7 @@ import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.change.ChangeBuilder;
+import edu.dlf.refactoring.change.ChangeComponentInjector.AnonymousClassDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ClassInstanceCreationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.ExpressionAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeAnnotation;
@@ -22,16 +23,19 @@ public class ClassInstanceCreateCalculator implements IASTNodeChangeCalculator{
 	private final IASTNodeChangeCalculator expressionCal;
 	private final ChangeBuilder changeBuilder;
 	private final IASTNodeChangeCalculator typeCal;
+	private final IASTNodeChangeCalculator anonymousClassCal;
 
 	@Inject
 	public ClassInstanceCreateCalculator(
 		Logger logger,
 		@TypeAnnotation IASTNodeChangeCalculator typeCal,
 		@ExpressionAnnotation IASTNodeChangeCalculator expressionCal,
+		@AnonymousClassDeclarationAnnotation IASTNodeChangeCalculator anonymousClassCal,
 		@ClassInstanceCreationAnnotation String changeLV) {
 		this.logger = logger;
 		this.expressionCal = expressionCal;
 		this.typeCal = typeCal;
+		this.anonymousClassCal = anonymousClassCal;
 		this.changeBuilder = new ChangeBuilder(changeLV);
 	}
 	
@@ -49,6 +53,9 @@ public class ClassInstanceCreateCalculator implements IASTNodeChangeCalculator{
 				andThen(SourceChangeUtils.getChangeCalculationFunc(expressionCal).
 					tuple()));
 		container.addMultiSubChanges(expressionChangess.toCollection());
+		container.addSubChange(anonymousClassCal.CalculateASTNodeChange(pair.
+			selectByPropertyDescriptor(ClassInstanceCreation.
+				ANONYMOUS_CLASS_DECLARATION_PROPERTY)));
 		return container;
 	}
 }
