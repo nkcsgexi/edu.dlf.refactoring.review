@@ -30,7 +30,8 @@ public class EnumDeclarationChangeCalculator implements IASTNodeChangeCalculator
 	private final F<ASTNodePair, ISourceChange> simpleNameCal;
 	
 	@Inject
-	public EnumDeclarationChangeCalculator(Logger logger, 
+	public EnumDeclarationChangeCalculator(
+		Logger logger, 
 		@EnumDeclarationAnnotation String enumDeclarationLV,
 		@EnumConstantDeclarationAnnotation IASTNodeChangeCalculator enumConstantCal,
 		@SimpleNameAnnotation IASTNodeChangeCalculator simpleNameCal) {

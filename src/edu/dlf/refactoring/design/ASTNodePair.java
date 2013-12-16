@@ -4,6 +4,7 @@ package edu.dlf.refactoring.design;
 import java.util.Collection;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ChildPropertyDescriptor;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 
 import com.google.common.base.Function;
@@ -43,6 +44,17 @@ public class ASTNodePair implements IASTNodePair{
 				return new ASTNodePair(n1, n2);
 	}};
 	
+	
+	public final static F2<ASTNodePair, StructuralPropertyDescriptor, 
+		List<ASTNodePair>> getSubASTNodePairsFunc = 
+			new F2<ASTNodePair, StructuralPropertyDescriptor, List<ASTNodePair>>() {
+			@Override
+			public List<ASTNodePair> f(ASTNodePair pair, 
+				StructuralPropertyDescriptor descriptor) {
+				return pair.selectNodePairByChildrenDescriptor(descriptor);
+	}};  
+		
+
 	@Override
 	public ASTNode getNodeBefore() {
 		return nodeBefore;

@@ -15,6 +15,8 @@ import com.google.inject.BindingAnnotation;
 import edu.dlf.refactoring.change.calculator.CompilationUnitChangeCalculator;
 import edu.dlf.refactoring.change.calculator.ProjectChangeCalculator;
 import edu.dlf.refactoring.change.calculator.SourcePackageChangeCalculator;
+import edu.dlf.refactoring.change.calculator.body.AnnotationTypeDeclarationChangeCalculator;
+import edu.dlf.refactoring.change.calculator.body.AnnotationTypeMemberDeclarationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.body.BodyDeclarationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.body.EnumConstantDeclarationChangeCalculator;
 import edu.dlf.refactoring.change.calculator.body.EnumDeclarationChangeCalculator;
@@ -63,8 +65,6 @@ public class ChangeComponentInjector extends AbstractModule{
 
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface FieldDeclarationAnnotation {}
-
-		
 
 		// Expressions
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
@@ -194,6 +194,12 @@ public class ChangeComponentInjector extends AbstractModule{
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface MethodDeclarationAnnotation {}
 		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface AnnotationTypeDeclarationAnnotation {}
+		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface AnnotationTypeMemberDeclarationAnnotation {}
+		
 		
 		// JavaModels:
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
@@ -234,6 +240,8 @@ public class ChangeComponentInjector extends AbstractModule{
 			bind(IASTNodeChangeCalculator.class).annotatedWith(EnumDeclarationAnnotation.class).to(EnumDeclarationChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(EnumConstantDeclarationAnnotation.class).to(EnumConstantDeclarationChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(AnonymousClassDeclarationAnnotation.class).to(AnonymousClassDeclarationChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(AnnotationTypeDeclarationAnnotation.class).to(AnnotationTypeDeclarationChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(AnnotationTypeMemberDeclarationAnnotation.class).to(AnnotationTypeMemberDeclarationChangeCalculator.class);
 			
 			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodDeclarationAnnotation.class).to(MethodDeclarationChangeCalculator.class);
 			bind(IASTNodeChangeCalculator.class).annotatedWith(TypeDeclarationAnnotation.class).to(TypeDeclarationChangeCalculator.class);
@@ -322,7 +330,9 @@ public class ChangeComponentInjector extends AbstractModule{
 			bindConstant().annotatedWith(EnumConstantDeclarationAnnotation.class).to("EnumConstantDeclaration");
 			bindConstant().annotatedWith(EnumDeclarationAnnotation.class).to("EnumDeclaration");
 			bindConstant().annotatedWith(InitializerAnnotation.class).to("Initializer");
-			//bindConstant().annotatedWith(.class).to("");
+			bindConstant().annotatedWith(AnnotationTypeDeclarationAnnotation.class).to("AnnotationTypeDeclaration");
+			bindConstant().annotatedWith(AnnotationTypeMemberDeclarationAnnotation.class).to("AnnotationTypeMemberDeclaration");
+			// bindConstant().annotatedWith(.class).to("");
 			
 			
 			bindConstant().annotatedWith(FieldDeclarationAnnotation.class).to("FieldDeclaration");

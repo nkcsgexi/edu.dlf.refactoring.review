@@ -6,6 +6,8 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.change.ChangeBuilder;
+import edu.dlf.refactoring.change.ChangeComponentInjector.AnnotationTypeDeclarationAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.AnnotationTypeMemberDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BodyDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.EnumConstantDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.EnumDeclarationAnnotation;
@@ -27,6 +29,8 @@ public class BodyDeclarationChangeCalculator implements IASTNodeChangeCalculator
 	private final IASTNodeChangeCalculator methodDeclarationCal;
 	private final IASTNodeChangeCalculator initializerCal;
 	private final IASTNodeChangeCalculator enumConstantCal;
+	private final IASTNodeChangeCalculator annotationTypeMemberDeclarationCal;
+	private final IASTNodeChangeCalculator annotationTypeDeclarationCal;
 
 	@Inject
 	public BodyDeclarationChangeCalculator(Logger logger,
@@ -36,7 +40,9 @@ public class BodyDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			@EnumConstantDeclarationAnnotation IASTNodeChangeCalculator enumConstantCal,
 			@MethodDeclarationAnnotation IASTNodeChangeCalculator methodDeclarationCal,
 			@FieldDeclarationAnnotation IASTNodeChangeCalculator fieldDeclarationCal,
-			@InitializerAnnotation IASTNodeChangeCalculator initializerCal) {
+			@InitializerAnnotation IASTNodeChangeCalculator initializerCal,
+			@AnnotationTypeDeclarationAnnotation IASTNodeChangeCalculator annotationTypeDeclarationCal,
+			@AnnotationTypeMemberDeclarationAnnotation IASTNodeChangeCalculator annotationTypeMemberDeclarationCal) {
 		this.logger = logger;
 		this.changeBuilder = new ChangeBuilder(bodyDeclarationLV);
 		this.typeDeclarationCal = typeDeclarationCal;
@@ -45,6 +51,8 @@ public class BodyDeclarationChangeCalculator implements IASTNodeChangeCalculator
 		this.methodDeclarationCal = methodDeclarationCal;
 		this.fieldDeclarationCal = fieldDeclarationCal;
 		this.initializerCal = initializerCal;
+		this.annotationTypeDeclarationCal = annotationTypeDeclarationCal;
+		this.annotationTypeMemberDeclarationCal = annotationTypeMemberDeclarationCal;
 	}
 	
 	
@@ -68,6 +76,10 @@ public class BodyDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			return this.fieldDeclarationCal.CalculateASTNodeChange(pair);
 		case ASTNode.INITIALIZER:
 			return this.initializerCal.CalculateASTNodeChange(pair);
+		case ASTNode.ANNOTATION_TYPE_DECLARATION:
+			return this.annotationTypeDeclarationCal.CalculateASTNodeChange(pair);
+		case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION:
+			return this.annotationTypeMemberDeclarationCal.CalculateASTNodeChange(pair);
 		default: 
 			return changeBuilder.createUnknownChange(pair);
 		}
