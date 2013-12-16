@@ -52,7 +52,6 @@ public class DiffTreeView extends ViewPart implements ICompListener{
 	@Override
 	public void callBack(final Object change) {
 		logger.info("Get change.");
-		computer.logChangedLines.e((ISourceChange)change);
 		Display.getDefault().asyncExec(new Runnable() {
 		    public void run() {
 		    	if(change instanceof ISourceChange){

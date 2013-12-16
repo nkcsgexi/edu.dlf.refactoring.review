@@ -22,6 +22,7 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameLocalVariable;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
+import edu.dlf.refactoring.study.StudyUtils;
 import edu.dlf.refactoring.utils.WorkQueue;
 import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.Effect;
@@ -67,7 +68,8 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 					logger.info("get event.");
 					final ISourceChange change = (ISourceChange) event;
 					logger.info(SourceChangeUtils.printChangeTree(change));
-					lineComputer.logChangedLines.e(change);
+					StudyUtils.logRevisionStart();
+					StudyUtils.logChangedLines.e(change);
 					detectorsList.bind(new F<IRefactoringDetector, 
 							List<IDetectedRefactoring>>(){
 						@Override
@@ -76,6 +78,7 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 						}}).foreach(new Effect<IDetectedRefactoring>(){
 							@Override
 							public void e(IDetectedRefactoring arg0) {
+								StudyUtils.logDetectedRefactoring.e(arg0);
 								bus.post(arg0);
 							}});
 					logger.info("Handled event.");

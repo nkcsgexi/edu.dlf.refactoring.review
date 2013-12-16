@@ -8,7 +8,7 @@ import fj.P;
 import fj.P2;
 import fj.data.List;
 
-public class DetectedRenameField extends AbstractRefactoring{
+public class DetectedRenameField extends AbstractDetectedRenameRefactoring{
 
 	public static NodeListDescriptor SimpleNamesBefore = new NodeListDescriptor(){};
 	public static NodeListDescriptor SimpleNamesAfter = new NodeListDescriptor(){};

@@ -11,7 +11,7 @@ import fj.P2;
 import fj.data.List;
 
 
-public class DetectedRenameMethodRefactoring extends AbstractRefactoring{
+public class DetectedRenameMethodRefactoring extends AbstractDetectedRenameRefactoring{
 
 	public static NodeListDescriptor SimpleNamesBefore = new NodeListDescriptor(){};
 	public static NodeListDescriptor SimpleNamesAfter = new NodeListDescriptor(){};

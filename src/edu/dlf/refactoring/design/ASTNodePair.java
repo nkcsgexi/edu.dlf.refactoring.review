@@ -1,17 +1,13 @@
 package edu.dlf.refactoring.design;
 
 
-import java.util.Collection;
-
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ChildPropertyDescriptor;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 
 import com.google.common.base.Function;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2ASTNodeUtils;
-import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.utils.XList;
 import fj.F;
 import fj.F2;

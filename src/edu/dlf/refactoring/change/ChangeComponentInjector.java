@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
+import com.google.inject.Singleton;
 
 import edu.dlf.refactoring.change.calculator.CompilationUnitChangeCalculator;
 import edu.dlf.refactoring.change.calculator.ProjectChangeCalculator;
@@ -234,55 +235,55 @@ public class ChangeComponentInjector extends AbstractModule{
 		
 		private void bindASTCalculators()
 		{
-			bind(IASTNodeChangeCalculator.class).annotatedWith(CompilationUnitAnnotation.class).to(CompilationUnitChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(BodyDeclarationAnnotation.class).to(BodyDeclarationChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(InitializerAnnotation.class).to(InitializerChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(EnumDeclarationAnnotation.class).to(EnumDeclarationChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(EnumConstantDeclarationAnnotation.class).to(EnumConstantDeclarationChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(AnonymousClassDeclarationAnnotation.class).to(AnonymousClassDeclarationChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(AnnotationTypeDeclarationAnnotation.class).to(AnnotationTypeDeclarationChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(AnnotationTypeMemberDeclarationAnnotation.class).to(AnnotationTypeMemberDeclarationChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(CompilationUnitAnnotation.class).to(CompilationUnitChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(BodyDeclarationAnnotation.class).to(BodyDeclarationChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(InitializerAnnotation.class).to(InitializerChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(EnumDeclarationAnnotation.class).to(EnumDeclarationChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(EnumConstantDeclarationAnnotation.class).to(EnumConstantDeclarationChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(AnonymousClassDeclarationAnnotation.class).to(AnonymousClassDeclarationChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(AnnotationTypeDeclarationAnnotation.class).to(AnnotationTypeDeclarationChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(AnnotationTypeMemberDeclarationAnnotation.class).to(AnnotationTypeMemberDeclarationChangeCalculator.class).in(Singleton.class);
 			
-			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodDeclarationAnnotation.class).to(MethodDeclarationChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(TypeDeclarationAnnotation.class).to(TypeDeclarationChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(FieldDeclarationAnnotation.class).to(FieldDeclarationCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodDeclarationAnnotation.class).to(MethodDeclarationChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(TypeDeclarationAnnotation.class).to(TypeDeclarationChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(FieldDeclarationAnnotation.class).to(FieldDeclarationCalculator.class).in(Singleton.class);
 			
-			bind(IASTNodeChangeCalculator.class).annotatedWith(IfStatementAnnotation.class).to(IfStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(StatementAnnotation.class).to(StatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(SwitchStatementAnnotation.class).to(SwitchStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(SwitchCaseStatementAnnotation.class).to(SwitchCaseChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(IfStatementAnnotation.class).to(IfStatementChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(StatementAnnotation.class).to(StatementChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(SwitchStatementAnnotation.class).to(SwitchStatementChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(SwitchCaseStatementAnnotation.class).to(SwitchCaseChangeCalculator.class).in(Singleton.class);
 			
-			bind(IASTNodeChangeCalculator.class).annotatedWith(BlockAnnotation.class).to(BlockChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(ForStatementAnnotation.class).to(ForStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(EnhancedForStatementAnnotation.class).to(EnhancedForStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(WhileStatementAnnotation.class).to(WhileStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(DoStatementAnnotation.class).to(DoStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(TryStatementAnnotation.class).to(TryStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(CatchClauseAnnotation.class).to(CatchClauseChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(BreakStatementAnnotation.class).to(KeyWordsStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(ContinueStatementAnnotation.class).to(KeyWordsStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(ReturnStatementAnnotation.class).to(ReturnAndThrowStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(ThrowStatementAnnotation.class).to(ReturnAndThrowStatementChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(VariableDeclarationStatementAnnotation.class).to(VariableDeclarationStatementChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(BlockAnnotation.class).to(BlockChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(ForStatementAnnotation.class).to(ForStatementChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(EnhancedForStatementAnnotation.class).to(EnhancedForStatementChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(WhileStatementAnnotation.class).to(WhileStatementChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(DoStatementAnnotation.class).to(DoStatementChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(TryStatementAnnotation.class).to(TryStatementChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(CatchClauseAnnotation.class).to(CatchClauseChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(BreakStatementAnnotation.class).to(KeyWordsStatementChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(ContinueStatementAnnotation.class).to(KeyWordsStatementChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(ReturnStatementAnnotation.class).to(ReturnAndThrowStatementChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(ThrowStatementAnnotation.class).to(ReturnAndThrowStatementChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(VariableDeclarationStatementAnnotation.class).to(VariableDeclarationStatementChangeCalculator.class).in(Singleton.class);
 			
 			
-			bind(IASTNodeChangeCalculator.class).annotatedWith(ExpressionAnnotation.class).to(ExpressionChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(InstanceOfExpressionAnnotation.class).to(InstanceOfChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(ClassInstanceCreationAnnotation.class).to(ClassInstanceCreateCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(AssignmentAnnotation.class).to(AssignmentChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(VariableDeclarationAnnotation.class).to(VariableDeclarationChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(SingleVariableDeclarationAnnotation.class).to(SingleVariableDeclarationChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(VariableDeclarationFragmentAnnotation.class).to(VariableDeclarationFragmentChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(TypeAnnotation.class).to(TypeChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(SimpleNameAnnotation.class).to(SimpleNameChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(NameAnnotation.class).to(NameChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(QualifiedNameAnnotation.class).to(QualifiedNameChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(PrePostFixExpressionAnnotation.class).to(PrePostFixExpressionChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(InfixExpressionAnnotation.class).to(InfixExpressionChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodInvocationAnnotation.class).to(MethodInvocationChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(FieldAccessAnnotation.class).to(FieldAccessChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(ThisAnnotation.class).to(ThisChangeCalculator.class);
-			bind(IASTNodeChangeCalculator.class).annotatedWith(CastAnnotation.class).to(CastChangeCalculator.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(ExpressionAnnotation.class).to(ExpressionChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(InstanceOfExpressionAnnotation.class).to(InstanceOfChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(ClassInstanceCreationAnnotation.class).to(ClassInstanceCreateCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(AssignmentAnnotation.class).to(AssignmentChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(VariableDeclarationAnnotation.class).to(VariableDeclarationChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(SingleVariableDeclarationAnnotation.class).to(SingleVariableDeclarationChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(VariableDeclarationFragmentAnnotation.class).to(VariableDeclarationFragmentChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(TypeAnnotation.class).to(TypeChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(SimpleNameAnnotation.class).to(SimpleNameChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(NameAnnotation.class).to(NameChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(QualifiedNameAnnotation.class).to(QualifiedNameChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(PrePostFixExpressionAnnotation.class).to(PrePostFixExpressionChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(InfixExpressionAnnotation.class).to(InfixExpressionChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(MethodInvocationAnnotation.class).to(MethodInvocationChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(FieldAccessAnnotation.class).to(FieldAccessChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(ThisAnnotation.class).to(ThisChangeCalculator.class).in(Singleton.class);
+			bind(IASTNodeChangeCalculator.class).annotatedWith(CastAnnotation.class).to(CastChangeCalculator.class).in(Singleton.class);
 			
 		}
 

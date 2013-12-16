@@ -8,7 +8,7 @@ import fj.P;
 import fj.P2;
 import fj.data.List;
 
-public class DetectedRenameLocalVariable extends AbstractRefactoring{
+public class DetectedRenameLocalVariable extends AbstractDetectedRenameRefactoring{
 
 	public static NodeListDescriptor SimpleNamesBefore = new NodeListDescriptor(){};
 	public static NodeListDescriptor SimpleNamesAfter = new NodeListDescriptor(){};
