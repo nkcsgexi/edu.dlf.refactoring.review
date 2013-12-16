@@ -42,7 +42,8 @@ public class BodyDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			@FieldDeclarationAnnotation IASTNodeChangeCalculator fieldDeclarationCal,
 			@InitializerAnnotation IASTNodeChangeCalculator initializerCal,
 			@AnnotationTypeDeclarationAnnotation IASTNodeChangeCalculator annotationTypeDeclarationCal,
-			@AnnotationTypeMemberDeclarationAnnotation IASTNodeChangeCalculator annotationTypeMemberDeclarationCal) {
+			@AnnotationTypeMemberDeclarationAnnotation IASTNodeChangeCalculator 
+				annotationTypeMemberDeclarationCal) {
 		this.logger = logger;
 		this.changeBuilder = new ChangeBuilder(bodyDeclarationLV);
 		this.typeDeclarationCal = typeDeclarationCal;
