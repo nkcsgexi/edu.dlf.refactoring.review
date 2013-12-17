@@ -14,8 +14,8 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.EnumDeclarationAnnotat
 import edu.dlf.refactoring.change.ChangeComponentInjector.FieldDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.InitializerAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
-import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeDeclarationAnnotation;
+import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 

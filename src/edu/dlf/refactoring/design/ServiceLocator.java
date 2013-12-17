@@ -11,7 +11,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.DailyRollingFileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -132,6 +131,7 @@ public class ServiceLocator extends AbstractModule {
 		Logger.getRootLogger().addAppender(createConsoleAppender());
 		Logger.getRootLogger().addAppender(createTotalLogAppender());
 		Logger.getRootLogger().addAppender(createStudyLogAppender());
+		Logger.getRootLogger().addAppender(createFatalLogAppender());
 		return Logger.getRootLogger();
 	}
 
@@ -168,6 +168,20 @@ public class ServiceLocator extends AbstractModule {
 		fa.activateOptions();
 		return fa;
 	}
+	
+	private RollingFileAppender createFatalLogAppender() throws Exception {
+		RollingFileAppender fa = new RollingFileAppender();
+		fa.setImmediateFlush(true);
+		fa.setMaximumFileSize(Integer.MAX_VALUE);
+		fa.setName("Fatal");
+		fa.setFile(FileUtils.desktop + "Fatal.log", true, true, 1);
+		fa.setLayout(new PatternLayout(PATTERN));
+		fa.setThreshold(Level.ERROR);
+		fa.setAppend(true);
+		fa.activateOptions();
+		return fa;
+	}
+	
 
 	@Provides
 	@Singleton

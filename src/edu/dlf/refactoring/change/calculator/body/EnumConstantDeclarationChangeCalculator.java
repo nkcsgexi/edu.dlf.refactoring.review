@@ -6,10 +6,10 @@ import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.change.ChangeBuilder;
+import edu.dlf.refactoring.change.ChangeComponentInjector.EnumConstantDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SimpleNameAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
-import edu.dlf.refactoring.change.ChangeComponentInjector.EnumConstantDeclarationAnnotation;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 

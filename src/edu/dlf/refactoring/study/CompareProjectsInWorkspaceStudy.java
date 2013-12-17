@@ -22,9 +22,9 @@ import fj.data.List;
 public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 
 	private final IFactorComponent changeComp;
-	private final Logger logger;
+	private final Logger logger;	
 	private final List<Integer> pairStarts = List.range(0, 10).map(multiply);
-	private int index = 1;
+	private int index = 0;
 	
 	@Inject
 	public CompareProjectsInWorkspaceStudy(

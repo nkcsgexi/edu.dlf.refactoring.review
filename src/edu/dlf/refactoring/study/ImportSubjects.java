@@ -21,7 +21,7 @@ public class ImportSubjects extends AbstractStudy {
 	private final Logger logger;
 	private final String root;
 	private final IFactorComponent changeComp;
-	private static final String projectName = "FBReaderJ";
+	private static final String projectName = "junit";
 	
 	@Inject
 	public ImportSubjects(

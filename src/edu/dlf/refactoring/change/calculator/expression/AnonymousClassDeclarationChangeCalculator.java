@@ -5,9 +5,9 @@ import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.AnonymousClassDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.BodyDeclarationAnnotation;
-import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.design.ASTNodePair;

@@ -5,9 +5,9 @@ import org.eclipse.jdt.core.IJavaElement;
 
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.analyzers.DlfStringUtils;
 import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
-import edu.dlf.refactoring.analyzers.DlfStringUtils;
 import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.SourcePackageAnnotation;
