@@ -48,16 +48,17 @@ public class ASTNodeMapperUtils {
 				return (int)(perc * maxScore);
 		}};
 	}
+	
 
 	public static F2<ASTNode, ASTNode, Integer> getCommonWordsASTNodeSimilarityScoreFunc
 		(final int maxScore, final F<ASTNode, String> getStringFunc) {
-		return new F2<ASTNode, ASTNode, Integer>() {
-		@Override
-		public Integer f(ASTNode n0, ASTNode n1) {
-			String s0 = getStringFunc.f(n0);
-			String s1 = getStringFunc.f(n1);
-			return (int)(DlfStringUtils.getCommonWordsPercentage.f(s0, s1) * 
-				maxScore);
+			return new F2<ASTNode, ASTNode, Integer>() {
+			@Override
+			public Integer f(ASTNode n0, ASTNode n1) {
+				String s0 = getStringFunc.f(n0);
+				String s1 = getStringFunc.f(n1);
+				return (int)(DlfStringUtils.getCommonWordsPercentage.f(s0, s1) * 
+					maxScore);
 	}};}
 
 	public static F2<ASTNode, ASTNode, Integer> getDefaultASTNodeSimilarityFunc() {
@@ -65,8 +66,7 @@ public class ASTNodeMapperUtils {
 			@Override
 			public Integer f(ASTNode n1, ASTNode n2) {
 				return 0 - DlfStringUtils.distance(n1.toString(), n2.toString());
-		}};
-	}
+	}};}
 
 	public static F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>>
 		getASTNodeMapper(final int minimumScore, final F2<ASTNode, ASTNode, 

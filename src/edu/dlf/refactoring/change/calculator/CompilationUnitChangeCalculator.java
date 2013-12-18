@@ -6,6 +6,8 @@ import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ImportDeclaration;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
 
 import com.google.inject.Inject;
 
@@ -20,6 +22,9 @@ import edu.dlf.refactoring.change.ChangeBuilder;
 import edu.dlf.refactoring.change.ChangeComponentInjector.AnnotationTypeDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.EnumDeclarationAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.ImportDeclarationAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.NameAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.PackageDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.TypeDeclarationAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.IJavaModelChangeCalculator;
@@ -29,6 +34,7 @@ import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.JavaElementPair;
 import fj.Equal;
 import fj.F;
+import fj.F2;
 import fj.P2;
 import fj.data.List;
 
@@ -37,15 +43,23 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	IASTNodeChangeCalculator{
 
 	private final Logger logger;
+	
 	private final IASTNodeChangeCalculator typeChangeCalculator;
-	private final ChangeBuilder changeBuilder;
 	private final IASTNodeChangeCalculator enumDeclarationCal;
-	private final IASTNodeChangeCalculator annotationTypeCal;	
+	private final IASTNodeChangeCalculator annotationTypeCal;
+	private final IASTNodeChangeCalculator nameChangeCal;
+	
+	private final ChangeBuilder compilationUnitCB;
+	private final ChangeBuilder packageDeclarationCB;
+	private final ChangeBuilder importDecalarationCB;	
 	
 	@Inject
 	public CompilationUnitChangeCalculator(
 			Logger logger,
-			@CompilationUnitAnnotation String changeLevel,
+			@CompilationUnitAnnotation String compilationUnitLV,
+			@PackageDeclarationAnnotation String packageDeclarationLV,
+			@ImportDeclarationAnnotation String importDeclarationLV,
+			@NameAnnotation IASTNodeChangeCalculator nameChangeCal,
 			@TypeDeclarationAnnotation IASTNodeChangeCalculator typeChangeCalculator,
 			@EnumDeclarationAnnotation IASTNodeChangeCalculator enumDeclarationCal,
 			@AnnotationTypeDeclarationAnnotation IASTNodeChangeCalculator annotationTypeCal) {
@@ -53,12 +67,18 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 		this.typeChangeCalculator = typeChangeCalculator;
 		this.enumDeclarationCal = enumDeclarationCal;
 		this.annotationTypeCal = annotationTypeCal;
-		this.changeBuilder = new ChangeBuilder(changeLevel);
+		this.nameChangeCal = nameChangeCal;
+		this.compilationUnitCB = new ChangeBuilder(compilationUnitLV);
+		this.packageDeclarationCB = new ChangeBuilder(packageDeclarationLV);
+		this.importDecalarationCB = new ChangeBuilder(importDeclarationLV);
 	}
 	
 	private final F<ASTNode, List<ASTNode>> getAbstractTypeFunc = 
 		ASTNode2ASTNodeUtils.getStructuralPropertyFunc.flip().
 			f(CompilationUnit.TYPES_PROPERTY);
+	
+	private final F<ASTNode, List<ASTNode>> getImportsFunc = ASTNode2ASTNodeUtils.
+		getStructuralPropertyFunc.flip().f(CompilationUnit.IMPORTS_PROPERTY);
 	
 	private final Equal<ASTNode> nodeTypeEq = Equal.intEqual.comap(ASTNode2IntegerUtils.
 		getKind);
@@ -75,7 +95,7 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	
 	@Override
 	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
-		ISourceChange simple = changeBuilder.buildSimpleChange(pair);
+		ISourceChange simple = compilationUnitCB.buildSimpleChange(pair);
 		if(simple != null)
 			return simple;
 		logger.debug("Calculate change: " + ASTNode2StringUtils.getCompilationUnitName.
@@ -84,13 +104,17 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 		ASTNode cuBefore = pair.getNodeBefore();
 		ASTNode cuAfter = pair.getNodeAfter();
 		ASTNodePair aPair = new ASTNodePair(cuBefore, cuAfter);
-		
-		ISourceChange change = changeBuilder.buildSimpleChange(aPair);
+		ISourceChange change = compilationUnitCB.buildSimpleChange(aPair);
 		if(change != null)
 			return change;
 		try{	
-			SubChangeContainer container = changeBuilder.createSubchangeContainer
+			SubChangeContainer container = compilationUnitCB.createSubchangeContainer
 				(pair);
+			container.addSubChange(calculatePackageDeclarationChange(pair.
+				selectByPropertyDescriptor(CompilationUnit.PACKAGE_PROPERTY)));
+			container.addMultiSubChanges(calculateImportDeclarationsChange
+				(getImportsFunc.f(pair.getNodeBefore()), getImportsFunc.
+					f(pair.getNodeAfter())));
 			List<ASTNode> typesBefore =  getAbstractTypeFunc.f(cuBefore);
 			List<ASTNode> typesAfter = getAbstractTypeFunc.f(cuAfter);
 			List<P2<List<ASTNode>, List<ASTNode>>> groups = FJUtils.
@@ -98,8 +122,8 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 				group(nodeTypeEq), Equal.intEqual.comap(FJUtils.getHeadFunc
 					((ASTNode)null).andThen(ASTNode2IntegerUtils.getKind)));		
 			F<P2<List<ASTNode>, List<ASTNode>>, List<ASTNodePair>> mapper = 
-				ASTNodeMapperUtils.getASTNodeMapper(5, ASTNodeMapperUtils.
-				getCommonWordsASTNodeSimilarityScoreFunc(10, new F<ASTNode, String>() {
+				ASTNodeMapperUtils.getASTNodeMapper(50, ASTNodeMapperUtils.
+				getCommonWordsASTNodeSimilarityScoreFunc(100, new F<ASTNode, String>() {
 				@Override
 				public String f(ASTNode node) {
 					return ((AbstractTypeDeclaration)node).getName().getIdentifier();
@@ -109,8 +133,49 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 			return container;
 		} catch(Exception e) {
 			logger.fatal(e);
-			return changeBuilder.createUnknownChange(aPair);
+			return compilationUnitCB.createUnknownChange(aPair);
 		}
+	}
+	
+	private Collection<ISourceChange> calculateImportDeclarationsChange(List<ASTNode> 
+		importsBefore, List<ASTNode> importsAfter) {
+		F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> mapper = 
+			ASTNodeMapperUtils.getASTNodeMapper(70, ASTNodeMapperUtils.
+			getASTNodeSimilarityFunc(100, new F<ASTNode, String>() {
+				@Override
+				public String f(ASTNode importDec) {
+					return importDec.getStructuralProperty(ImportDeclaration.
+						NAME_PROPERTY).toString();
+		}}));
+		List<ASTNodePair> importPairs = mapper.f(importsBefore, importsAfter).
+			map(ASTNodePair.createPairFunc.tuple());
+		return importPairs.map(calculateImportChange).toCollection();
+	}
+	
+	private F<ASTNodePair, ISourceChange> calculateImportChange = new F<ASTNodePair, 
+		ISourceChange>() {
+		@Override
+		public ISourceChange f(ASTNodePair pair) {
+			ISourceChange change = importDecalarationCB.buildSimpleChange(pair);
+			if(change != null)
+				return change;
+			SubChangeContainer container = importDecalarationCB.
+				createSubchangeContainer(pair);
+			container.addSubChange(nameChangeCal.CalculateASTNodeChange(pair.
+				selectByPropertyDescriptor(ImportDeclaration.NAME_PROPERTY)));
+			return container;
+	}};
+	
+	private ISourceChange calculatePackageDeclarationChange(ASTNodePair pair) {
+		ISourceChange change = packageDeclarationCB.buildSimpleChange(pair);
+		if(change != null)
+			return change;
+		SubChangeContainer container = packageDeclarationCB.
+			createSubchangeContainer(pair);
+		ASTNodePair namePair = pair.selectByPropertyDescriptor
+			(PackageDeclaration.NAME_PROPERTY);
+		container.addSubChange(nameChangeCal.CalculateASTNodeChange(namePair));
+		return container;
 	}
 
 	private void addSubChanges(SubChangeContainer container, Collection

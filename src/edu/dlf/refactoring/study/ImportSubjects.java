@@ -21,15 +21,18 @@ public class ImportSubjects extends AbstractStudy {
 	private final Logger logger;
 	private final String root;
 	private final IFactorComponent changeComp;
-	private static final String projectName = "junit";
+	
+	private static final int index = 0;
+	private static final String[] projectNames = {"junit"};
+	private static final String[] studyFolders = {"junit-study/"};
 	
 	@Inject
 	public ImportSubjects(
 		Logger logger,
 		@ChangeCompAnnotation IFactorComponent changeComp) {
-		super(projectName + " study");
+		super(projectNames[index] + " study");
 		this.logger = logger;
-		this.root = FileUtils.desktop;
+		this.root = FileUtils.desktop + studyFolders[index];
 		this.changeComp = changeComp;
 	}
 
@@ -52,7 +55,6 @@ public class ImportSubjects extends AbstractStudy {
 				public String f(String oldName) {
 					return oldName + count;
 				}})).foreach(EclipseUtils.directlyRenameProject.tuple());
-			
 			return importedProjects;
 	}}; 
 	
@@ -62,7 +64,7 @@ public class ImportSubjects extends AbstractStudy {
 			(new F<String, Boolean>(){
 			@Override
 			public Boolean f(String path) {
-				return path.contains(projectName);
+				return path.contains(projectNames[index]);
 		}}).sort(Ord.stringOrd);
 		folders.zipIndex().bind(importAllProjects.tuple());
 	}

@@ -47,7 +47,6 @@ public class ManualRefactoringExternalConnector implements
 	private final Equal<ASTNode> grouper = FJUtils.getReferenceEq((ASTNode)null).
 		comap(ASTNode2ASTNodeUtils.getRootFunc);
 	
-	
 	private final F<ASTNode, IManualRefactoringPosition> getNodePostion = 
 		new F<ASTNode, IManualRefactoringPosition>() {
 			@Override
@@ -72,8 +71,6 @@ public class ManualRefactoringExternalConnector implements
 							getLength();
 					}
 	};}};
-	
-	
 	
 	private final F<ICheckingResult, IManualRefactoringInfo> convert2RefactoringInfo = 
 		new F<ICheckingResult, IManualRefactoringInfo>() {

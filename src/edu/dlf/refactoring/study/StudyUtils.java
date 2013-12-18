@@ -37,8 +37,10 @@ public class StudyUtils {
 		<ISourceChange>() {
 		@Override
 		public void e(ISourceChange change) {
-			computer.startCompute((ISourceChange)change);
-			writeStudylog("All changes:");
+			computer.startCompute(change);
+			writeStudylog("All changes: " + change.getElementBefore().
+				getElementName() + "->" + change.getElementAfter().
+					getElementName());
 			writeStudylog("Changed lines: " + computer.getChangedLines());
 			writeStudylog("Added lines: " + computer.getAddedLines());
 			writeStudylog("Removed lines: " + computer.getRemovedLines());

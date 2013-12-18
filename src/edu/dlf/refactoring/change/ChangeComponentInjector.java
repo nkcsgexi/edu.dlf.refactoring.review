@@ -202,6 +202,14 @@ public class ChangeComponentInjector extends AbstractModule{
 		public @interface AnnotationTypeMemberDeclarationAnnotation {}
 		
 		
+		//
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface ImportDeclarationAnnotation {}
+		
+		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+		public @interface PackageDeclarationAnnotation {}
+		
+		
 		// JavaModels:
 		@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 		public @interface JavaProjectAnnotation {}
@@ -333,6 +341,8 @@ public class ChangeComponentInjector extends AbstractModule{
 			bindConstant().annotatedWith(InitializerAnnotation.class).to("Initializer");
 			bindConstant().annotatedWith(AnnotationTypeDeclarationAnnotation.class).to("AnnotationTypeDeclaration");
 			bindConstant().annotatedWith(AnnotationTypeMemberDeclarationAnnotation.class).to("AnnotationTypeMemberDeclaration");
+			bindConstant().annotatedWith(ImportDeclarationAnnotation.class).to("ImportDeclaration");
+			bindConstant().annotatedWith(PackageDeclarationAnnotation.class).to("PackageDeclaration");
 			// bindConstant().annotatedWith(.class).to("");
 			
 			

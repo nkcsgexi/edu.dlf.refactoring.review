@@ -65,7 +65,6 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 			@Override
 			public void internalRun() {
 				if(event instanceof ISourceChange) {
-					logger.info("get event.");
 					final ISourceChange change = (ISourceChange) event;
 					logger.info(SourceChangeUtils.printChangeTree(change));
 					StudyUtils.logRevisionStart();
@@ -77,12 +76,10 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 							return d.detectRefactoring(change);
 						}}).foreach(new Effect<IDetectedRefactoring>(){
 							@Override
-							public void e(IDetectedRefactoring arg0) {
-								StudyUtils.logDetectedRefactoring.e(arg0);
-								bus.post(arg0);
-							}});
-					logger.info("Handled event.");
-				}
+							public void e(IDetectedRefactoring refactoring) {
+								StudyUtils.logDetectedRefactoring.e(refactoring);
+								bus.post(refactoring);
+							}});}
 			}});
 		return null;
 	}
