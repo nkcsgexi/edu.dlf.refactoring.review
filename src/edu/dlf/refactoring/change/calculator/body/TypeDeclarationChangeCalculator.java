@@ -11,6 +11,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import com.google.common.base.Function;
 import com.google.inject.Inject;
 
+import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2ASTNodeUtils;
 import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
 import edu.dlf.refactoring.analyzers.ASTNodeMapperUtils;
@@ -113,6 +114,8 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			(calculateChange).toCollection();
 	}
 
+	
+	
 	private Collection<ISourceChange> calculateFieldChanges(TypeDeclaration typeB, 
 			TypeDeclaration typeA) {
 		List<ASTNode> fieldsBefore = FJUtils.createListFromArray
@@ -131,25 +134,9 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 		}}).toCollection();
 	}
 	
-	private final F<ASTNode, ASTNode> getMethodName = ASTNode2ASTNodeUtils.
-		getStructuralPropertyFunc.flip().f(MethodDeclaration.NAME_PROPERTY).
-			andThen(FJUtils.getHeadFunc((ASTNode)null));
-	
 	private final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> 
-		methodNameSimilarityMapper = ASTNodeMapperUtils.getASTNodeMapper(4, 
-			new F2<ASTNode, ASTNode, 
-		Integer>() {
-			@Override
-			public Integer f(ASTNode method1, ASTNode method2) {
-				ASTNode name1 = getMethodName.f(method1);
-				ASTNode name2 = getMethodName.f(method2);
-				return ASTNodeMapperUtils.getASTNodeSimilarityFunc(10).f(name1, 
-					name2);
-	}}); 
-	
-	private final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> 
-		methodNameCamelCaseMapper = ASTNodeMapperUtils.getASTNodeMapper(5,
-			ASTNodeMapperUtils.getCommonWordsASTNodeSimilarityScoreFunc(10, 
+		methodNameCamelCaseMapper = ASTNodeMapperUtils.getASTNodeMapper(70,
+			ASTNodeMapperUtils.getCommonWordsASTNodeSimilarityScoreFunc(100, 
 				ASTNode2StringUtils.getMethodNameFunc));	
 				
 	private Collection<ISourceChange> calculateMethodChanges(TypeDeclaration typeB,
