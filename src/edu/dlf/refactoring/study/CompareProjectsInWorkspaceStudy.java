@@ -24,6 +24,7 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 	private final IFactorComponent changeComp;
 	private final Logger logger;	
 	private final List<Integer> pairStarts = List.range(0, 10).map(multiply);
+	private static final int stepLength = 2;
 	private int index = 0;
 	
 	@Inject
@@ -38,7 +39,7 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 	private static final F<Integer, Integer> multiply = new F<Integer, Integer>() {
 		@Override
 		public Integer f(Integer num) {
-			return num * 5;
+			return num * stepLength;
 	}};		
 	
 	private final F<IJavaElement, String> getOriginalName = 

@@ -129,6 +129,7 @@ public class ServiceLocator extends AbstractModule {
 	private Logger GetLogger() throws Exception {
 		Logger.getRootLogger().getLoggerRepository().resetConfiguration();
 		Logger.getRootLogger().addAppender(createConsoleAppender());
+		Logger.getRootLogger().addAppender(createConsoleLogFileAppender());
 		Logger.getRootLogger().addAppender(createTotalLogAppender());
 		Logger.getRootLogger().addAppender(createStudyLogAppender());
 		Logger.getRootLogger().addAppender(createFatalLogAppender());
@@ -143,6 +144,19 @@ public class ServiceLocator extends AbstractModule {
 		return console;
 	}
 
+	private RollingFileAppender createConsoleLogFileAppender() throws IOException {
+		RollingFileAppender fa = new RollingFileAppender();
+		fa.setImmediateFlush(true);
+		fa.setMaximumFileSize(Integer.MAX_VALUE);
+		fa.setName("ConsoleFileLog");
+		fa.setFile(FileUtils.desktop + "console.log", true, true, 1);
+		fa.setLayout(new PatternLayout(PATTERN));
+		fa.setThreshold(Level.INFO);
+		fa.setAppend(true);
+		fa.activateOptions();
+		return fa;
+	}
+	
 	private RollingFileAppender createTotalLogAppender() throws IOException {
 		RollingFileAppender fa = new RollingFileAppender();
 		fa.setImmediateFlush(true);

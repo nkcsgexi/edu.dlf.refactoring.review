@@ -5,13 +5,11 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import com.google.common.base.Function;
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2ASTNodeUtils;
 import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
 import edu.dlf.refactoring.analyzers.ASTNodeMapperUtils;
@@ -43,13 +41,12 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 	
 	@Inject
 	public TypeDeclarationChangeCalculator(
-		Logger logger,
-		@SimpleNameAnnotation IASTNodeChangeCalculator snChangeCalculator,
-		@TypeDeclarationAnnotation String changeLevel,
-		@TypeAnnotation IASTNodeChangeCalculator typeCalculator,
-		@FieldDeclarationAnnotation IASTNodeChangeCalculator fCalculator,
-		@MethodDeclarationAnnotation IASTNodeChangeCalculator mChangeCalculator)
-	{
+			Logger logger,
+			@SimpleNameAnnotation IASTNodeChangeCalculator snChangeCalculator,
+			@TypeDeclarationAnnotation String changeLevel,
+			@TypeAnnotation IASTNodeChangeCalculator typeCalculator,
+			@FieldDeclarationAnnotation IASTNodeChangeCalculator fCalculator,
+			@MethodDeclarationAnnotation IASTNodeChangeCalculator mChangeCalculator) {
 		this.logger = logger;
 		this.snChangeCalculator = snChangeCalculator;
 		this.mChangeCalculator = mChangeCalculator;
@@ -67,7 +64,7 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 
 	@Override
 	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
-		logger.debug("Comparing types: " + getTypeFunc.f(pair.getNodeBefore()) + 
+		logger.info("Comparing types: " + getTypeFunc.f(pair.getNodeBefore()) + 
 			"=>" + getTypeFunc.f(pair.getNodeAfter()));
 		ISourceChange change = changeBuilder.buildSimpleChange(pair);
 		if(change != null)
@@ -78,7 +75,8 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 				(new Function<ASTNode, ASTNode>(){
 				@Override
 				public ASTNode apply(ASTNode n) {
-					return (ASTNode) n.getStructuralProperty(TypeDeclaration.NAME_PROPERTY);
+					return (ASTNode) n.getStructuralProperty(TypeDeclaration.
+						NAME_PROPERTY);
 				}})));	
 			TypeDeclaration typeB = (TypeDeclaration) pair.getNodeBefore();
 			TypeDeclaration typeA = (TypeDeclaration) pair.getNodeAfter();
@@ -114,8 +112,6 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			(calculateChange).toCollection();
 	}
 
-	
-	
 	private Collection<ISourceChange> calculateFieldChanges(TypeDeclaration typeB, 
 			TypeDeclaration typeA) {
 		List<ASTNode> fieldsBefore = FJUtils.createListFromArray
@@ -129,8 +125,8 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			ISourceChange>() {
 				@Override
 				public ISourceChange f(P2<ASTNode, ASTNode> p) {
-					return fCalculator.CalculateASTNodeChange(new ASTNodePair
-						(p._1(), p._2()));
+					return fCalculator.CalculateASTNodeChange(ASTNodePair.
+						createPairFunc.f(p._1(), p._2()));
 		}}).toCollection();
 	}
 	
@@ -149,11 +145,11 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			methodsAfter).map(new F<P2<ASTNode, ASTNode>, ISourceChange>(){
 			@Override
 			public ISourceChange f(P2<ASTNode, ASTNode> pair) {
-				logger.debug(ASTNode2StringUtils.getMethodNameFunc.f(pair._1()) 
+				logger.info(ASTNode2StringUtils.getMethodNameFunc.f(pair._1()) 
 					+ "->" + ASTNode2StringUtils.getMethodNameFunc.f(pair._2()));
 				return mChangeCalculator.CalculateASTNodeChange(new ASTNodePair
 					(pair._1(), pair._2()));
-			}});
+		}});
 		return changes.toCollection();
 	}
 

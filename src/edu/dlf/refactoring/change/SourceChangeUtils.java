@@ -253,10 +253,8 @@ public class SourceChangeUtils {
 			}
 			if(change.getSourceChangeType() == SourceChangeType.NULL)
 				return List.nil();
-			
 			return List.single(change.getSourceChangeLevel() + ":" + change.
-				getSourceChangeType().toString() + " " + change.getNodeBefore() 
-					+ " " + change.getNodeAfter());
+				getSourceChangeType().toString());
 		}catch(Exception e)
 		{
 			Logger logger = ServiceLocator.ResolveType(Logger.class);

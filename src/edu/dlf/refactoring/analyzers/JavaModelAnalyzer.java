@@ -21,11 +21,9 @@ import fj.Equal;
 import fj.F;
 import fj.F2;
 import fj.Ord;
-import fj.P;
 import fj.P2;
 import fj.data.List;
 import fj.data.List.Buffer;
-import fj.data.Option;
 
 
 public class JavaModelAnalyzer {
@@ -265,135 +263,17 @@ public class JavaModelAnalyzer {
 		}
 	}
 	
-	
-	public static List<P2<IJavaElement, IJavaElement>> getSimilarJavaElement(
-			List<IJavaElement> list1, List<IJavaElement> list2, final int minimumScore,
-			final F2<IJavaElement, IJavaElement, Integer> similarScoreCalculator)
-	{
-		List<P2<IJavaElement, IJavaElement>> allTuples = list1.bind(list2, 
-			new F2<IJavaElement, IJavaElement, P2<IJavaElement, IJavaElement>>(){
-			@Override
-			public P2<IJavaElement, IJavaElement> f(IJavaElement arg0,
-					IJavaElement arg1) {
-				return P.p(arg0, arg1);
-			}});
-		
-		List<Integer> allScores = allTuples.map(new F<P2<IJavaElement,
-				IJavaElement>, Integer>() {
-			@Override
-			public Integer f(P2<IJavaElement, IJavaElement> p) {
-				return similarScoreCalculator.f(p._1(), p._2());
-			}
-		});
-		
-		Ord<P2<P2<IJavaElement, IJavaElement>, Integer>> ord = Ord.intOrd.comap
-				(new F<P2<P2<IJavaElement, IJavaElement>, Integer>, Integer>(){
-			@Override
-			public Integer f(P2<P2<IJavaElement, IJavaElement>, Integer> p) {
-				return p._2();
-			}});
-		
-		List<P2<IJavaElement, IJavaElement>> matchedTuples = allTuples.zip(allScores).
-			filter(new F<P2<P2<IJavaElement,IJavaElement>, Integer>, Boolean>() {
-			@Override
-			public Boolean f(P2<P2<IJavaElement, IJavaElement>, Integer> arg0) {
-				return arg0._2() >= minimumScore;
-			}
-		}).sort(ord).reverse().map(new F<P2<P2<IJavaElement,IJavaElement>,Integer>, 
-				P2<IJavaElement, IJavaElement>>() {
-			@Override
-			public P2<IJavaElement, IJavaElement> f(
-					P2<P2<IJavaElement, IJavaElement>, Integer> arg0) {
-				return arg0._1();
-			}});
-		
-		return matchedTuples.nub(Equal.equal(new F<P2<IJavaElement, IJavaElement>, 
-				F<P2<IJavaElement, IJavaElement>, Boolean>>(){
-			@Override
-			public F<P2<IJavaElement, IJavaElement>, Boolean> f(final P2<IJavaElement, 
-				IJavaElement> p1) {
-				return new F<P2<IJavaElement,IJavaElement>, Boolean>() {
-					@Override
-					public Boolean f(P2<IJavaElement, IJavaElement> p2) {
-						return p1._1() == p2._1() || p1._2() == p2._2();
-					}
-				};}}));
-	}
-	
 	public static F2<List<IJavaElement>, List<IJavaElement>, 
-		List<P2<IJavaElement, IJavaElement>>> getSameNameElementPairsFunction()
-	{
-		return new F2<List<IJavaElement>, List<IJavaElement>, List<P2<IJavaElement,
-				IJavaElement>>>() {
+		List<P2<IJavaElement, IJavaElement>>> sameNameElementPairsFunc = 
+			new F2<List<IJavaElement>, List<IJavaElement>, List<P2<IJavaElement,
+			IJavaElement>>>() {
 			@Override
 			public List<P2<IJavaElement, IJavaElement>> f(List<IJavaElement> list1,
-					final List<IJavaElement> list2) {
-				return list1.zip(list1.map(new F<IJavaElement, Option<IJavaElement>>() {
-					@Override
-					public Option<IJavaElement> f(final IJavaElement arg0) {
-						return list2.find(new F<IJavaElement, Boolean>() {
-							@Override
-							public Boolean f(IJavaElement arg1) {
-								return arg0.getElementName().equals(arg1.
-									getElementName());
-							}
-						});
-					}
-				})).filter(new F<P2<IJavaElement,Option<IJavaElement>>, Boolean>() {
-					@Override
-					public Boolean f(P2<IJavaElement, Option<IJavaElement>> arg0) {
-						return arg0._2().isSome();
-					}
-				}).map(new F<P2<IJavaElement,Option<IJavaElement>>, P2<IJavaElement, 
-						IJavaElement>>() {
-					@Override
-					public P2<IJavaElement, IJavaElement> f(
-							P2<IJavaElement, Option<IJavaElement>> arg0) {
-						return P.p(arg0._1(), arg0._2().some());
-					}
-				});
-			}
-		};
-	}
-	
-	
-	public static F2<List<IJavaElement>, List<IJavaElement>, List<IJavaElement>>
-		getAddedElementsFunction()
-	{
-		return new F2<List<IJavaElement>, List<IJavaElement>, List<IJavaElement>>() {
-			@Override
-			public List<IJavaElement> f(final List<IJavaElement> list1, 
 					List<IJavaElement> list2) {
-				return list2.filter(new F<IJavaElement, Boolean>(){
-					@Override
-					public Boolean f(final IJavaElement element1) {
-						return list1.forall(new F<IJavaElement, Boolean>() {
-							@Override
-							public Boolean f(final IJavaElement element2) {
-								return !element1.getElementName().equals(element2.
-									getElementName());
-							}});
-					}});}};
-	}
+				return FJUtils.getSamePairs(list1, list2, Equal.stringEqual.
+					comap(JavaModelAnalyzer.getElementNameFunc));
+	}};
 	
-	public static F2<List<IJavaElement>, List<IJavaElement>, List<IJavaElement>>
-		getRemovedElementsFunction()
-	{
-		return new F2<List<IJavaElement>, List<IJavaElement>, List<IJavaElement>>() {
-			@Override
-			public List<IJavaElement> f(List<IJavaElement> list1, final 
-					List<IJavaElement> list2) {
-				return list1.filter(new F<IJavaElement, Boolean>() {
-					@Override
-					public Boolean f(final IJavaElement element0) {
-						return list2.forall(new F<IJavaElement, Boolean>() {
-							@Override
-							public Boolean f(final IJavaElement element1) {
-								return !element0.getElementName().equals(element1.
-									getElementName());
-							}});}
-				});}};
-	}
 
 	public static Boolean arePathsSame(IJavaElement unit1, IJavaElement unit2) {
 		String p1 = unit1.getPath().toOSString();

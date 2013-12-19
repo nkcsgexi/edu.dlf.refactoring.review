@@ -23,10 +23,9 @@ public class ProjectChangeCalculator implements IJavaModelChangeCalculator{
 
 	@Inject
 	public ProjectChangeCalculator(
-		@JavaProjectAnnotation String projectLevel,
-		@SourcePackageAnnotation IJavaModelChangeCalculator pChangeCalculator,
-		Logger logger)
-	{
+			@JavaProjectAnnotation String projectLevel,
+			@SourcePackageAnnotation IJavaModelChangeCalculator pChangeCalculator,
+			Logger logger) {
 		this.projectLevel = projectLevel;
 		this.pChangeCalculator = pChangeCalculator;
 		this.logger = logger;
@@ -34,19 +33,19 @@ public class ProjectChangeCalculator implements IJavaModelChangeCalculator{
 	
 	@Override
 	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
-		logger.debug("Compare projects: " + pair.getElementBefore().
+		logger.info("Compare projects: " + pair.getElementBefore().
 			getElementName() + " " + pair.getElementAfter().getElementName());
 		final SubChangeContainer container = new SubChangeContainer
 				(this.projectLevel, pair);
-		JavaModelAnalyzer.getSameNameElementPairsFunction().
-			f(JavaModelAnalyzer.getSourcePackages(pair.getElementBefore()), 
-				JavaModelAnalyzer.getSourcePackages(pair.getElementAfter())).
-					foreach(new Effect<P2<IJavaElement, IJavaElement>>() {
-						@Override
-						public void e(P2<IJavaElement, IJavaElement> p) {
-							container.addSubChange(pChangeCalculator.
-								CalculateJavaModelChange(new JavaElementPair
-									(p._1(), p._2())));}});
+		JavaModelAnalyzer.sameNameElementPairsFunc.f(JavaModelAnalyzer.
+			getSourcePackages(pair.getElementBefore()), JavaModelAnalyzer.
+				getSourcePackages(pair.getElementAfter())).foreach(
+				new Effect<P2<IJavaElement, IJavaElement>>() {
+				@Override
+				public void e(P2<IJavaElement, IJavaElement> p) {
+					container.addSubChange(pChangeCalculator.
+						CalculateJavaModelChange(new JavaElementPair(p._1(), 
+							p._2())));}});
 		return container;
 	}
 }

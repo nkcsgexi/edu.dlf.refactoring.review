@@ -98,7 +98,7 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 		ISourceChange simple = compilationUnitCB.buildSimpleChange(pair);
 		if(simple != null)
 			return simple;
-		logger.debug("Calculate change: " + ASTNode2StringUtils.getCompilationUnitName.
+		logger.info("Calculate change: " + ASTNode2StringUtils.getCompilationUnitName.
 			f(pair.getNodeBefore()) + "->" + ASTNode2StringUtils.getCompilationUnitName.
 				f(pair.getNodeAfter()));
 		ASTNode cuBefore = pair.getNodeBefore();
@@ -119,8 +119,8 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 			List<ASTNode> typesAfter = getAbstractTypeFunc.f(cuAfter);
 			List<P2<List<ASTNode>, List<ASTNode>>> groups = FJUtils.
 				pairEqualElements(typesBefore.group(nodeTypeEq), typesAfter.
-				group(nodeTypeEq), Equal.intEqual.comap(FJUtils.getHeadFunc
-					((ASTNode)null).andThen(ASTNode2IntegerUtils.getKind)));		
+					group(nodeTypeEq), Equal.intEqual.comap(FJUtils.getHeadFunc
+						((ASTNode)null).andThen(ASTNode2IntegerUtils.getKind)));		
 			F<P2<List<ASTNode>, List<ASTNode>>, List<ASTNodePair>> mapper = 
 				ASTNodeMapperUtils.getASTNodeMapper(50, ASTNodeMapperUtils.
 				getCommonWordsASTNodeSimilarityScoreFunc(100, new F<ASTNode, String>() {

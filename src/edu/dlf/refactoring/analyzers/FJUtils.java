@@ -2,10 +2,11 @@ package edu.dlf.refactoring.analyzers;
 
 import java.util.Collection;
 
-import org.eclipse.jdt.core.dom.ASTNode;
+import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
+import edu.dlf.refactoring.design.ServiceLocator;
 import fj.Equal;
 import fj.F;
 import fj.F2;
@@ -18,6 +19,8 @@ import fj.data.Option;
 
 public class FJUtils {
 
+	private static Logger logger = ServiceLocator.ResolveType(Logger.class);
+	
 	private FJUtils() throws Exception
 	{
 		throw new Exception();
@@ -302,13 +305,12 @@ public class FJUtils {
 		return new F2<List<T>, List<T>, List<P2<T, T>>>(){
 			@Override
 			public List<P2<T, T>> f(final List<T> list1, final List<T> list2) {
-				
 				List<P2<T, T>> multiplied = list1.bind(list2, 
 					new F2<T, T, P2<T, T>>(){
 					@Override
 					public P2<T, T> f(T n1, T n2) {
 						return P.p(n1, n2);
-					}});
+				}});
 	
 				List<P2<T, T>> sorted = multiplied.filter(
 					new F<P2<T,T>, Boolean>() {
@@ -316,8 +318,7 @@ public class FJUtils {
 					public Boolean f(P2<T, T> pair) {
 						return similarityScoreFunc.f(pair._1(), pair._2()) > 
 							minimumScore;
-					}
-				}).sort(Ord.intOrd.comap(new F<P2<T, T>, Integer>() {
+				}}).sort(Ord.intOrd.comap(new F<P2<T, T>, Integer>() {
 					@Override
 					public Integer f(P2<T, T> p) {
 						return similarityScoreFunc.f(p._1(), p._2());
@@ -331,8 +332,7 @@ public class FJUtils {
 						@Override
 						public Boolean f(P2<T, T> p) {
 							return p._1() == head._1() || p._2() == head._2();
-						}
-					}).isNone()){
+					}}).isNone()){
 						result = result.snoc(head);
 					}
 				}
@@ -349,9 +349,7 @@ public class FJUtils {
 								return p._1() == node;
 							}
 						}).isNone();
-					}
-				}).map(new F<T, P2<T, T>>() {
-					@Override
+					}}).map(new F<T, P2<T, T>>() {
 					public P2<T, T> f(T p) {
 						return P.p(p, null);
 					}

@@ -35,16 +35,24 @@ public class DlfStringUtils {
 		new F2<String, String, Double>() {
 			@Override
 			public Double f(String name1, String name2) {
-				final List<String> words1 = camelCaseSplitter.f(name1);
-				final List<String> words2 = camelCaseSplitter.f(name2);
-				int base = Math.min(words1.length(), words2.length());
+				final List<String> words1 = camelCaseSplitter.f(name1).map
+					(toLowerCase);
+				final List<String> words2 = camelCaseSplitter.f(name2).map
+					(toLowerCase);
+				double base = (words1.length() + words2.length())/2.0;
 				int common = words1.foldLeft(new F2<Integer, String, Integer>() {
 					@Override
 					public Integer f(Integer count, String word) {
 						return words2.find(Equal.stringEqual.eq(word)).isSome() 
 							? count + 1 : count;
 				}}, 0);
-				return (double)common/(double)base;
+				return common/base;
+	}};
+	
+	public static F<String, String> toLowerCase = new F<String, String>() {
+		@Override
+		public String f(String word) {
+			return StringUtils.lowerCase(word);
 	}};
 	
 	
@@ -52,8 +60,8 @@ public class DlfStringUtils {
 		new F<String, List<String>>() {
 		@Override
 		public List<String> f(String name) {
-			String[] words = name.replaceAll("[^A-Za-z]", "").split
-				(("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])"));
+			String[] words = name.replaceAll("[^A-Za-z0-9]", "").split
+				(("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z0-9])"));
 			return FJUtils.createListFromArray(words);
 	}}; 
 	

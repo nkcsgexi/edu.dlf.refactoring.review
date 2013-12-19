@@ -36,8 +36,8 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 	
 	@Override
 	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
-		logger.info("Compare packages: " + pair.getElementBefore().getElementName() 
-				+ ":" + pair.getElementAfter().getElementName());
+		logger.debug("Compare packages: " + pair.getElementBefore().
+			getElementName() + ":" + pair.getElementAfter().getElementName());
 		final SubChangeContainer change = new SubChangeContainer(this.paLevel, pair);
 		final Effect<P2<IJavaElement, IJavaElement>> calculateSubchange = 
 				new Effect<P2<IJavaElement, IJavaElement>>() {
@@ -54,7 +54,8 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 			getCommonWordsStringSimilarityFunc(100, JavaModelAnalyzer.
 				getElementNameFunc);
 		F2<List<IJavaElement>, List<IJavaElement>, List<P2<IJavaElement, 
-			IJavaElement>>> mapper = FJUtils.getSimilarityMapper(80, similarityFunc);
+			IJavaElement>>> mapper = FJUtils.getSimilarityMapper(80, 
+				similarityFunc);
 		mapper.f(unitsBefore, unitsAfter).foreach(calculateSubchange);
 		return change;
 	}

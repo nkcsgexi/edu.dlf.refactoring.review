@@ -26,10 +26,10 @@ import fj.data.List;
 public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 
 	private final Logger logger;
-	private final String cuLevel;
+	private final String compilationUnitLV;
 	private final ChangeCriteriaBuilder builder;
-	private final String mdLevel;
-	private final String fLevel;
+	private final String methodDeclarationLV;
+	private final String fieldDeclarationLV;
 	private final F<ISourceChange, ASTNode> getBeforeNode;
 	private final F<ISourceChange, ASTNode> getAfterNode;
 	private final F<String, IChangeSearchCriteria> getAddCriteria;
@@ -38,33 +38,33 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 		getLowestChanges;
 
 	@Inject
-	public MoveRefactoringDetector(Logger logger,
+	public MoveRefactoringDetector(
+			Logger logger,
 			ChangeCriteriaBuilder exbuilder,
 			@CompilationUnitAnnotation String cuLevel,
 			@MethodDeclarationAnnotation String mdLevel,
-			@FieldDeclarationAnnotation String fLevel)
-	{
+			@FieldDeclarationAnnotation String fLevel) {
 		this.logger = logger;
-		this.cuLevel = cuLevel;
-		this.mdLevel = mdLevel;
+		this.compilationUnitLV = cuLevel;
+		this.methodDeclarationLV = mdLevel;
 		this.builder = exbuilder;
-		this.fLevel = fLevel;
+		this.fieldDeclarationLV = fLevel;
 		
 		this.getAddCriteria = new F<String, IChangeSearchCriteria>(){
-				@Override
-				public IChangeSearchCriteria f(String level) {
-					builder.reset();
-					return builder.addSingleChangeCriteria
-						(level, SourceChangeType.ADD).getSearchCriteria();
-				}};
+			@Override
+			public IChangeSearchCriteria f(String level) {
+				builder.reset();
+				return builder.addSingleChangeCriteria
+					(level, SourceChangeType.ADD).getSearchCriteria();
+		}};
 
 		this.getRemoveCriteria = new F<String, IChangeSearchCriteria>(){
-				@Override
-				public IChangeSearchCriteria f(String level) {
-					builder.reset();
-					return builder.addSingleChangeCriteria
-						(level, SourceChangeType.REMOVE).getSearchCriteria();
-				}};
+			@Override
+			public IChangeSearchCriteria f(String level) {
+				builder.reset();
+				return builder.addSingleChangeCriteria
+					(level, SourceChangeType.REMOVE).getSearchCriteria();
+		}};
 				
 		this.getLowestChanges = new F2<List<ISourceChange>, 
 				IChangeSearchCriteria, List<ISourceChange>>(){
@@ -79,22 +79,19 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 							@Override
 							public ISourceChange f(IChangeSearchResult result) {
 								return result.getSourceChanges().reverse().head();
-							}});}});}};
+		}});}});}};
 		
 		this.getBeforeNode = new F<ISourceChange, ASTNode>() {
 				@Override
 				public ASTNode f(ISourceChange change) {
 					return change.getNodeBefore();
-				}
-			};
+		}};
 			
 		this.getAfterNode = new F<ISourceChange, ASTNode>() {
 				@Override
 				public ASTNode f(ISourceChange change) {
 					return change.getNodeAfter();
-				}
-			};
-		
+		}};
 	}
 	
 	@Override
@@ -103,10 +100,9 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 			(change).filter(new F<ISourceChange, Boolean>() {
 			@Override
 			public Boolean f(ISourceChange child) {
-				return child.getSourceChangeLevel() == cuLevel;
-			}
-		});
-		return detectMoveRefactoring(cuChanges, mdLevel, ASTAnalyzer.
+				return child.getSourceChangeLevel() == compilationUnitLV;
+		}});
+		return detectMoveRefactoring(cuChanges, methodDeclarationLV, ASTAnalyzer.
 			getMethodDeclarationNamesEqualFunc());
 	}
 
@@ -125,7 +121,7 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 				public IDetectedRefactoring f(P2<ASTNode, ASTNode> p) {
 					return new DetectedMoveRefactoring(RefactoringType.
 						Move, p._1(), p._2());
-				}});
+		}});
 		}catch(Exception e)
 		{
 			logger.fatal(e);
