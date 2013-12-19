@@ -2,11 +2,14 @@ package edu.dlf.refactoring.analyzers;
 
 import java.util.Collection;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 import com.google.common.collect.Lists;
 
 import fj.Equal;
 import fj.F;
 import fj.F2;
+import fj.Ord;
 import fj.P;
 import fj.P2;
 import fj.data.List;
@@ -271,5 +274,110 @@ public class FJUtils {
 	public static <T> java.util.List<T> toJavaList(final List<T> list) {
 		return Lists.newArrayList(list.toCollection());
 	}
+	
+	public static <T> F2<T, T, Integer> getStringSimilarityFunc(final 
+		int maxScore, final F<T, String> getFeatureString) {
+		return new F2<T, T, Integer>() {
+			@Override
+			public Integer f(T n0, T n1) {
+				Double perc = DlfStringUtils.getSamePartPercentage.f(
+					getFeatureString.f(n0), getFeatureString.f(n1));
+				return (int)(perc * maxScore);
+	}};}
+	
+	public static <T> F2<T, T, Integer> getCommonWordsStringSimilarityFunc
+		(final int maxScore, final F<T, String> getStringFunc) {
+		return new F2<T, T, Integer>() {
+		@Override
+		public Integer f(T n0, T n1) {
+			String s0 = getStringFunc.f(n0);
+			String s1 = getStringFunc.f(n1);
+			return (int)(DlfStringUtils.getCommonWordsPercentage.f(s0, s1) * 
+				maxScore);
+	}};}
+	
+	public static <T> F2<List<T>, List<T>, List<P2<T, T>>> 
+		getSimilarityMapper(final int minimumScore, final F2<T, T, Integer> 
+			similarityScoreFunc) {
+		return new F2<List<T>, List<T>, List<P2<T, T>>>(){
+			@Override
+			public List<P2<T, T>> f(final List<T> list1, final List<T> list2) {
+				
+				List<P2<T, T>> multiplied = list1.bind(list2, 
+					new F2<T, T, P2<T, T>>(){
+					@Override
+					public P2<T, T> f(T n1, T n2) {
+						return P.p(n1, n2);
+					}});
+	
+				List<P2<T, T>> sorted = multiplied.filter(
+					new F<P2<T,T>, Boolean>() {
+					@Override
+					public Boolean f(P2<T, T> pair) {
+						return similarityScoreFunc.f(pair._1(), pair._2()) > 
+							minimumScore;
+					}
+				}).sort(Ord.intOrd.comap(new F<P2<T, T>, Integer>() {
+					@Override
+					public Integer f(P2<T, T> p) {
+						return similarityScoreFunc.f(p._1(), p._2());
+					}
+				})).reverse();
+				
+				List<P2<T, T>> result = List.nil();
+				for(;sorted.isNotEmpty();sorted = sorted.tail()) {
+					final P2<T, T> head = sorted.head();
+					if(result.find(new F<P2<T,T>, Boolean>() {
+						@Override
+						public Boolean f(P2<T, T> p) {
+							return p._1() == head._1() || p._2() == head._2();
+						}
+					}).isNone()){
+						result = result.snoc(head);
+					}
+				}
+				
+				final List<P2<T, T>> currentResult = result;
+				List<P2<T, T>> remain1 = list1.filter
+					(new F<T, Boolean>() {
+					@Override
+					public Boolean f(final T node) {
+						return currentResult.find(new F<P2<T,T>, 
+								Boolean>() {
+							@Override
+							public Boolean f(P2<T, T> p) {
+								return p._1() == node;
+							}
+						}).isNone();
+					}
+				}).map(new F<T, P2<T, T>>() {
+					@Override
+					public P2<T, T> f(T p) {
+						return P.p(p, null);
+					}
+				});
+				
+				List<P2<T, T>> remain2 = list2.filter
+					(new F<T, Boolean>() {
+					@Override
+					public Boolean f(final T node) {
+						return currentResult.find(new F<P2<T,T>, 
+								Boolean>() {
+							@Override
+							public Boolean f(P2<T, T> p) {
+								return p._2() == node;
+							}
+						}).isNone();
+					}}).map(new F<T, P2<T, T>>() {
+					@Override
+					public P2<T, T> f(T p) {
+						return P.p(null, p);
+					}
+				});
+				result = result.append(remain1).append(remain2);
+				return result;
+			}};
+	}
+	
 	
 }
