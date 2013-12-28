@@ -7,7 +7,7 @@ import org.eclipse.core.resources.IProject;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.analyzers.FileUtils;
+import edu.dlf.refactoring.analyzers.DlfFileUtils;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.ServiceLocator.ChangeCompAnnotation;
 import edu.dlf.refactoring.utils.EclipseUtils;
@@ -32,7 +32,7 @@ public class ImportSubjects extends AbstractStudy {
 		@ChangeCompAnnotation IFactorComponent changeComp) {
 		super(projectNames[index] + " study");
 		this.logger = logger;
-		this.root = FileUtils.desktop + studyFolders[index];
+		this.root = DlfFileUtils.desktop + studyFolders[index];
 		this.changeComp = changeComp;
 	}
 
@@ -40,14 +40,14 @@ public class ImportSubjects extends AbstractStudy {
 		new F2<String, Integer, List<IProject>>() {
 		@Override
 		public List<IProject> f(final String path, final Integer count) {
-			List<File> files = FileUtils.searchFilesInDirectory.f(path, 
+			List<File> files = DlfFileUtils.searchFilesInDirectory.f(path, 
 				new F<File, Boolean>() {
 				@Override
 				public Boolean f(File file) {
 					return file.getName().equals(".project") && !file.
 						getAbsolutePath().contains("bin");
 			}});
-			List<IProject> importedProjects = files.map(FileUtils.getPath.
+			List<IProject> importedProjects = files.map(DlfFileUtils.getPath.
 				andThen(EclipseUtils.importGetProject));	
 			importedProjects.zip(importedProjects.map(EclipseUtils.getProjectName).
 				map(new F<String, String>(){
@@ -60,7 +60,7 @@ public class ImportSubjects extends AbstractStudy {
 	
 	@Override
 	protected void study() {
-		List<String> folders = FileUtils.getSubDirectories.f(root).filter
+		List<String> folders = DlfFileUtils.getSubDirectories.f(root).filter
 			(new F<String, Boolean>(){
 			@Override
 			public Boolean f(String path) {

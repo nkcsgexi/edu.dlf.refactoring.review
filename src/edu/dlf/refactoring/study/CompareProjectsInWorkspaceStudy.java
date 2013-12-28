@@ -24,7 +24,7 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 	private final IFactorComponent changeComp;
 	private final Logger logger;	
 	private final List<Integer> pairStarts = List.range(0, 10).map(multiply);
-	private static final int stepLength = 2;
+	private static final int stepLength = 10;
 	private int index = 0;
 	
 	@Inject

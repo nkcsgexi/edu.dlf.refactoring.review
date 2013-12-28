@@ -23,7 +23,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
-import edu.dlf.refactoring.analyzers.FileUtils;
+import edu.dlf.refactoring.analyzers.DlfFileUtils;
 import edu.dlf.refactoring.change.ChangeComponent;
 import edu.dlf.refactoring.change.ChangeComponentInjector;
 import edu.dlf.refactoring.change.HistorySavingComponent;
@@ -149,7 +149,7 @@ public class ServiceLocator extends AbstractModule {
 		fa.setImmediateFlush(true);
 		fa.setMaximumFileSize(Integer.MAX_VALUE);
 		fa.setName("ConsoleFileLog");
-		fa.setFile(FileUtils.desktop + "console.log", true, true, 1);
+		fa.setFile(DlfFileUtils.desktop + "console.log", true, true, 1);
 		fa.setLayout(new PatternLayout(PATTERN));
 		fa.setThreshold(Level.INFO);
 		fa.setAppend(true);
@@ -162,7 +162,7 @@ public class ServiceLocator extends AbstractModule {
 		fa.setImmediateFlush(true);
 		fa.setMaximumFileSize(Integer.MAX_VALUE);
 		fa.setName("FileLogger");
-		fa.setFile(FileUtils.desktop + "RefReviewer.log", true, true, 1);
+		fa.setFile(DlfFileUtils.desktop + "RefReviewer.log", true, true, 1);
 		fa.setLayout(new PatternLayout(PATTERN));
 		fa.setThreshold(Level.DEBUG);
 		fa.setAppend(true);
@@ -175,7 +175,7 @@ public class ServiceLocator extends AbstractModule {
 		fa.setImmediateFlush(true);
 		fa.setMaximumFileSize(Integer.MAX_VALUE);
 		fa.setName("Study");
-		fa.setFile(FileUtils.desktop + "StudyInfo.log", true, true, 1);
+		fa.setFile(DlfFileUtils.desktop + "StudyInfo.log", true, true, 1);
 		fa.setLayout(new PatternLayout(PATTERN));
 		fa.setThreshold(StudyLogLevel.LEVEL);
 		fa.setAppend(true);
@@ -188,7 +188,7 @@ public class ServiceLocator extends AbstractModule {
 		fa.setImmediateFlush(true);
 		fa.setMaximumFileSize(Integer.MAX_VALUE);
 		fa.setName("Fatal");
-		fa.setFile(FileUtils.desktop + "Fatal.log", true, true, 1);
+		fa.setFile(DlfFileUtils.desktop + "Fatal.log", true, true, 1);
 		fa.setLayout(new PatternLayout(PATTERN));
 		fa.setThreshold(Level.ERROR);
 		fa.setAppend(true);

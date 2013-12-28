@@ -145,8 +145,6 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 			methodsAfter).map(new F<P2<ASTNode, ASTNode>, ISourceChange>(){
 			@Override
 			public ISourceChange f(P2<ASTNode, ASTNode> pair) {
-				logger.info(ASTNode2StringUtils.getMethodNameFunc.f(pair._1()) 
-					+ "->" + ASTNode2StringUtils.getMethodNameFunc.f(pair._2()));
 				return mChangeCalculator.CalculateASTNodeChange(new ASTNodePair
 					(pair._1(), pair._2()));
 		}});

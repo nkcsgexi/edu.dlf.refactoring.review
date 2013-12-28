@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
-import edu.dlf.refactoring.analyzers.FileUtils;
+import edu.dlf.refactoring.analyzers.DlfFileUtils;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.change.calculator.CompilationUnitChangeCalculator;
@@ -35,9 +35,9 @@ public class CompilationUnitChangeTests extends TestSuite{
 	@Test
 	public void printChangeTest() throws Exception
 	{
-		ASTNode cuBefore = ASTAnalyzer.parseICompilationUnit(FileUtils.readAllFunc.f(testFileFolder + 
+		ASTNode cuBefore = ASTAnalyzer.parseICompilationUnit(DlfFileUtils.readAllFunc.f(testFileFolder + 
 				"TestCUBefore1.java"));
-		ASTNode cuAfter = ASTAnalyzer.parseICompilationUnit(FileUtils.readAllFunc.f(testFileFolder + 
+		ASTNode cuAfter = ASTAnalyzer.parseICompilationUnit(DlfFileUtils.readAllFunc.f(testFileFolder + 
 				"TestCUAfter1.java"));
 		ISourceChange change = calculator.CalculateASTNodeChange(new ASTNodePair(cuBefore, cuAfter));
 		change = SourceChangeUtils.pruneSourceChange(change);
@@ -47,9 +47,9 @@ public class CompilationUnitChangeTests extends TestSuite{
 	@Test
 	public void searchUtilTest() throws Exception
 	{
-		ASTNode cuBefore = ASTAnalyzer.parseICompilationUnit(FileUtils.readAllFunc.f(testFileFolder + 
+		ASTNode cuBefore = ASTAnalyzer.parseICompilationUnit(DlfFileUtils.readAllFunc.f(testFileFolder + 
 				"TestCUBefore1.java"));
-		ASTNode cuAfter = ASTAnalyzer.parseICompilationUnit(FileUtils.readAllFunc.f(testFileFolder + 
+		ASTNode cuAfter = ASTAnalyzer.parseICompilationUnit(DlfFileUtils.readAllFunc.f(testFileFolder + 
 				"TestCUAfter1.java"));
 		ISourceChange change = calculator.CalculateASTNodeChange(new ASTNodePair(cuBefore, cuAfter));
 		change = SourceChangeUtils.pruneSourceChange(change);

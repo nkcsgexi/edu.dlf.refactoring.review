@@ -377,9 +377,6 @@ public class FJUtils {
 			}};
 	}
 	
-	
-	
-	
 	public static <T, S> F2<List<T>, List<T>, List<P2<T, T>>> 
 		getSimilarityMapperByContents(final int threshold, final int maxScore, 
 			final Equal<S> contentEq, final F<T, List<S>> getContents){		
@@ -402,7 +399,7 @@ public class FJUtils {
 					public F<T, Boolean> f(T t) {
 						return new F<T, Boolean>() {
 							@Override
-							public Boolean f(T arg0) {
+							public Boolean f(T t1) {
 								return true;
 				}};}};
 				final F2<P2<T, T>, P2<T, T>, Boolean> firstHit = extendEqualToProduct

@@ -18,7 +18,7 @@ import fj.F;
 import fj.F2;
 import fj.data.List;
 
-public class FileUtils {
+public class DlfFileUtils {
 
 	private static final Random randomGenerator = new Random();
 	private static final Logger logger = ServiceLocator.ResolveType(Logger.class);
@@ -56,6 +56,9 @@ public class FileUtils {
 		public String f(File file) {
 			return file.getAbsolutePath();
 	}};
+	
+
+	
 	
 	public static final F<String, List<String>> getSubDirectories = 
 		new F<String, List<String>>() {

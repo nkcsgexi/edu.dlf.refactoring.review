@@ -2,9 +2,12 @@ package edu.dlf.refactoring.analyzers;
 
 
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -21,6 +24,12 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 
 import edu.dlf.refactoring.change.calculator.SimilarityASTNodeMapStrategy.IDistanceCalculator;
 import edu.dlf.refactoring.design.ASTNodePair;
@@ -39,9 +48,62 @@ import fj.data.Option;
 
 public class ASTAnalyzer {
 	
-	private final static HashMap<ASTNode, String> sourceCodeRepo =
-			new HashMap<ASTNode, String>();
-
+	private static RemoveLoadListener listener = new RemoveLoadListener();
+	
+	private static final LoadingCache<ASTNode, String> sourceCodeRepo = 
+		CacheBuilder.newBuilder().maximumSize(2000).expireAfterWrite(10, TimeUnit.
+			MINUTES).removalListener(listener).build(listener);
+	
+	private static class RemoveLoadListener extends CacheLoader<ASTNode, String> 
+		implements RemovalListener<ASTNode, String> {
+		
+		private List<P2<ASTNode, String>> fileNames = List.nil();
+		
+		private final String directory = DlfFileUtils.desktop + "CachedFiles/";
+		
+		private final F2<P2<ASTNode, String>, P2<ASTNode, String>, Boolean> finder = 
+			FJUtils.getReferenceEq((ASTNode)null).comap(FJUtils.
+				getFirstElementInPFunc((ASTNode)null, (String)null)).eq();;
+		
+		private RemoveLoadListener() {
+			  File theDir = new File(directory);
+			  if (!theDir.exists()) {
+				  theDir.mkdir(); 
+			  }
+			  try {
+				FileUtils.cleanDirectory(new File(directory));
+			} catch (IOException e) {
+				logger.fatal("Cannot clean directory.");
+			}
+		}
+		
+		@Override
+		public void onRemoval(RemovalNotification<ASTNode, String> arg) {
+			String time = ((Long)System.currentTimeMillis()).toString();
+			try {
+				File file = new File(directory + time);
+				file.createNewFile();
+				FileUtils.writeStringToFile(file, arg.getValue());
+				fileNames = fileNames.snoc(P.p(arg.getKey(), time));
+			} catch (Exception e) {
+				logger.fatal(e);
+			}
+		}
+	
+		@Override
+		public String load(ASTNode node) {
+			Option<P2<ASTNode, String>> op = fileNames.find(finder.f(P.p(node, 
+				"")));
+			if(op.isNone()) {	
+				logger.fatal("Cannot find original source.");
+				return "";
+			}
+        	return op.some()._2();
+		}	
+	}
+	
+	
+	
 	private final static Logger logger = ServiceLocator.ResolveType(Logger.class);
 	
 	private ASTAnalyzer() throws Exception {
@@ -80,8 +142,6 @@ public class ASTAnalyzer {
 		}
 	}
 	
-
-	
 	public static ASTNode parseICompilationUnit(String code) {
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
@@ -116,9 +176,8 @@ public class ASTAnalyzer {
 		return root;
 	}
 	
-	public static String getOriginalSourceFromRoot(ASTNode root)
-	{
-		return sourceCodeRepo.get(root);
+	public static String getOriginalSourceFromRoot(ASTNode root) {
+		return sourceCodeRepo.getUnchecked(root);
 	}
 	
 	

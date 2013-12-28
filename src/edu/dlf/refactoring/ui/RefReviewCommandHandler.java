@@ -7,7 +7,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.ASTNode;
 
-import edu.dlf.refactoring.analyzers.FileUtils;
+import edu.dlf.refactoring.analyzers.DlfFileUtils;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ComponentsRepository;
 import edu.dlf.refactoring.design.IFactorComponent;
@@ -44,7 +44,7 @@ public class RefReviewCommandHandler extends AbstractHandler {
 			try {
 			EclipseUtils.importProject.e(path);
 			String name = EclipseUtils.getProjectNameByPath.f(path);
-			EclipseUtils.renameProject.f(name, name + FileUtils.generateRandomInteger.
+			EclipseUtils.renameProject.f(name, name + DlfFileUtils.generateRandomInteger.
 				f(1000).toString());
 			}catch(Exception e) {
 				logger.fatal(e);
@@ -53,8 +53,8 @@ public class RefReviewCommandHandler extends AbstractHandler {
 	private final WorkQueueItem importWorkItem = new WorkQueueItem("ImportButton"){
 		@Override
 		public void internalRun() {
-			List<String> directories = FileUtils.getSubDirectories.
-				f(FileUtils.desktop).filter(new F<String, Boolean>() {
+			List<String> directories = DlfFileUtils.getSubDirectories.
+				f(DlfFileUtils.desktop).filter(new F<String, Boolean>() {
 					@Override
 					public Boolean f(String path) {
 						return path.contains("checking");
