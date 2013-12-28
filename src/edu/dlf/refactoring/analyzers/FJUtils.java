@@ -378,4 +378,57 @@ public class FJUtils {
 	}
 	
 	
+	
+	
+	public static <T, S> F2<List<T>, List<T>, List<P2<T, T>>> 
+		getSimilarityMapperByContents(final int threshold, final int maxScore, 
+			final Equal<S> contentEq, final F<T, List<S>> getContents){		
+		return new F2<List<T>, List<T>, List<P2<T,T>>>() {
+			@Override
+			public List<P2<T, T>> f(List<T> list1, List<T> list2) {
+				final F2<T, T, Integer> getCommonContentesScore = new F2<T, T, 
+						Integer>(){
+					@Override
+					public Integer f(T t0, T t1) {
+						List<S> contents1 = getContents.f(t0);
+						List<S> contents2 = getContents.f(t1);
+						double commonCount = contents1.length() - contents1.minus
+							(contentEq, contents2).length();
+						double base = (contents1.length() + contents2.length())/2;
+						return (int) (commonCount/base * maxScore);
+				}};
+				final F<T, F<T, Boolean>> alwaysEq = new F<T, F<T,Boolean>>(){
+					@Override
+					public F<T, Boolean> f(T t) {
+						return new F<T, Boolean>() {
+							@Override
+							public Boolean f(T arg0) {
+								return true;
+				}};}};
+				final F2<P2<T, T>, P2<T, T>, Boolean> firstHit = extendEqualToProduct
+					(getReferenceEq((T)null), Equal.equal(alwaysEq)).eq();
+				final F2<P2<T, T>, P2<T, T>, Boolean> secondHit = extendEqualToProduct
+					(Equal.equal(alwaysEq), getReferenceEq((T)null)).eq();
+				List<P2<T, T>> sortedPairs = list1.bind(list2, pairFunction
+					((T)null)).sort(Ord.intOrd.comap(getCommonContentesScore.
+						tuple()));
+				List<P2<T, T>> results = List.nil();
+				for(; sortedPairs.isNotEmpty(); sortedPairs = sortedPairs.
+					drop(1)) {
+					P2<T, T> head = sortedPairs.head();
+					boolean isFirstInResults = results.exists(firstHit.f(head));
+					boolean isSecondInResults = results.exists(secondHit.f(head));
+					if(!isFirstInResults && !isSecondInResults)
+						results = results.snoc(head);
+					else if (!isFirstInResults) {
+						results = results.snoc(P.p(head._1(), (T)null));
+					}else if (!isSecondInResults) {
+						results = results.snoc(P.p((T)null, head._2()));
+					}
+				}
+				return results;
+			}
+		};
+	}
+	
 }
