@@ -56,10 +56,7 @@ public class DlfFileUtils {
 		public String f(File file) {
 			return file.getAbsolutePath();
 	}};
-	
 
-	
-	
 	public static final F<String, List<String>> getSubDirectories = 
 		new F<String, List<String>>() {
 		@Override

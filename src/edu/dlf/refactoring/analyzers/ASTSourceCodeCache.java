@@ -28,8 +28,8 @@ import fj.data.List;
 import fj.data.Option;
 
 public class ASTSourceCodeCache extends CacheLoader<ASTNode, String> 
-	implements RemovalListener<ASTNode, String>, LoadingCache<ASTNode, String>{
-	
+		implements RemovalListener<ASTNode, String>, LoadingCache<ASTNode, 
+			String>{
 	private final int maxSize = 2000;
 	private final int timeInMinutes = 10;
 	private final LoadingCache<ASTNode, String> internalCache = 
@@ -41,11 +41,12 @@ public class ASTSourceCodeCache extends CacheLoader<ASTNode, String>
 		FJUtils.getReferenceEq((ASTNode)null).comap(FJUtils.
 			getFirstElementInPFunc((ASTNode)null, (String)null)).eq();;
 	
-	private List<P2<ASTNode, String>> fileNames = List.nil();
+	private List<P2<ASTNode, String>> fileNames;
 
 	@Inject
 	public ASTSourceCodeCache(Logger logger) {
 		this.logger = logger;
+		this.fileNames = List.nil();
 		File theDir = new File(directory);
 		if (!theDir.exists()) {
 			theDir.mkdir(); 

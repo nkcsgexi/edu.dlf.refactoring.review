@@ -1,6 +1,7 @@
 package edu.dlf.refactoring.ui;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
@@ -19,7 +20,6 @@ import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator.ChangeCompAnnotation;
 import edu.dlf.refactoring.design.ServiceLocator.RefactoringCheckerCompAnnotation;
-import edu.dlf.refactoring.utils.WorkQueue;
 import fj.Equal;
 import fj.F;
 import fj.data.List;
@@ -30,12 +30,12 @@ public class ManualRefactoringExternalConnector implements
 	private final Logger logger;
 	private final IFactorComponent changeComp;
 	private final IFactorComponent checkComp;
-	private final WorkQueue queue;
+	private final ExecutorService queue;
 
 	@Inject
 	public ManualRefactoringExternalConnector(
 		Logger logger,
-		WorkQueue queue,
+		ExecutorService queue,
 		@ChangeCompAnnotation IFactorComponent changeComp,
 		@RefactoringCheckerCompAnnotation IFactorComponent checkComp) {
 			this.logger = logger;
@@ -130,11 +130,12 @@ public class ManualRefactoringExternalConnector implements
 					public void run() {
 						ICheckingResult result = (ICheckingResult)output;
 						if(result.IsBehaviorPreserving()) buffer.snoc(result);
-						if(queue.getQueueLength() == 0) {
-							List<ICheckingResult> list = buffer.toList();
-							callBack.callBack(list.map(convert2RefactoringInfo).
-								toCollection());
-				}}}.start();
+						queue.shutdown();
+						while(!queue.isTerminated());
+						List<ICheckingResult> list = buffer.toList();
+						callBack.callBack(list.map(convert2RefactoringInfo).
+							toCollection());
+				}}.start();
 		}});
 		this.changeComp.listen(pair);
 	}

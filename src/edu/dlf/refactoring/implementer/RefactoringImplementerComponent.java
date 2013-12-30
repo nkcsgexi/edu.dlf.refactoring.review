@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.implementer;
 
+import java.util.concurrent.ExecutorService;
+
 import org.apache.log4j.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -18,7 +20,6 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameLocalVariable;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
-import edu.dlf.refactoring.utils.WorkQueue;
 import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.P;
 import fj.data.HashMap;
@@ -34,12 +35,12 @@ public class RefactoringImplementerComponent implements IFactorComponent,
 
 	private final EventBus bus;
 
-	private final WorkQueue queue;
+	private final ExecutorService queue;
 
 	@Inject
 	public RefactoringImplementerComponent(
 			Logger logger,
-			WorkQueue queue,
+			ExecutorService queue,
 			@ExtractMethod final IRefactoringImplementer emImplementer,
 			@RenameMethod final IRefactoringImplementer rmImplementer,
 			@RenameType final IRefactoringImplementer rtImplementer,

@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.ui;
 
+import java.util.concurrent.ExecutorService;
+
 import org.apache.log4j.Logger;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -18,7 +20,6 @@ import edu.dlf.refactoring.study.CompareProjectsInWorkspaceStudy;
 import edu.dlf.refactoring.study.ImportSubjects;
 import edu.dlf.refactoring.ui.ICodeReviewInput.InputType;
 import edu.dlf.refactoring.utils.EclipseUtils;
-import edu.dlf.refactoring.utils.WorkQueue;
 import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.Effect;
 import fj.F;
@@ -28,7 +29,7 @@ import fj.data.List;
 public class RefReviewCommandHandler extends AbstractHandler {
 
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
-	private final WorkQueue queue = ServiceLocator.ResolveType(WorkQueue.class);
+	private final ExecutorService queue = ServiceLocator.ResolveType(ExecutorService.class);
 	private final IFactorComponent changeComp = ((ComponentsRepository)
 		ServiceLocator.ResolveType(ComponentsRepository.class)).
 			getChangeComponent();

@@ -1,6 +1,7 @@
 package edu.dlf.refactoring.hiding;
 
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -17,13 +18,12 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameLocalVariable;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
-import edu.dlf.refactoring.utils.WorkQueue;
 import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.F;
 
 public class RefactoringHidingComponent implements IFactorComponent{
 
-	private final WorkQueue queue;
+	private final ExecutorService queue;
 	private final Logger logger;
 	private final HashMap<RefactoringType, AbstractRefactoringHider> allHiders;
 	
@@ -41,7 +41,7 @@ public class RefactoringHidingComponent implements IFactorComponent{
 	
 	
 	@Inject
-	public RefactoringHidingComponent(Logger logger, WorkQueue queue,
+	public RefactoringHidingComponent(Logger logger, ExecutorService queue,
 			@ExtractMethod AbstractRefactoringHider emHider,
 			@RenameMethod AbstractRefactoringHider rmHider,
 			@RenameType AbstractRefactoringHider rtHider,

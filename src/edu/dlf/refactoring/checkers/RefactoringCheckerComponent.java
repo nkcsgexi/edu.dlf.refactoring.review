@@ -1,6 +1,8 @@
 package edu.dlf.refactoring.checkers;
 
 
+import java.util.concurrent.ExecutorService;
+
 import org.apache.log4j.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -21,7 +23,6 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import edu.dlf.refactoring.implementer.ImplementedRefactoring;
-import edu.dlf.refactoring.utils.WorkQueue;
 import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.P2;
 import fj.data.HashMap;
@@ -32,12 +33,12 @@ public class RefactoringCheckerComponent implements
 
 	private final HashMap<RefactoringType, IRefactoringChecker> map;
 	private final EventBus bus;
-	private final WorkQueue queue;
+	private final ExecutorService queue;
 	private final Logger logger;
 	
 	@Inject
 	public RefactoringCheckerComponent(
-			WorkQueue queue, Logger logger,
+			ExecutorService queue, Logger logger,
 			@ExtractMethod IRefactoringChecker emChecker,
 			@RenameMethod IRefactoringChecker rmChecker,
 			@RenameType IRefactoringChecker rtChecker,

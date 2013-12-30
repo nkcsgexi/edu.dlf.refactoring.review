@@ -14,7 +14,6 @@ import edu.dlf.refactoring.change.calculator.statement.BlockChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.IfStatementChangeCalculator;
 import edu.dlf.refactoring.change.calculator.statement.StatementChangeCalculator;
 import edu.dlf.refactoring.design.ServiceLocator;
-import edu.dlf.refactoring.utils.WorkQueue;
 
 public class DependencyInjectionTests extends TestSuite{
 
@@ -28,7 +27,6 @@ public class DependencyInjectionTests extends TestSuite{
 		Assert.isNotNull(ServiceLocator.ResolveType(IfStatementChangeCalculator.class));
 		Assert.isNotNull(ServiceLocator.ResolveType(StatementChangeCalculator.class));
 		Assert.isNotNull(ServiceLocator.ResolveType(ExpressionChangeCalculator.class));
-		Assert.isNotNull(ServiceLocator.ResolveType(WorkQueue.class));
 	}
 	
 	@Test

@@ -9,6 +9,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
@@ -17,6 +19,7 @@ import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
 
 import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Guice;
@@ -39,7 +42,6 @@ import edu.dlf.refactoring.implementer.RefactoringImplementerComponent;
 import edu.dlf.refactoring.study.StudyLogLevel;
 import edu.dlf.refactoring.ui.CodeReviewUIComponent;
 import edu.dlf.refactoring.ui.UICompInjector;
-import edu.dlf.refactoring.utils.WorkQueue;
 
 public class ServiceLocator extends AbstractModule {
 	private final static AbstractModule _instance = new ServiceLocator();
@@ -102,22 +104,16 @@ public class ServiceLocator extends AbstractModule {
 		this.install(new HidingComponentInjector());
 
 		bind(ComponentsRepository.class).in(Singleton.class);
-		bind(IFactorComponent.class).annotatedWith(HistorySavingCompAnnotation.class)
-			.to(HistorySavingComponent.class).in(Singleton.class);
-		bind(IFactorComponent.class).annotatedWith(ChangeCompAnnotation.class)
-			.to(ChangeComponent.class).in(Singleton.class);
-		bind(IFactorComponent.class).annotatedWith(RefactoringDetectionCompAnnotation.class)
-			.to(RefactoringDetectionComponent.class).in(Singleton.class);
-		bind(IFactorComponent.class).annotatedWith(RefactoringImplementaterCompAnnotation.class)
-			.to(RefactoringImplementerComponent.class).in(Singleton.class);
-		bind(IFactorComponent.class).annotatedWith(RefactoringCheckerCompAnnotation.class)
-			.to(RefactoringCheckerComponent.class).in(Singleton.class);
-		bind(IFactorComponent.class).annotatedWith(UICompAnnotation.class)
-			.to(CodeReviewUIComponent.class).in(Singleton.class);
-		bind(IFactorComponent.class).annotatedWith(HidingCompAnnotation.class)
-			.to(RefactoringHidingComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(HistorySavingCompAnnotation.class).to(HistorySavingComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(ChangeCompAnnotation.class).to(ChangeComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(RefactoringDetectionCompAnnotation.class).to(RefactoringDetectionComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(RefactoringImplementaterCompAnnotation.class).to(RefactoringImplementerComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(RefactoringCheckerCompAnnotation.class).to(RefactoringCheckerComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(UICompAnnotation.class).to(CodeReviewUIComponent.class).in(Singleton.class);
+		bind(IFactorComponent.class).annotatedWith(HidingCompAnnotation.class).to(RefactoringHidingComponent.class).in(Singleton.class);
 
 		bind(LoadingCache.class).to(ASTSourceCodeCache.class).in(Singleton.class);
+		bind(ExecutorService.class).toInstance(MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1)));
 	}
 
 	public static <T> T ResolveType(Class T) {
@@ -197,12 +193,5 @@ public class ServiceLocator extends AbstractModule {
 		fa.setAppend(true);
 		fa.activateOptions();
 		return fa;
-	}
-	
-
-	@Provides
-	@Singleton
-	private WorkQueue getSingleThreadQueue() {
-		return new WorkQueue(1);
 	}
 }

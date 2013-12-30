@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.ui;
 
+import java.util.concurrent.ExecutorService;
+
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -12,20 +14,19 @@ import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotat
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator.UICompAnnotation;
-import edu.dlf.refactoring.utils.WorkQueue;
 import edu.dlf.refactoring.utils.WorkQueueItem;
 
 public class TreeViewItemDoubleClickListener implements IDoubleClickListener{
 
 	private final String cuLevel;
 	private final CodeReviewUIComponent uiComponent;
-	private final WorkQueue queue;
+	private final ExecutorService queue;
 
 	@Inject
 	public TreeViewItemDoubleClickListener(
 			@CompilationUnitAnnotation String cuLevel,
 			@UICompAnnotation IFactorComponent uiComponent,
-			WorkQueue queue)
+			ExecutorService queue)
 	{
 		this.cuLevel = cuLevel;
 		this.uiComponent = (CodeReviewUIComponent) uiComponent;

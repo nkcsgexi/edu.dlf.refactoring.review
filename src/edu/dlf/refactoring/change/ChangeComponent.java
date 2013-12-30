@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.change;
 
+import java.util.concurrent.ExecutorService;
+
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
@@ -19,7 +21,6 @@ import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator;
 import edu.dlf.refactoring.design.ServiceLocator.RefactoringDetectionCompAnnotation;
-import edu.dlf.refactoring.utils.WorkQueue;
 import edu.dlf.refactoring.utils.WorkQueueItem;
 
 
@@ -31,11 +32,11 @@ public class ChangeComponent implements IFactorComponent{
 	private final IASTNodeChangeCalculator cuCalculator;
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	private final EventBus bus;
-	private final WorkQueue queue;
+	private final ExecutorService queue;
 	
 	@Inject
 	public ChangeComponent(
-			WorkQueue queue,
+			ExecutorService queue,
 			@JavaProjectAnnotation IJavaModelChangeCalculator projectCalculator,
 			@SourcePackageAnnotation IJavaModelChangeCalculator packageCalculator, 
 			@CompilationUnitAnnotation IJavaModelChangeCalculator icuCalculator,

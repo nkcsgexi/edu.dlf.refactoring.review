@@ -2,6 +2,8 @@ package edu.dlf.refactoring.detectors;
 
 import static fj.data.List.list;
 
+import java.util.concurrent.ExecutorService;
+
 import org.apache.log4j.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -23,7 +25,6 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import edu.dlf.refactoring.study.StudyUtils;
-import edu.dlf.refactoring.utils.WorkQueue;
 import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.Effect;
 import fj.F;
@@ -34,12 +35,12 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 	private final Logger logger;
 	private final List<IRefactoringDetector> detectorsList;
 	private final EventBus bus;
-	private final WorkQueue queue;
+	private final ExecutorService queue;
 	private final ChangedLinesComputer lineComputer;
 
 	@Inject
 	public RefactoringDetectionComponent(
-			WorkQueue queue,
+			ExecutorService queue,
 			Logger logger,
 			ChangedLinesComputer lineComputer,
 			@RenameMethod IRefactoringDetector rmDetector,
