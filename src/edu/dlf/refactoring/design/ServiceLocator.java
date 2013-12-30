@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
 
+import com.google.common.cache.LoadingCache;
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Guice;
@@ -23,6 +24,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
+import edu.dlf.refactoring.analyzers.ASTSourceCodeCache;
 import edu.dlf.refactoring.analyzers.DlfFileUtils;
 import edu.dlf.refactoring.change.ChangeComponent;
 import edu.dlf.refactoring.change.ChangeComponentInjector;
@@ -115,13 +117,14 @@ public class ServiceLocator extends AbstractModule {
 		bind(IFactorComponent.class).annotatedWith(HidingCompAnnotation.class)
 			.to(RefactoringHidingComponent.class).in(Singleton.class);
 
-		
+		bind(LoadingCache.class).to(ASTSourceCodeCache.class).in(Singleton.class);
 	}
 
 	public static <T> T ResolveType(Class T) {
 		return (T) injector.getInstance(T);
 	}
-
+	
+	
 	private static String PATTERN = "%d [%p|%c|%C{1}] %m%n";
 	
 	@Provides
@@ -135,7 +138,7 @@ public class ServiceLocator extends AbstractModule {
 		Logger.getRootLogger().addAppender(createFatalLogAppender());
 		return Logger.getRootLogger();
 	}
-
+	
 	private ConsoleAppender createConsoleAppender() {
 		ConsoleAppender console = new ConsoleAppender();
 		console.setLayout(new PatternLayout(PATTERN));
