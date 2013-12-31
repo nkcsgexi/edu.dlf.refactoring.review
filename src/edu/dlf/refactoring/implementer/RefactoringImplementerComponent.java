@@ -58,6 +58,7 @@ public class RefactoringImplementerComponent implements IFactorComponent,
 	@Override
 	public Void listen(final Object event) {
 		if(event instanceof IDetectedRefactoring){
+			logger.info("Implementation starts.");
 			final IImplementedRefactoringCallback listener = this;
 			try {
 				IDetectedRefactoring refactoring = (IDetectedRefactoring)event;
@@ -67,7 +68,9 @@ public class RefactoringImplementerComponent implements IFactorComponent,
 					implementer.some().implementRefactoring(refactoring, listener);
 			} catch (Exception e) {
 				logger.fatal(e);
-		}};
+			}
+			logger.info("Implementation ends.");
+		};
 		return null;
 	}
 

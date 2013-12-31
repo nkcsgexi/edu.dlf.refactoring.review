@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.IJavaElement;
 
 import com.google.common.cache.LoadingCache;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.analyzers.JavaModelAnalyzer;
@@ -24,6 +25,7 @@ import fj.P2;
 import fj.Unit;
 import fj.data.List;
 
+@Singleton
 public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 
 	private final IFactorComponent changeComp;
@@ -88,6 +90,7 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 			DesignUtils.convertProduct2JavaElementPair.andThen(converter).
 				andThen(feeder).f(pair);
 			try {
+				queue.shutdown();
 				queue.awaitTermination(1, TimeUnit.DAYS);
 			} catch (Exception e) {
 				logger.fatal(e);

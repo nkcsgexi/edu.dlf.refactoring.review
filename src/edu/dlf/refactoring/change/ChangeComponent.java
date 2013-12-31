@@ -41,8 +41,7 @@ public class ChangeComponent implements IFactorComponent{
 			@SourcePackageAnnotation IJavaModelChangeCalculator packageCalculator, 
 			@CompilationUnitAnnotation IJavaModelChangeCalculator icuCalculator,
 			@CompilationUnitAnnotation IASTNodeChangeCalculator cuCalculator,
-			@RefactoringDetectionCompAnnotation IFactorComponent component)
-	{
+			@RefactoringDetectionCompAnnotation IFactorComponent component) {
 		this.queue = queue;
 		this.projectCalculator = projectCalculator;
 		this.packageCalculator = packageCalculator;
@@ -55,7 +54,7 @@ public class ChangeComponent implements IFactorComponent{
 	@Subscribe
 	@Override
 	public Void listen(final Object event) {
-		queue.execute(new WorkQueueItem("Change"){
+		queue.execute(new WorkQueueItem("analysis"){
 			@Override
 			public void internalRun() {
 				if(event instanceof JavaElementPair){

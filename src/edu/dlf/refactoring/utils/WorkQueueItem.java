@@ -26,6 +26,7 @@ public abstract class WorkQueueItem implements Runnable{
 		long elapsedTime = stopTime - startTime;
 		logger.debug("Time for " + this.itemName + ": " + elapsedTime);
 		callBack();
+		logger.info(itemName + " ends.");
 	}
 	
 	abstract protected void internalRun();
