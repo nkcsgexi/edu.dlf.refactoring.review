@@ -1,7 +1,6 @@
 package edu.dlf.refactoring.study;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.IJavaElement;
@@ -85,12 +84,6 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 				f(changeComp);
 			DesignUtils.convertProduct2JavaElementPair.andThen(converter).
 				andThen(feeder).f(pair);
-			try {
-				queue.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
-			} catch (Exception e) {
-				logger.fatal(e);
-			}
-			cache.cleanUp();
 	}};
 	
 	private final Ord<IJavaElement> timeOrd = Ord.stringOrd.comap(JavaModelAnalyzer.
