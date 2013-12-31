@@ -88,8 +88,8 @@ public class RefReviewCommandHandler extends AbstractHandler {
 		}
 		
 		if(id.equals("RefReview.startStudy")) {
-			queue.execute((WorkQueueItem)(ServiceLocator.ResolveType(
-				CompareProjectsInWorkspaceStudy.class)));	
+			new Thread(((WorkQueueItem)(ServiceLocator.ResolveType(
+				CompareProjectsInWorkspaceStudy.class)))).start();	
 		}
 		
 		if(id.equals("RefReview.clearWorkspace")) {

@@ -1,8 +1,12 @@
 package edu.dlf.refactoring.study;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.IJavaElement;
 
+import com.google.common.cache.LoadingCache;
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.FJUtils;
@@ -24,16 +28,23 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 	private final IFactorComponent changeComp;
 	private final Logger logger;	
 	private final List<Integer> pairStarts = List.range(0, 10).map(multiply);
+	private final ExecutorService queue;
+	private final LoadingCache cache;
+	
 	private static final int stepLength = 10;
 	private int index = 0;
 	
 	@Inject
 	public CompareProjectsInWorkspaceStudy(
 			Logger logger,
+			ExecutorService queue,
+			LoadingCache cache,
 			@ChangeCompAnnotation IFactorComponent changeComp) {
 		super("Compare projects in work space");
 		this.changeComp = changeComp;
 		this.logger = logger;
+		this.queue = queue;
+		this.cache = cache;
 	}
 	
 	private static final F<Integer, Integer> multiply = new F<Integer, Integer>() {
@@ -74,6 +85,12 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 				f(changeComp);
 			DesignUtils.convertProduct2JavaElementPair.andThen(converter).
 				andThen(feeder).f(pair);
+			try {
+				queue.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
+			} catch (Exception e) {
+				logger.fatal(e);
+			}
+			cache.cleanUp();
 	}};
 	
 	private final Ord<IJavaElement> timeOrd = Ord.stringOrd.comap(JavaModelAnalyzer.

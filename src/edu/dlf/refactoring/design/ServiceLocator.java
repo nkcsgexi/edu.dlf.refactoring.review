@@ -42,6 +42,7 @@ import edu.dlf.refactoring.implementer.RefactoringImplementerComponent;
 import edu.dlf.refactoring.study.StudyLogLevel;
 import edu.dlf.refactoring.ui.CodeReviewUIComponent;
 import edu.dlf.refactoring.ui.UICompInjector;
+import edu.dlf.refactoring.utils.DlfExecutorService;
 
 public class ServiceLocator extends AbstractModule {
 	private final static AbstractModule _instance = new ServiceLocator();
@@ -113,7 +114,7 @@ public class ServiceLocator extends AbstractModule {
 		bind(IFactorComponent.class).annotatedWith(HidingCompAnnotation.class).to(RefactoringHidingComponent.class).in(Singleton.class);
 
 		bind(LoadingCache.class).to(ASTSourceCodeCache.class).in(Singleton.class);
-		bind(ExecutorService.class).toInstance(MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1)));
+		bind(ExecutorService.class).to(DlfExecutorService.class).in(Singleton.class);
 	}
 
 	public static <T> T ResolveType(Class T) {
