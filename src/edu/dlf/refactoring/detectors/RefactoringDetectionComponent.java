@@ -17,6 +17,7 @@ import edu.dlf.refactoring.design.IRefactoringDetector;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator.RefactoringImplementaterCompAnnotation;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractSuperType;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameField;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameLocalVariable;
@@ -40,6 +41,7 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 			ChangedLinesComputer lineComputer,
 			@RenameMethod IRefactoringDetector rmDetector,
 			@ExtractMethod IRefactoringDetector emDetector,
+			@ExtractSuperType IRefactoringDetector extractSuperDet,
 			@RenameType IRefactoringDetector rtDetector,
 			@RenameLocalVariable IRefactoringDetector rlvDetector,
 			@RenameField IRefactoringDetector rfDetector,
@@ -47,7 +49,7 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 			@RefactoringImplementaterCompAnnotation IFactorComponent component) {
 		this.logger = logger;
 		this.detectorsList = list(rmDetector, emDetector, rfDetector, mDetector, 
-			rtDetector, rlvDetector);
+			rtDetector, rlvDetector, extractSuperDet);
 		this.bus = new EventBus();
 		this.lineComputer = lineComputer;
 		bus.register(component);

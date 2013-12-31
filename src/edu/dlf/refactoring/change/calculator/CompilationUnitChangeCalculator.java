@@ -31,12 +31,14 @@ import edu.dlf.refactoring.change.IJavaModelChangeCalculator;
 import edu.dlf.refactoring.change.SubChangeContainer;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
+import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.design.JavaElementPair;
 import fj.Equal;
 import fj.F;
 import fj.F2;
 import fj.P2;
 import fj.data.List;
+import fj.data.Option;
 
 
 public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculator, 
@@ -83,6 +85,27 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	private final Equal<ASTNode> nodeTypeEq = Equal.intEqual.comap(ASTNode2IntegerUtils.
 		getKind);
 	
+	private final F<ASTNodePair, Option<ISourceChange>> calculateTypeDecChange = 
+		new F<ASTNodePair, Option<ISourceChange>>() {
+		@Override
+		public Option<ISourceChange> f(ASTNodePair typePair) {
+			int kind = typePair.getNodeBefore() != null ? typePair.getNodeBefore().
+					getNodeType() : typePair.getNodeAfter().getNodeType();
+			switch(kind) {
+			case ASTNode.TYPE_DECLARATION:
+				return Option.some(typeChangeCalculator.CalculateASTNodeChange
+					(typePair));
+			case ASTNode.ENUM_DECLARATION:	
+				return Option.some(enumDeclarationCal.CalculateASTNodeChange
+					(typePair));
+			case ASTNode.ANNOTATION_TYPE_DECLARATION:
+				return Option.some(annotationTypeCal.CalculateASTNodeChange
+					(typePair));
+			default: 
+				logger.fatal("Unknown type declaration.");
+				return Option.none();
+	}}};
+			
 	@Override
 	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
 		logger.debug("Calculate change: " + JavaModelAnalyzer.getElementNameFunc.
@@ -96,8 +119,9 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	@Override
 	public ISourceChange CalculateASTNodeChange(ASTNodePair pair) {
 		ISourceChange simple = compilationUnitCB.buildSimpleChange(pair);
-		if(simple != null)
-			return simple;
+		if(simple != null) {
+			return breakSimpleChange(simple);
+		}
 		logger.info("Calculate change: " + ASTNode2StringUtils.getCompilationUnitName.
 			f(pair.getNodeBefore()) + "->" + ASTNode2StringUtils.getCompilationUnitName.
 				f(pair.getNodeAfter()));
@@ -135,6 +159,48 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 			logger.fatal(e);
 			return compilationUnitCB.createUnknownChange(aPair);
 		}
+	}
+
+	private ISourceChange breakSimpleChange(ISourceChange simple) {
+		if(simple.getSourceChangeType() == SourceChangeType.ADD) {
+			return breakCompilationAdd(simple.getNodeAfter());
+		}
+		if(simple.getSourceChangeType() == SourceChangeType.REMOVE) {
+			return breakCompilationRemove(simple.getNodeBefore());
+		}
+		return simple;
+	}
+	
+	private ISourceChange breakCompilationAdd(ASTNode unit) {
+		SubChangeContainer container = compilationUnitCB.createSubchangeContainer
+			(new ASTNodePair(null, unit));
+		List<ASTNodePair> typePairs = getAbstractTypeFunc.f(unit).map(FJUtils.
+			prependElementFunc((ASTNode)null, (ASTNode)null)).map(ASTNodePair.
+				createPairFunc.tuple());
+		return addContainer(container, typePairs);
+	}
+	
+	private final F<Option<ISourceChange>, Boolean> isSome = FJUtils.getIsSome
+		((ISourceChange)null);
+	
+	private final F<Option<ISourceChange>, ISourceChange> getSome = FJUtils.
+		getGetSomeFunc((ISourceChange)null);
+	
+	private ISourceChange addContainer(SubChangeContainer container, List
+			<ASTNodePair> typePairs) {
+		container.addMultiSubChanges(typePairs.map(this.
+			calculateTypeDecChange).filter(isSome).map(getSome).toCollection());
+		return container;
+	}
+	
+	private ISourceChange breakCompilationRemove(ASTNode unit) {
+		SubChangeContainer container = compilationUnitCB.createSubchangeContainer
+			(new ASTNodePair(unit, null));
+		List<ASTNodePair> typePairs = getAbstractTypeFunc.f(unit).map(FJUtils.
+			appendElementFunc((ASTNode)null, (ASTNode)null)).map(ASTNodePair.
+				createPairFunc.tuple());
+		addContainer(container, typePairs);
+		return container;
 	}
 	
 	private Collection<ISourceChange> calculateImportDeclarationsChange(List<ASTNode> 
@@ -179,26 +245,11 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	}
 
 	private void addSubChanges(SubChangeContainer container, Collection
-		<ASTNodePair> nodePairs) throws Exception {
+			<ASTNodePair> nodePairs) throws Exception {
 		for(ASTNodePair typePair : nodePairs) {
-			int kind = typePair.getNodeBefore() != null ? typePair.getNodeBefore().
-				getNodeType() : typePair.getNodeAfter().getNodeType();
-			switch(kind) {
-			case ASTNode.TYPE_DECLARATION:
-				container.addSubChange(this.typeChangeCalculator.
-					CalculateASTNodeChange(typePair));
-				continue;
-			case ASTNode.ENUM_DECLARATION:	
-				container.addSubChange(this.enumDeclarationCal.
-					CalculateASTNodeChange(typePair));
-				continue;
-			case ASTNode.ANNOTATION_TYPE_DECLARATION:
-				container.addSubChange(this.annotationTypeCal.
-					CalculateASTNodeChange(typePair));
-				continue;
-			default: 
-				throw new Exception("Unknown type declaration.");
-			}
+			Option<ISourceChange> op = calculateTypeDecChange.f(typePair);
+			if(op.isSome())
+				container.addSubChange(op.some());
 		}
 	}
 }

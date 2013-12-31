@@ -26,6 +26,9 @@ public class RefactoringDetectionComponentInjector extends AbstractModule{
 
 	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 	public @interface ExtractMethod {}
+	
+	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
+	public @interface ExtractSuperType {}
 
 	@BindingAnnotation @Target({ FIELD, PARAMETER, METHOD, CONSTRUCTOR }) @Retention(RUNTIME)
 	public @interface RenameMethod {}
@@ -47,6 +50,7 @@ public class RefactoringDetectionComponentInjector extends AbstractModule{
 	protected void configure() {
 		bind(IRefactoringDetector.class).annotatedWith(RenameMethod.class).to(RenameMethodDetector.class);
 		bind(IRefactoringDetector.class).annotatedWith(ExtractMethod.class).to(ExtractMethodDetector.class);
+		bind(IRefactoringDetector.class).annotatedWith(ExtractSuperType.class).to(ExtractIntefaceDetector.class);
 		bind(IRefactoringDetector.class).annotatedWith(RenameType.class).to(RenameTypeDetector.class);
 		bind(IRefactoringDetector.class).annotatedWith(RenameLocalVariable.class).to(RenameLocalVariableDetector.class);
 		bind(IRefactoringDetector.class).annotatedWith(RenameField.class).to(RenameFieldDetector.class);
@@ -63,6 +67,7 @@ public class RefactoringDetectionComponentInjector extends AbstractModule{
 		bindConstant().annotatedWith(RenameMethod.class).to(RefactoringType.RenameMethod);
 		bindConstant().annotatedWith(RenameType.class).to(RefactoringType.RenameType);
 		bindConstant().annotatedWith(MoveResource.class).to(RefactoringType.Move);
+		bindConstant().annotatedWith(ExtractSuperType.class).to(RefactoringType.ExtractSuperType);
 	}
 		
 }

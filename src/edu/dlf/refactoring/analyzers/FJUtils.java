@@ -428,4 +428,19 @@ public class FJUtils {
 		};
 	}
 	
+	public static <T> F<Option<T>, Boolean> getIsSome(T t) {
+		return new F<Option<T>, Boolean>() {
+			@Override
+			public Boolean f(Option<T> op) {
+				return op.isSome();
+		}};
+	}
+	
+	public static <T> F<Option<T>, T> getGetSomeFunc(T t) {
+		return new F<Option<T>, T>() {
+			@Override
+			public T f(Option<T> op) {
+				return op.some();
+		}};
+	}
 }

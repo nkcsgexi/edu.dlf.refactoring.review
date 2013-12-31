@@ -59,7 +59,9 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 	private F<ASTNode, String> getTypeFunc = new F<ASTNode, String>() {
 		@Override
 		public String f(ASTNode node) {
-			return node.getStructuralProperty(TypeDeclaration.NAME_PROPERTY).toString();
+			if(node == null) return "";
+			return node.getStructuralProperty(TypeDeclaration.NAME_PROPERTY).
+				toString();
 	}};
 
 	@Override
