@@ -1,8 +1,6 @@
 package edu.dlf.refactoring.checkers;
 
 
-import java.util.concurrent.ExecutorService;
-
 import org.apache.log4j.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -23,7 +21,6 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import edu.dlf.refactoring.implementer.ImplementedRefactoring;
-import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.P2;
 import fj.data.HashMap;
 import fj.data.Option;
@@ -33,12 +30,11 @@ public class RefactoringCheckerComponent implements
 
 	private final HashMap<RefactoringType, IRefactoringChecker> map;
 	private final EventBus bus;
-	private final ExecutorService queue;
 	private final Logger logger;
 	
 	@Inject
 	public RefactoringCheckerComponent(
-			ExecutorService queue, Logger logger,
+			Logger logger,
 			@ExtractMethod IRefactoringChecker emChecker,
 			@RenameMethod IRefactoringChecker rmChecker,
 			@RenameType IRefactoringChecker rtChecker,
@@ -46,7 +42,6 @@ public class RefactoringCheckerComponent implements
 			@RenameField IRefactoringChecker rfChecker,
 			@MoveResource IRefactoringChecker mChecker,
 			@UICompAnnotation IFactorComponent uiComponent) {
-		this.queue = queue;
 		this.logger = logger;
 		this.map = HashMap.hashMap();
 		this.map.set(RefactoringType.ExtractMethod, emChecker);
@@ -56,31 +51,28 @@ public class RefactoringCheckerComponent implements
 		this.map.set(RefactoringType.RenameField, rfChecker);
 		this.map.set(RefactoringType.Move, mChecker);
 		this.bus = new EventBus();
-		this.bus.register(uiComponent);
+		//this.bus.register(uiComponent);
 	}
 	
 	@Subscribe
 	@Override
 	public Void listen(final Object event) {
 		if(isEventRight(event)){
-			queue.execute(new WorkQueueItem("Checker"){
-			@Override
-			public void internalRun() {
-				IDetectedRefactoring detected = (IDetectedRefactoring)
-					((P2)event)._1();
-				IImplementedRefactoring implemented = (ImplementedRefactoring)
-					((P2)event)._2();
-				Option<IRefactoringChecker> checkOp = map.get(detected.
+			IDetectedRefactoring detected = (IDetectedRefactoring)
+				((P2)event)._1();
+			IImplementedRefactoring implemented = (ImplementedRefactoring)
+				((P2)event)._2();
+			Option<IRefactoringChecker> checkOp = map.get(detected.
+				getRefactoringType());
+			if(checkOp.isSome()) {
+				ICheckingResult result = checkOp.some().checkRefactoring
+					(detected, implemented);
+				bus.post(result);
+			} else {
+				logger.fatal("Missing checker for " + detected.
 					getRefactoringType());
-				if(checkOp.isSome()) {
-					ICheckingResult result = checkOp.some().checkRefactoring
-						(detected, implemented);
-					bus.post(result);
-				} else {
-					logger.fatal("Missing checker for " + detected.
-						getRefactoringType());
-				}
-		}});}
+			}
+		}
 		return null;
 	}
 	

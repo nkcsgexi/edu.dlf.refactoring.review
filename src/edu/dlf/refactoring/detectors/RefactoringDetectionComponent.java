@@ -2,8 +2,6 @@ package edu.dlf.refactoring.detectors;
 
 import static fj.data.List.list;
 
-import java.util.concurrent.ExecutorService;
-
 import org.apache.log4j.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -25,7 +23,6 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
 import edu.dlf.refactoring.study.StudyUtils;
-import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.Effect;
 import fj.F;
 import fj.data.List;
@@ -35,12 +32,10 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 	private final Logger logger;
 	private final List<IRefactoringDetector> detectorsList;
 	private final EventBus bus;
-	private final ExecutorService queue;
 	private final ChangedLinesComputer lineComputer;
 
 	@Inject
 	public RefactoringDetectionComponent(
-			ExecutorService queue,
 			Logger logger,
 			ChangedLinesComputer lineComputer,
 			@RenameMethod IRefactoringDetector rmDetector,
@@ -50,7 +45,6 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 			@RenameField IRefactoringDetector rfDetector,
 			@MoveResource IRefactoringDetector mDetector,
 			@RefactoringImplementaterCompAnnotation IFactorComponent component) {
-		this.queue = queue;
 		this.logger = logger;
 		this.detectorsList = list(rmDetector, emDetector, rfDetector, mDetector, 
 			rtDetector, rlvDetector);
@@ -62,26 +56,22 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 	@Subscribe
 	@Override
 	public Void listen(final Object event) {
-		queue.execute(new WorkQueueItem("Detection"){
-			@Override
-			public void internalRun() {
-				if(event instanceof ISourceChange) {
-					final ISourceChange change = (ISourceChange) event;
-					logger.info(SourceChangeUtils.printChangeTree(change));
-					StudyUtils.logRevisionStart();
-					StudyUtils.logChangedLines.e(change);
-					detectorsList.bind(new F<IRefactoringDetector, 
-							List<IDetectedRefactoring>>(){
-						@Override
-						public List<IDetectedRefactoring> f(IRefactoringDetector d) {
-							return d.detectRefactoring(change);
-						}}).foreach(new Effect<IDetectedRefactoring>(){
-							@Override
-							public void e(IDetectedRefactoring refactoring) {
-								StudyUtils.logDetectedRefactoring.e(refactoring);
-								bus.post(refactoring);
-							}});}
-			}});
+		if(event instanceof ISourceChange) {
+			final ISourceChange change = (ISourceChange) event;
+			logger.info(SourceChangeUtils.printChangeTree(change));
+			StudyUtils.logRevisionStart();
+			StudyUtils.logChangedLines.e(change);
+			detectorsList.bind(new F<IRefactoringDetector, 
+					List<IDetectedRefactoring>>(){
+				@Override
+				public List<IDetectedRefactoring> f(IRefactoringDetector d) {
+					return d.detectRefactoring(change);
+				}}).foreach(new Effect<IDetectedRefactoring>(){
+					@Override
+					public void e(IDetectedRefactoring refactoring) {
+						StudyUtils.logDetectedRefactoring.e(refactoring);
+						bus.post(refactoring);
+					}});}
 		return null;
 	}
 

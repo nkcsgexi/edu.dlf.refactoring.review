@@ -45,7 +45,7 @@ public class RefactoringUtils {
 			}
 		}catch(Exception e)
 		{
-			logger.fatal("Check refactoring condition fails:" + e);
+			logger.fatal("Check refactoring condition fails: " + e);
 			return Option.none();
 		}
 	}

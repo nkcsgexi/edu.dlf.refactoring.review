@@ -29,8 +29,7 @@ public class RenameMethodImplementer extends AbstractRenameImplementer{
 	@Inject
 	public RenameMethodImplementer(
 		Logger logger,
-		@CompilationUnitAnnotation IASTNodeChangeCalculator cuCalculater)
-	{
+		@CompilationUnitAnnotation IASTNodeChangeCalculator cuCalculater) {
 		super(logger, cuCalculater);
 		this.logger = logger;
 		this.cuCalculator = cuCalculater;

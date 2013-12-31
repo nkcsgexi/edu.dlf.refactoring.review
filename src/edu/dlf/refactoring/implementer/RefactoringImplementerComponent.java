@@ -1,7 +1,5 @@
 package edu.dlf.refactoring.implementer;
 
-import java.util.concurrent.ExecutorService;
-
 import org.apache.log4j.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -20,7 +18,6 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameLocalVariable;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameType;
-import edu.dlf.refactoring.utils.WorkQueueItem;
 import fj.P;
 import fj.data.HashMap;
 import fj.data.Option;
@@ -35,12 +32,9 @@ public class RefactoringImplementerComponent implements IFactorComponent,
 
 	private final EventBus bus;
 
-	private final ExecutorService queue;
-
 	@Inject
 	public RefactoringImplementerComponent(
 			Logger logger,
-			ExecutorService queue,
 			@ExtractMethod final IRefactoringImplementer emImplementer,
 			@RenameMethod final IRefactoringImplementer rmImplementer,
 			@RenameType final IRefactoringImplementer rtImplementer,
@@ -49,7 +43,6 @@ public class RefactoringImplementerComponent implements IFactorComponent,
 			@MoveResource final IRefactoringImplementer mvImplementer,
 			@RefactoringCheckerCompAnnotation final IFactorComponent nextComp) {
 		this.logger = logger;
-		this.queue = queue;
 		this.implementers = HashMap.hashMap();
 		this.implementers.set(RefactoringType.ExtractMethod, emImplementer);
 		this.implementers.set(RefactoringType.RenameMethod, rmImplementer);
@@ -65,10 +58,7 @@ public class RefactoringImplementerComponent implements IFactorComponent,
 	@Override
 	public Void listen(final Object event) {
 		if(event instanceof IDetectedRefactoring){
-		final IImplementedRefactoringCallback listener = this;
-		queue.execute(new WorkQueueItem("Implementation"){
-		@Override
-		public void internalRun() {
+			final IImplementedRefactoringCallback listener = this;
 			try {
 				IDetectedRefactoring refactoring = (IDetectedRefactoring)event;
 				Option<IRefactoringImplementer> implementer = implementers.
@@ -77,7 +67,7 @@ public class RefactoringImplementerComponent implements IFactorComponent,
 					implementer.some().implementRefactoring(refactoring, listener);
 			} catch (Exception e) {
 				logger.fatal(e);
-			}}});}
+		}};
 		return null;
 	}
 

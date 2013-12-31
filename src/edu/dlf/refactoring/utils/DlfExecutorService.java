@@ -17,12 +17,17 @@ import com.google.inject.Inject;
 
 public final class DlfExecutorService implements ExecutorService{
 
-	private final ExecutorService internalExecutor;
+	private ExecutorService internalExecutor;
 	private final Logger logger;
 
 	@Inject
 	public DlfExecutorService(Logger logger) {
 		this.logger = logger;
+		this.internalExecutor = MoreExecutors.listeningDecorator(Executors.
+			newFixedThreadPool(1));
+	}
+	
+	public void restart() {
 		this.internalExecutor = MoreExecutors.listeningDecorator(Executors.
 			newFixedThreadPool(1));
 	}

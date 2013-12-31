@@ -1,6 +1,7 @@
 package edu.dlf.refactoring.study;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.IJavaElement;
@@ -14,6 +15,7 @@ import edu.dlf.refactoring.design.DesignUtils;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.JavaElementPair;
 import edu.dlf.refactoring.design.ServiceLocator.ChangeCompAnnotation;
+import edu.dlf.refactoring.utils.DlfExecutorService;
 import fj.Effect;
 import fj.Equal;
 import fj.F;
@@ -46,7 +48,8 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 		this.cache = cache;
 	}
 	
-	private static final F<Integer, Integer> multiply = new F<Integer, Integer>() {
+	private static final F<Integer, Integer> multiply = new F<Integer,
+			Integer>() {
 		@Override
 		public Integer f(Integer num) {
 			return num * stepLength;
@@ -84,6 +87,13 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 				f(changeComp);
 			DesignUtils.convertProduct2JavaElementPair.andThen(converter).
 				andThen(feeder).f(pair);
+			try {
+				queue.awaitTermination(1, TimeUnit.DAYS);
+			} catch (Exception e) {
+				logger.fatal(e);
+			}
+			cache.cleanUp();
+			((DlfExecutorService)queue).restart();
 	}};
 	
 	private final Ord<IJavaElement> timeOrd = Ord.stringOrd.comap(JavaModelAnalyzer.

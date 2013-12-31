@@ -45,8 +45,7 @@ public abstract class AbstractRenameImplementer extends AbstractRefactoringImple
 	private final Logger logger;
 	
 	protected AbstractRenameImplementer(Logger logger, IASTNodeChangeCalculator 
-			cuCalculater)
-	{
+			cuCalculater) {
 		super(logger, cuCalculater);
 		this.logger = logger;
 	}
