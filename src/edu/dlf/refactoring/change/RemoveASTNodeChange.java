@@ -3,29 +3,17 @@ package edu.dlf.refactoring.change;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.ASTNode;
 
-import edu.dlf.refactoring.design.ISourceChange;
-import edu.dlf.refactoring.design.ISourceChange.AbstractSourceChange;
+import edu.dlf.refactoring.design.ASTNodePair;
+import edu.dlf.refactoring.design.JavaElementPair;
 
-public class RemoveASTNodeChange extends AbstractSourceChange{
+public final class RemoveASTNodeChange extends AbstractSourceChange{
 		
-	public RemoveASTNodeChange(String changeLevel, ASTNode node)
-	{
-		super(changeLevel, node, null);
+	public RemoveASTNodeChange(String changeLevel, ASTNode node){
+		super(changeLevel, new ASTNodePair(node, null));
 	}
 	
-	public RemoveASTNodeChange(String changeLevel, IJavaElement element)
-	{
-		super(changeLevel, element, null);
-	}
-
-	@Override
-	public boolean hasSubChanges() {
-		return false;
-	}
-
-	@Override
-	public ISourceChange[] getSubSourceChanges() {
-		return new ISourceChange[0];
+	public RemoveASTNodeChange(String changeLevel, IJavaElement element) {
+		super(changeLevel, new JavaElementPair(element, null));
 	}
 
 	@Override

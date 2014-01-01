@@ -163,21 +163,21 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 
 	private ISourceChange breakSimpleChange(ISourceChange simple) {
 		if(simple.getSourceChangeType() == SourceChangeType.ADD) {
-			return breakCompilationAdd(simple.getNodeAfter());
+			simple.addMultiSubChanges(breakCompilationAdd(simple.getNodeAfter()));
 		}
 		if(simple.getSourceChangeType() == SourceChangeType.REMOVE) {
-			return breakCompilationRemove(simple.getNodeBefore());
+			simple.addMultiSubChanges(breakCompilationRemove(simple.getNodeBefore()));
 		}
 		return simple;
 	}
 	
-	private ISourceChange breakCompilationAdd(ASTNode unit) {
+	private Collection<ISourceChange> breakCompilationAdd(ASTNode unit) {
 		SubChangeContainer container = compilationUnitCB.createSubchangeContainer
 			(new ASTNodePair(null, unit));
 		List<ASTNodePair> typePairs = getAbstractTypeFunc.f(unit).map(FJUtils.
 			prependElementFunc((ASTNode)null, (ASTNode)null)).map(ASTNodePair.
 				createPairFunc.tuple());
-		return addContainer(container, typePairs);
+		return map2SourceChanges(typePairs);
 	}
 	
 	private final F<Option<ISourceChange>, Boolean> isSome = FJUtils.getIsSome
@@ -186,21 +186,18 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	private final F<Option<ISourceChange>, ISourceChange> getSome = FJUtils.
 		getGetSomeFunc((ISourceChange)null);
 	
-	private ISourceChange addContainer(SubChangeContainer container, List
-			<ASTNodePair> typePairs) {
-		container.addMultiSubChanges(typePairs.map(this.
-			calculateTypeDecChange).filter(isSome).map(getSome).toCollection());
-		return container;
-	}
-	
-	private ISourceChange breakCompilationRemove(ASTNode unit) {
+	private Collection<ISourceChange> breakCompilationRemove(ASTNode unit) {
 		SubChangeContainer container = compilationUnitCB.createSubchangeContainer
 			(new ASTNodePair(unit, null));
 		List<ASTNodePair> typePairs = getAbstractTypeFunc.f(unit).map(FJUtils.
 			appendElementFunc((ASTNode)null, (ASTNode)null)).map(ASTNodePair.
 				createPairFunc.tuple());
-		addContainer(container, typePairs);
-		return container;
+		return map2SourceChanges(typePairs);
+	}
+
+	private Collection<ISourceChange> map2SourceChanges(List<ASTNodePair> typePairs) {
+		return typePairs.map(this.calculateTypeDecChange).filter(isSome).map
+			(getSome).toCollection();
 	}
 	
 	private Collection<ISourceChange> calculateImportDeclarationsChange(List<ASTNode> 

@@ -233,10 +233,8 @@ public class SourceChangeUtils {
 				logger.fatal(change.getNodeBefore());
 				logger.fatal(change.getNodeAfter());
 			}
-			if(change.getSourceChangeType() == SourceChangeType.PARENT)
-			{
-				SubChangeContainer container = (SubChangeContainer) change;
-				List<ISourceChange> children = FJUtils.createListFromArray(container.
+			if(change.hasSubChanges()) {
+				List<ISourceChange> children = FJUtils.createListFromArray(change.
 					getSubSourceChanges());
 				List<String> subLines = children.bind(new F<ISourceChange, 
 					List<String>>(){
