@@ -1,5 +1,6 @@
 package edu.dlf.refactoring.change.calculator;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.IJavaElement;
 
@@ -34,6 +35,27 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 		this.logger = logger;
 	}
 	
+	private final F2<IJavaElement, IJavaElement, Integer> similarityFunc = FJUtils.
+		getCommonWordsStringSimilarityFunc(100, JavaModelAnalyzer.
+			getElementNameFunc);
+		
+	private final F2<IJavaElement, IJavaElement, Integer> refinedSimilarityFunc
+		= new F2<IJavaElement, IJavaElement, Integer>() {
+			@Override
+			public Integer f(IJavaElement ele0, IJavaElement ele1) {
+				String name0 =  FilenameUtils.removeExtension(ele0.getElementName());
+				String name1 = FilenameUtils.removeExtension(ele1.getElementName());
+				String longName = name0.length() > name1.length() ? name0 : name1;
+				String shortName = name0 == longName ? name1 : name0;
+				if(shortName.length() != longName.length()) {
+					String rest = longName.substring(shortName.length());
+					if(rest.toLowerCase().startsWith("test")) {
+						return Integer.MIN_VALUE;
+					}
+				}
+				return similarityFunc.f(ele0, ele1);
+	}};
+	
 	@Override
 	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
 		logger.debug("Compare packages: " + pair.getElementBefore().
@@ -50,12 +72,9 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 			(pair.getElementBefore()); 
 		List<IJavaElement> unitsBefore = JavaModelAnalyzer.getICompilationUnit
 			(pair.getElementAfter());
-		F2<IJavaElement, IJavaElement, Integer> similarityFunc = FJUtils.
-			getCommonWordsStringSimilarityFunc(100, JavaModelAnalyzer.
-				getElementNameFunc);
 		F2<List<IJavaElement>, List<IJavaElement>, List<P2<IJavaElement, 
-			IJavaElement>>> mapper = FJUtils.getSimilarityMapper(80, 
-				similarityFunc);
+			IJavaElement>>> mapper = FJUtils.getSimilarityMapper(40, 
+				refinedSimilarityFunc);
 		mapper.f(unitsBefore, unitsAfter).foreach(calculateSubchange);
 		return change;
 	}

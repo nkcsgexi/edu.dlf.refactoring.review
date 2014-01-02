@@ -2,7 +2,9 @@ package edu.dlf.refactoring.refactorings;
 
 
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import difflib.Delta.TYPE;
 import edu.dlf.refactoring.design.RefactoringType;
@@ -11,7 +13,7 @@ import fj.P;
 import fj.P2;
 import fj.data.List;
 
-public class DetectedMoveRefactoring extends AbstractRefactoring{
+public final class DetectedMoveRefactoring extends AbstractRefactoring{
 
 	public static SingleNodeDescriptor RemovedDeclarationDescriptor = 
 		new SingleNodeDescriptor(){};
@@ -55,5 +57,14 @@ public class DetectedMoveRefactoring extends AbstractRefactoring{
 			P.p((NodesDescriptor)RemovedDeclarationDescriptor, TYPE.DELETE), 
 			P.p((NodesDescriptor)AddedDeclarationDescripter, TYPE.INSERT));
 	}
-
+	
+	public IJavaElement getBeforeLocation() {
+		return ((CompilationUnit)this.getEffectedNode(RemovedDeclarationDescriptor).
+			getRoot()).getJavaElement();
+	}
+	
+	public IJavaElement getAfterLocation() {
+		return ((CompilationUnit)this.getEffectedNode(AddedDeclarationDescripter).
+			getRoot()).getJavaElement();
+	}
 }

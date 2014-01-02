@@ -2,14 +2,19 @@ package edu.dlf.refactoring.detectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
+import edu.dlf.refactoring.analyzers.ASTNode2ASTNodeUtils;
+import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
 import edu.dlf.refactoring.analyzers.ASTNodeMapperUtils;
+import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.FieldDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
+import edu.dlf.refactoring.change.ChangeComponentInjector.TypeDeclarationAnnotation;
 import edu.dlf.refactoring.change.SourceChangeUtils;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
@@ -18,6 +23,7 @@ import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchResult;
 import edu.dlf.refactoring.refactorings.DetectedMoveRefactoring;
+import fj.Equal;
 import fj.F;
 import fj.F2;
 import fj.P2;
@@ -28,6 +34,7 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 	private final Logger logger;
 	private final String compilationUnitLV;
 	private final ChangeCriteriaBuilder builder;
+	private final String typeDeclarationLV;
 	private final String methodDeclarationLV;
 	private final String fieldDeclarationLV;
 	private final F<ISourceChange, ASTNode> getBeforeNode;
@@ -36,15 +43,17 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 	private final F<String, IChangeSearchCriteria> getRemoveCriteria;
 	private final F2<List<ISourceChange>,IChangeSearchCriteria,List<ISourceChange>> 
 		getLowestChanges;
-
+	
 	@Inject
 	public MoveRefactoringDetector(
 			Logger logger,
 			ChangeCriteriaBuilder exbuilder,
+			@TypeDeclarationAnnotation String typeDeclarationLV,
 			@CompilationUnitAnnotation String cuLevel,
 			@MethodDeclarationAnnotation String mdLevel,
 			@FieldDeclarationAnnotation String fLevel) {
 		this.logger = logger;
+		this.typeDeclarationLV = typeDeclarationLV;
 		this.compilationUnitLV = cuLevel;
 		this.methodDeclarationLV = mdLevel;
 		this.builder = exbuilder;
@@ -94,6 +103,12 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 		}};
 	}
 	
+	private final F<ASTNode, String> getTypeDecNameFunc = ASTNode2ASTNodeUtils.
+		getStructuralPropertyFunc.flip().f(TypeDeclaration.NAME_PROPERTY).andThen
+			(FJUtils.getHeadFunc((ASTNode)null)).andThen(ASTNode2StringUtils.
+				astNodeToStringFunc);
+	
+	
 	@Override
 	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
 		final List<ISourceChange> cuChanges = SourceChangeUtils.getSelfAndDescendent
@@ -103,7 +118,9 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 				return child.getSourceChangeLevel() == compilationUnitLV;
 		}});
 		return detectMoveRefactoring(cuChanges, methodDeclarationLV, ASTAnalyzer.
-			getMethodDeclarationNamesEqualFunc());
+			getMethodDeclarationNamesEqualFunc()).append(detectMoveRefactoring
+				(cuChanges, typeDeclarationLV, Equal.stringEqual.comap(
+					getTypeDecNameFunc).eq()));
 	}
 
 	private List<IDetectedRefactoring> detectMoveRefactoring(

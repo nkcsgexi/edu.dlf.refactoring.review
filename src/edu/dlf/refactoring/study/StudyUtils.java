@@ -6,7 +6,9 @@ import difflib.Delta.TYPE;
 import edu.dlf.refactoring.change.ChangedLinesComputer;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
+import edu.dlf.refactoring.design.RefactoringType;
 import edu.dlf.refactoring.design.ServiceLocator;
+import edu.dlf.refactoring.refactorings.DetectedMoveRefactoring;
 import edu.dlf.refactoring.refactorings.DetectedRefactoringUtils;
 import fj.Effect;
 import fj.F;
@@ -59,16 +61,22 @@ public class StudyUtils {
 				return "Changed lines: " + p._2();
 			}
 			return "";
-		}};
+	}};
 	
 	public static final Effect<IDetectedRefactoring> logDetectedRefactoring =
 		new Effect<IDetectedRefactoring>() {
 			@Override
 			public void e(IDetectedRefactoring refactoring) {
-				logger.fatal(refactoring.getRefactoringType());
 				if(DetectedRefactoringUtils.isRenameRefactoring(refactoring)) {
 					writeStudylog(DetectedRefactoringUtils.getOldName(refactoring)
 						+ "->" + DetectedRefactoringUtils.getNewName(refactoring));
+				}
+				if(refactoring.getRefactoringType() == RefactoringType.Move) {
+					String beforeName = ((DetectedMoveRefactoring)refactoring).
+						getBeforeLocation().getElementName();
+					String afterName = ((DetectedMoveRefactoring)refactoring).
+						getAfterLocation().getElementName();
+					writeStudylog("Move from " + beforeName + " to " + afterName);
 				}
 				List<P2<TYPE, Integer>> summary = refactoring.getDeltaSummary();
 				summary.map(getHeader).foreach(new Effect<String>() {

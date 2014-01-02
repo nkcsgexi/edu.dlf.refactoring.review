@@ -7,6 +7,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.ISourceRange;
@@ -94,16 +95,12 @@ public class JavaModelAnalyzer {
 			IPackageFragment[] packages = ((IJavaProject)project).
 				getPackageFragments();
 		    for (IPackageFragment pac : packages) {
-		      if (pac.getKind() == IPackageFragmentRoot.K_SOURCE) {
-		    	  list = list.snoc(pac);
-		      }
+		    	if (pac.getKind() == IPackageFragmentRoot.K_SOURCE && 
+		    		pac.getCompilationUnits().length > 0) {
+		    			list = list.snoc(pac);
+		    	}
 		    }
-		    return list.filter(new F<IJavaElement, Boolean>() {
-				@Override
-				public Boolean f(IJavaElement pack) {
-					return getICompilationUnit(pack).isNotEmpty();
-				}
-			});
+		    return list;
 	    }catch(Exception e) {
 			logger.fatal(e);
 			return List.nil();
@@ -116,11 +113,10 @@ public class JavaModelAnalyzer {
 			List<IJavaElement> list = List.nil();
 			for (ICompilationUnit unit : ((IPackageFragment)pack).
 				getCompilationUnits()) {
-				list = list.snoc(unit);
+					list = list.snoc(unit);	
 			}
 			return list;
-		}catch(Exception e)
-		{
+		}catch(Exception e) {
 			logger.fatal(e);
 			return List.nil();
 		}
@@ -143,8 +139,7 @@ public class JavaModelAnalyzer {
 				ISourceRange range = getJavaElementSourceRange(type);
 				if(range.getOffset() <= node.getStartPosition() && 
 					range.getOffset() + range.getLength() >= node.
-						getStartPosition() + node.getLength())
-				{
+						getStartPosition() + node.getLength()) {
 					logger.debug(type.getElementName() + ":" + range.getLength());
 					return true;
 				}
@@ -262,17 +257,6 @@ public class JavaModelAnalyzer {
 			return null;
 		}
 	}
-	
-	public static F2<List<IJavaElement>, List<IJavaElement>, 
-		List<P2<IJavaElement, IJavaElement>>> sameNameElementPairsFunc = 
-			new F2<List<IJavaElement>, List<IJavaElement>, List<P2<IJavaElement,
-			IJavaElement>>>() {
-			@Override
-			public List<P2<IJavaElement, IJavaElement>> f(List<IJavaElement> list1,
-					List<IJavaElement> list2) {
-				return FJUtils.getSamePairs(list1, list2, Equal.stringEqual.
-					comap(JavaModelAnalyzer.getElementNameFunc));
-	}};
 	
 
 	public static Boolean arePathsSame(IJavaElement unit1, IJavaElement unit2) {
