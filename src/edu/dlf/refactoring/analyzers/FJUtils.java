@@ -278,6 +278,15 @@ public class FJUtils {
 		return Lists.newArrayList(list.toCollection());
 	}
 	
+	public static <T, S, K> F2<T, S, K> deTuple(final F<P2<T, S>, K> func) {
+		return new F2<T, S, K>() {
+			@Override
+			public K f(T t, S s) {
+				return func.f(P.p(t, s));
+			}
+		};
+	}
+	
 	public static <T> F2<T, T, Integer> getStringSimilarityFunc(final 
 		int maxScore, final F<T, String> getFeatureString) {
 		return new F2<T, T, Integer>() {

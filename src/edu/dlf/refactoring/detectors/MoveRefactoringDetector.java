@@ -37,12 +37,6 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 	private final String typeDeclarationLV;
 	private final String methodDeclarationLV;
 	private final String fieldDeclarationLV;
-	private final F<ISourceChange, ASTNode> getBeforeNode;
-	private final F<ISourceChange, ASTNode> getAfterNode;
-	private final F<String, IChangeSearchCriteria> getAddCriteria;
-	private final F<String, IChangeSearchCriteria> getRemoveCriteria;
-	private final F2<List<ISourceChange>,IChangeSearchCriteria,List<ISourceChange>> 
-		getLowestChanges;
 	
 	@Inject
 	public MoveRefactoringDetector(
@@ -57,25 +51,43 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 		this.compilationUnitLV = cuLevel;
 		this.methodDeclarationLV = mdLevel;
 		this.builder = exbuilder;
-		this.fieldDeclarationLV = fLevel;
-		
-		this.getAddCriteria = new F<String, IChangeSearchCriteria>(){
-			@Override
-			public IChangeSearchCriteria f(String level) {
-				builder.reset();
-				return builder.addSingleChangeCriteria
-					(level, SourceChangeType.ADD).getSearchCriteria();
-		}};
-
-		this.getRemoveCriteria = new F<String, IChangeSearchCriteria>(){
-			@Override
-			public IChangeSearchCriteria f(String level) {
-				builder.reset();
-				return builder.addSingleChangeCriteria
-					(level, SourceChangeType.REMOVE).getSearchCriteria();
-		}};
-				
-		this.getLowestChanges = new F2<List<ISourceChange>, 
+		this.fieldDeclarationLV = fLevel;			
+	}
+	
+	private final F<ISourceChange, ASTNode> getBeforeNode = new F<ISourceChange, 
+			ASTNode>() {
+		@Override
+		public ASTNode f(ISourceChange change) {
+			return change.getNodeBefore();
+	}};
+	
+	private final F<ISourceChange, ASTNode> getAfterNode = new F<ISourceChange, 
+			ASTNode>() {
+		@Override
+		public ASTNode f(ISourceChange change) {
+			return change.getNodeAfter();
+	}};
+	
+	private final F<String, IChangeSearchCriteria> getAddCriteria = 
+		new F<String, IChangeSearchCriteria>(){
+		@Override
+		public IChangeSearchCriteria f(String level) {
+			builder.reset();
+			return builder.addSingleChangeCriteria
+				(level, SourceChangeType.ADD).getSearchCriteria();
+	}};
+	
+	private final F<String, IChangeSearchCriteria> getRemoveCriteria = 
+		new F<String, IChangeSearchCriteria>(){
+		@Override
+		public IChangeSearchCriteria f(String level) {
+			builder.reset();
+			return builder.addSingleChangeCriteria
+				(level, SourceChangeType.REMOVE).getSearchCriteria();
+	}};
+	
+	private final F2<List<ISourceChange>,IChangeSearchCriteria,List<ISourceChange>> 
+		getLowestChanges = new F2<List<ISourceChange>, 
 				IChangeSearchCriteria, List<ISourceChange>>(){
 			@Override
 			public List<ISourceChange> f(final List<ISourceChange> cuChanges, 
@@ -88,26 +100,34 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 							@Override
 							public ISourceChange f(IChangeSearchResult result) {
 								return result.getSourceChanges().reverse().head();
-		}});}});}};
-		
-		this.getBeforeNode = new F<ISourceChange, ASTNode>() {
-				@Override
-				public ASTNode f(ISourceChange change) {
-					return change.getNodeBefore();
-		}};
-			
-		this.getAfterNode = new F<ISourceChange, ASTNode>() {
-				@Override
-				public ASTNode f(ISourceChange change) {
-					return change.getNodeAfter();
+	}});}});}};
+	
+	private final F2<ASTNode, ASTNode, Boolean> getAreLocationsChanged(int 
+			locationKind, final F<ASTNode, String> locationNameFunc) {
+		final F<ASTNode, List<ASTNode>> ancFunc = ASTAnalyzer.getAncestorsFunc.
+			f(locationKind);
+		return new F2<ASTNode, ASTNode, Boolean>() {
+			@Override
+			public Boolean f(ASTNode arg0, ASTNode arg1) {
+				String name0 = locationNameFunc.f(ancFunc.f(arg0).head());
+				String name1 = locationNameFunc.f(ancFunc.f(arg1).head());
+				return !name0.equals(name1);
 		}};
 	}
+	
+	private final F2<ASTNode, ASTNode, Boolean> areTypeLocationsChanged = 
+		getAreLocationsChanged(ASTNode.TYPE_DECLARATION, ASTNode2StringUtils.
+			getTypeDeclarationNameFunc);
+	
+
+	private final F2<ASTNode, ASTNode, Boolean> areCompilationUnitLocationsChanged = 
+		getAreLocationsChanged(ASTNode.COMPILATION_UNIT, ASTNode2StringUtils.
+			getCompilationUnitName);
 	
 	private final F<ASTNode, String> getTypeDecNameFunc = ASTNode2ASTNodeUtils.
 		getStructuralPropertyFunc.flip().f(TypeDeclaration.NAME_PROPERTY).andThen
 			(FJUtils.getHeadFunc((ASTNode)null)).andThen(ASTNode2StringUtils.
 				astNodeToStringFunc);
-	
 	
 	@Override
 	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
@@ -118,22 +138,26 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 				return child.getSourceChangeLevel() == compilationUnitLV;
 		}});
 		return detectMoveRefactoring(cuChanges, methodDeclarationLV, ASTAnalyzer.
-			getMethodDeclarationNamesEqualFunc()).append(detectMoveRefactoring
-				(cuChanges, typeDeclarationLV, Equal.stringEqual.comap(
-					getTypeDecNameFunc).eq()));
+			getMethodDeclarationNamesEqualFunc(), areTypeLocationsChanged).append(
+				detectMoveRefactoring(cuChanges, typeDeclarationLV, Equal.stringEqual.comap(
+					getTypeDecNameFunc).eq(), areCompilationUnitLocationsChanged));
 	}
 
 	private List<IDetectedRefactoring> detectMoveRefactoring(
 			final List<ISourceChange> cuChanges,
 			final String changeLevel,
-			final F2<ASTNode, ASTNode, Boolean> areNodesSame) {
+			final F2<ASTNode, ASTNode, Boolean> areNodesSame,
+			final F2<ASTNode, ASTNode, Boolean> areLocationChanged) {
 		try{
+		F<P2<ASTNode, ASTNode>, Boolean> condition = FJUtils.andPredicates
+			(areNodesSame.tuple(),areLocationChanged.tuple());
 		List<ASTNode> addedDec = getLowestChanges.f(cuChanges, getAddCriteria.
 			f(changeLevel)).map(getAfterNode);
 		List<ASTNode> removedDec = getLowestChanges.f(cuChanges, getRemoveCriteria.
 			f(changeLevel)).map(getBeforeNode);
 		return ASTNodeMapperUtils.getSameNodePairs(removedDec, addedDec, 
-			areNodesSame).map(new F<P2<ASTNode, ASTNode>, IDetectedRefactoring>() {
+			FJUtils.deTuple(condition)).map(new F<P2<ASTNode, ASTNode>, 
+				IDetectedRefactoring>() {
 				@Override
 				public IDetectedRefactoring f(P2<ASTNode, ASTNode> p) {
 					return new DetectedMoveRefactoring(RefactoringType.

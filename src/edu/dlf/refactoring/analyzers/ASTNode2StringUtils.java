@@ -6,6 +6,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.F;
@@ -56,6 +57,10 @@ public class ASTNode2StringUtils {
 				(MethodDeclaration.NAME_PROPERTY).toString();
 	}};
 	
+	
+	public static F<ASTNode, String> getTypeDeclarationNameFunc = ASTNode2ASTNodeUtils.
+		getStructuralPropertyFunc.flip().f(TypeDeclaration.NAME_PROPERTY).andThen
+			(FJUtils.getHeadFunc((ASTNode)null)).andThen(astNodeToStringFunc);
 	
 	public static F<ASTNode, String> getFilePath = new F<ASTNode, String>() {
 		@Override
