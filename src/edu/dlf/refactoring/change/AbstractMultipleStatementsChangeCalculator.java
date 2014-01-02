@@ -12,6 +12,8 @@ import edu.dlf.refactoring.analyzers.FJUtils;
 import edu.dlf.refactoring.design.ASTNodePair;
 import edu.dlf.refactoring.design.ISourceChange;
 import fj.F;
+import fj.F2;
+import fj.P2;
 import fj.data.List;
 import fj.data.List.Buffer;
 
@@ -20,6 +22,7 @@ public abstract class AbstractMultipleStatementsChangeCalculator implements
 	
 	protected final F<ASTNodePair, ISourceChange> statementCalFunc;
 
+	
 	protected AbstractMultipleStatementsChangeCalculator(IASTNodeChangeCalculator 
 		stCalculator) {
 		this.statementCalFunc = ASTNodePair.splitPairFunc.andThen
@@ -38,6 +41,11 @@ public abstract class AbstractMultipleStatementsChangeCalculator implements
 	private final F<ASTNode, ASTNodePair> createRemovePair = FJUtils.appendElementFunc
 		((ASTNode)null, (ASTNode)null).andThen(ASTNodePair.createPairFunc.tuple());
 	
+	private final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> 
+		statementsMapper = FJUtils.getSimilarityMapper(70, FJUtils.
+			getStringSimilarityFunc(100, ASTNode2StringUtils.astNodeToStringFunc));
+	
+	
 	protected List<ASTNodePair> mapStatementsToPairs(List<ASTNode> beforeSts, 
 			List<ASTNode> afterSts) {
 		final Buffer<ASTNodePair> container = Buffer.empty();
@@ -51,23 +59,14 @@ public abstract class AbstractMultipleStatementsChangeCalculator implements
 		
 		for(Delta diff : diffs) {
 			if(diff.getType() == TYPE.CHANGE) {
-				int changeCount = Math.min(diff.getOriginal().getLines().size(), 
-					diff.getRevised().getLines().size());
-				for(int i = 0; i < changeCount; i++) {
-					container.snoc(new ASTNodePair(
-						beforeSts.index(diff.getOriginal().getPosition() + i),
-						afterSts.index(diff.getRevised().getPosition() + i)));
-				}
-				if(diff.getOriginal().getLines().size() > changeCount) {
-					List<ASTNode> removed = FJUtils.getSubList(beforeSts, 
-						changeCount, beforeSts.length());
-					container.append(removed.map(this.createRemovePair));
-				}
-				if(diff.getRevised().getLines().size() > changeCount) {
-					List<ASTNode> added = FJUtils.getSubList(afterSts, changeCount, 
-						afterSts.length());
-					container.append(added.map(this.createAddPair));
-				}
+				List<ASTNode> changedBefore = FJUtils.getSubList(beforeSts, 
+					diff.getOriginal().getPosition(), diff.getOriginal().
+						getPosition() + diff.getOriginal().size());
+				List<ASTNode> changedAfter = FJUtils.getSubList(afterSts, diff.
+					getRevised().getPosition(), diff.getRevised().getPosition() 
+						+ diff.getRevised().size());
+				container.append(statementsMapper.f(changedBefore, changedAfter).
+					map(ASTNodePair.createPairFunc.tuple()));
 			}
 			else if(diff.getType() == TYPE.DELETE) {
 				int start = diff.getOriginal().getPosition();

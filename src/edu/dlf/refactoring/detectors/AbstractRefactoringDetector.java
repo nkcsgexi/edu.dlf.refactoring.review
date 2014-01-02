@@ -17,7 +17,7 @@ public abstract class AbstractRefactoringDetector implements IRefactoringDetecto
 	}
 	
 	protected IChangeSearchCriteria getBasicSearchCriteria(final String c, 
-		final SourceChangeType t) {
+			final SourceChangeType t) {
 		return new BasicChangeSearchCriteria() {
 			@Override
 			protected boolean isSourceChangeTypeOk(SourceChangeType type) {
