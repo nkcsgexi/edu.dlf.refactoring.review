@@ -79,12 +79,19 @@ public class FJUtils {
 	}
 	
 	
-	public static <T> F2<T, T, P2<T, T>> pairFunction(T t)
-	{
+	public static <T> F2<T, T, P2<T, T>> pairFunction(T t) {
 		return new F2<T, T, P2<T,T>>(){
 			@Override
 			public P2<T, T> f(T t1, T t2) {
 				return P.p(t1, t2);
+		}};
+	}
+	
+	public static <T, S> F2<T, S, P2<T, S>> pairFunction(T t, S s) {
+		return new F2<T, S, P2<T,S>>(){
+			@Override
+			public P2<T, S> f(T t, S s) {
+				return P.p(t, s);
 		}};
 	}
 	

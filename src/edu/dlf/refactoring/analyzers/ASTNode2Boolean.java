@@ -41,18 +41,11 @@ public class ASTNode2Boolean {
 					getStartPosition() ? node1 : node2;
 				ASTNode afterNode = node1 == beforeNode ? node2 : node1; 
 				final int gapStart = ASTNode2IntegerUtils.getEnd.f(beforeNode) + 1;
-				final int gapEnd = afterNode.getStartPosition() - 1;
-				ASTNode parent = ASTNode2ASTNodeUtils.getClosestCommonParent.
-					f(node1, node2);
-				return ASTAnalyzer.getAllDecendantsFunc.f(parent).find(
-					new F<ASTNode, Boolean>() {
-					@Override
-					public Boolean f(ASTNode n) {
-						return n.getStartPosition() >= gapStart && 
-							ASTNode2IntegerUtils.getEnd.f(n) <= gapEnd;
-				}}).isNone();
+				final int gapEnd = afterNode.getStartPosition();
+				String gap = ASTAnalyzer.getOriginalSourceFromRoot(afterNode.
+					getRoot()).substring(gapStart, gapEnd);
+				return !gap.contains("[a-zA-Z0-1]+");
 	}};
-	
 	
 	public static final F2<ASTNode, ASTNode, Boolean> araAstNodesOverlapped =
 		new F2<ASTNode, ASTNode, Boolean>() {

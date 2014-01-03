@@ -25,8 +25,7 @@ public class SourceChangeUtils {
 		throw new Exception();
 	}
 	
-	public static F<ISourceChange, ISourceChange> getPruneSourceChangeFunc()
-	{
+	public static F<ISourceChange, ISourceChange> getPruneSourceChangeFunc() {
 		return new F<ISourceChange, ISourceChange>() {
 			@Override
 			public ISourceChange f(ISourceChange change) {
@@ -53,8 +52,7 @@ public class SourceChangeUtils {
 	}};
 	
 	
-	public static ISourceChange pruneSourceChange(ISourceChange change)
-	{
+	public static ISourceChange pruneSourceChange(ISourceChange change) {
 		boolean isNull = !pruneSubChanges(change);
 		if(isNull)
 			return null;

@@ -8,7 +8,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 
 import com.google.inject.Inject;
 
-import edu.dlf.refactoring.analyzers.ASTAnalyzer;
+import edu.dlf.refactoring.analyzers.ASTNode2Boolean;
 import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.IASTNodeChangeCalculator;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
@@ -30,8 +30,7 @@ public class ExtractMethodImplementer extends AbstractRefactoringImplementer{
 	@Inject
 	public ExtractMethodImplementer(
 			Logger logger,
-			@CompilationUnitAnnotation IASTNodeChangeCalculator cuCalculator)
-	{
+			@CompilationUnitAnnotation IASTNodeChangeCalculator cuCalculator) {
 		super(logger, cuCalculator);
 		this.logger = logger;
 	}
@@ -56,8 +55,7 @@ public class ExtractMethodImplementer extends AbstractRefactoringImplementer{
 		ExtractMethodRefactoring refactoring  = new ExtractMethodRefactoring
 				(unit, start, end - start);
 		Option<Change> change = RefactoringUtils.createChange(refactoring);
-		if(change.isSome())
-		{
+		if(change.isSome()) {
 			collectAutoRefactoringChangesAsync(change.some(), 
 				new IAutoChangeCallback() {
 				@Override
@@ -68,11 +66,8 @@ public class ExtractMethodImplementer extends AbstractRefactoringImplementer{
 							changes);
 					callback.onImplementedRefactoringReady(detectedRefactoring, 
 						implemented);
-				}
-			});
-		}
-	}	
-	
+		}});}
+	}
 	
 	private List<ASTNode> getLongestSequentialNodes(List<ASTNode> statements) {
 		final ASTNode head = statements.head();
@@ -82,7 +77,7 @@ public class ExtractMethodImplementer extends AbstractRefactoringImplementer{
 			@Override
 			public Boolean f(P2<ASTNode, ASTNode> pair) {
 				if(pair._2() == head) return true;
-				return ASTAnalyzer.areNodesNeighbors(pair._1(), pair._2());
+				return ASTNode2Boolean.areASTNodesNeighbors.f(pair._1(), pair._2());
 			}})._1().map(new F<P2<ASTNode,ASTNode>, ASTNode>(){
 				@Override
 				public ASTNode f(P2<ASTNode, ASTNode> pair) {
