@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.analyzers;
 
+import java.awt.geom.Line2D;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import fj.F;
@@ -59,5 +61,11 @@ public class ASTNode2IntegerUtils {
 			int span = getLinesSpan.f(node);
 			return span + start - 1;
 	}};
+	
+	public static F<ASTNode, Line2D> convertNode2Line = new F<ASTNode, Line2D>() {
+		@Override
+		public Line2D f(ASTNode node) {
+			return new Line2D.Double(getStart.f(node), 0, getEnd.f(node), 0);
+	}}; 
 	
 }

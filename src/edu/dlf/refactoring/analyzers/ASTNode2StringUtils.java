@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
@@ -22,9 +23,18 @@ public class ASTNode2StringUtils {
 	
 	public static F<ASTNode, String> resolveBindingKey = new F<ASTNode, String>() {
 		@Override
-		public String f(ASTNode name) {
-			if(!(name instanceof Name)) logger.fatal("Node must be a name.");
-			return ((Name)name).resolveBinding().getKey();
+		public String f(ASTNode node) {
+			if(node instanceof MethodDeclaration) {
+				return ((MethodDeclaration)node).resolveBinding().getKey();
+			}
+			if(node instanceof MethodInvocation) {
+				return ((MethodInvocation)node).resolveMethodBinding().getKey();
+			}
+			if(node instanceof Name){
+				return ((Name)node).resolveBinding().getKey();
+			}
+			logger.fatal("Cannot resolve binding key.");
+			return "";
 	}};
 	
 	

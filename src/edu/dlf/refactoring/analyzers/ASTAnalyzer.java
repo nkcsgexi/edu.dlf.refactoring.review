@@ -414,10 +414,14 @@ public class ASTAnalyzer {
 		}
 	};
 
+	
+	
 	public static Boolean areNodesNeighbors(ASTNode node1, ASTNode node2) {
 	
 		return true;
 	}
+	
+	
 
 	public static boolean areTypesSame(ASTNode type1, ASTNode type2) {
 		IJavaElement t1 = JavaModelAnalyzer.getAssociatedITypes(type1).sort

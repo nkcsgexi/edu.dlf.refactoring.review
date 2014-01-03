@@ -6,11 +6,13 @@ import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 
+import fj.Equal;
 import fj.F;
 import fj.F2;
 import fj.Ord;
 import fj.data.List;
 import fj.data.List.Buffer;
+import fj.data.Option;
 
 public class ASTNode2ASTNodeUtils {
 	
@@ -117,4 +119,35 @@ public class ASTNode2ASTNodeUtils {
 			return visitor.getCollectedASTNode().sort(Ord.intOrd.comap(
 				ASTNode2IntegerUtils.getStart)).head();
 	}};
+	
+	public static F<ASTNode, List<ASTNode>> getAncestorsFunc = new F<ASTNode, 
+		List<ASTNode>>() {
+		@Override
+		public List<ASTNode> f(ASTNode node) {
+			List<ASTNode> results = List.nil();
+			node = node.getParent();
+			for(;node != null; node = node.getParent()) {
+				results = results.snoc(node);
+			}
+			return results;
+	}};
+	
+	public static F2<ASTNode, ASTNode, ASTNode> getClosestCommonParent = 
+		new F2<ASTNode, ASTNode, ASTNode>() {
+		@Override
+		public ASTNode f(ASTNode n0, ASTNode n1) {
+			Equal<ASTNode> eq = FJUtils.getReferenceEq((ASTNode)null);
+			List<ASTNode> anc0 = getAncestorsFunc.f(n0);
+			List<ASTNode> anc1 = getAncestorsFunc.f(n1);
+			for(ASTNode head = anc0.head(); head != null; anc0 = anc0.drop(1), 
+				head = anc0.head()) {
+				F<ASTNode, Boolean> finder = eq.eq(head);
+				Option<ASTNode> op = anc1.find(finder);
+				if(op.isSome()) {
+					return op.some();
+				}
+			}
+			return null;
+	}};
+	
 }
