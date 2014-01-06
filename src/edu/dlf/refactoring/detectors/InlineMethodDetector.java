@@ -99,8 +99,7 @@ public class InlineMethodDetector extends AbstractRefactoringDetector{
 				results = results.snoc(currentBuffer.toList());
 				currentBuffer = Buffer.empty();
 				currentBuffer.snoc(sta2);
-			}
-		}
+		}}
 		results = results.snoc(currentBuffer.toList());
 		return results;
 	}
