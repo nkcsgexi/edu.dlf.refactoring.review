@@ -18,6 +18,7 @@ import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ServiceLocator.RefactoringImplementaterCompAnnotation;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.ExtractSuperType;
+import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.InlineMethod;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.MoveResource;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameField;
 import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.RenameLocalVariable;
@@ -26,6 +27,7 @@ import edu.dlf.refactoring.detectors.RefactoringDetectionComponentInjector.Renam
 import edu.dlf.refactoring.study.StudyUtils;
 import fj.Effect;
 import fj.F;
+import fj.F2;
 import fj.data.List;
 
 public class RefactoringDetectionComponent implements IFactorComponent{
@@ -41,6 +43,7 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 			ChangedLinesComputer lineComputer,
 			@RenameMethod IRefactoringDetector rmDetector,
 			@ExtractMethod IRefactoringDetector emDetector,
+			@InlineMethod IRefactoringDetector inlineDetector,
 			@ExtractSuperType IRefactoringDetector extractSuperDet,
 			@RenameType IRefactoringDetector rtDetector,
 			@RenameLocalVariable IRefactoringDetector rlvDetector,
@@ -48,8 +51,8 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 			@MoveResource IRefactoringDetector mDetector,
 			@RefactoringImplementaterCompAnnotation IFactorComponent component) {
 		this.logger = logger;
-		this.detectorsList = list(rmDetector, emDetector, rfDetector, mDetector, 
-			rtDetector, rlvDetector, extractSuperDet);
+		this.detectorsList = list(rmDetector, emDetector, inlineDetector, 
+			rfDetector, mDetector, rtDetector, rlvDetector, extractSuperDet);
 		this.bus = new EventBus();
 		this.lineComputer = lineComputer;
 		bus.register(component);
@@ -63,8 +66,8 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 			logger.info(SourceChangeUtils.printChangeTree(change));
 			StudyUtils.logRevisionStart();
 			StudyUtils.logChangedLines.e(change);
-			detectorsList.bind(new F<IRefactoringDetector, 
-					List<IDetectedRefactoring>>(){
+			detectorsList.bind(new F<IRefactoringDetector, List<
+					IDetectedRefactoring>>(){
 				@Override
 				public List<IDetectedRefactoring> f(IRefactoringDetector d) {
 					return d.f(change);

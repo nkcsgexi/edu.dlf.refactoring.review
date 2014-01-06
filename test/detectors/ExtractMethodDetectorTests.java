@@ -66,7 +66,7 @@ public class ExtractMethodDetectorTests extends TestSuite{
 		ISourceChange change = cuCalculator.CalculateASTNodeChange(TestUtils.
 				getNodePairByFileNames("TestCUBefore1.java", "TestCUAfter1.java"));
 		change = SourceChangeUtils.pruneSourceChange(change);
-		List<IDetectedRefactoring> refactorings = emDetector.detectRefactoring(change);
+		List<IDetectedRefactoring> refactorings = emDetector.f(change);
 		Assert.isTrue(refactorings.length() == 1);
 		IDetectedRefactoring refactoring = refactorings.head();
 		System.out.println(refactoring);
@@ -83,7 +83,7 @@ public class ExtractMethodDetectorTests extends TestSuite{
 		ISourceChange change = cuCalculator.CalculateASTNodeChange(TestUtils.
 				getNodePairByFileNames("TestCUBefore1.java", "TestCUAfter1.java"));
 		change = SourceChangeUtils.pruneSourceChange(change);
-		List<IDetectedRefactoring> refactorings = rmDetector.detectRefactoring(change);
+		List<IDetectedRefactoring> refactorings = rmDetector.f(change);
 		Assert.isTrue(refactorings.length() == 2);
 		IDetectedRefactoring ref = refactorings.head();
 		Assert.isTrue(ref instanceof DetectedRenameMethodRefactoring);
