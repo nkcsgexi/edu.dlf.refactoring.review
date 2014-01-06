@@ -67,7 +67,7 @@ public class RefactoringDetectionComponent implements IFactorComponent{
 					List<IDetectedRefactoring>>(){
 				@Override
 				public List<IDetectedRefactoring> f(IRefactoringDetector d) {
-					return d.detectRefactoring(change);
+					return d.f(change);
 				}}).foreach(new Effect<IDetectedRefactoring>(){
 					@Override
 					public void e(IDetectedRefactoring refactoring) {

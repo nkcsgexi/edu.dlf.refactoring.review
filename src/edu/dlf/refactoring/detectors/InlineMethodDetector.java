@@ -29,8 +29,6 @@ import fj.data.List.Buffer;
 public class InlineMethodDetector extends AbstractRefactoringDetector{
 
 	private final Logger logger;
-	private final F<ISourceChange, List<ASTNode>> removedMethodSearcher;
-	private final F<ISourceChange, List<ASTNode>> addedStatementSearcher;
 	private final F<ASTNode, List<ASTNode>> getDownMethodInvocations = ASTAnalyzer.
 		getDecendantFunc().f(ASTNode.METHOD_INVOCATION);
 	private final F<ASTNode, List<ASTNode>> getUpMethodDeclaration = ASTAnalyzer.
@@ -43,6 +41,10 @@ public class InlineMethodDetector extends AbstractRefactoringDetector{
 		ASTNode2ASTNodeUtils.getRootFunc.andThen(ASTNode2StringUtils.
 			getCompilationUnitName));
 	private final static double threshold = 0.7;
+	
+	private final F<ISourceChange, List<ASTNode>> removedMethodSearcher;
+	private final F<ISourceChange, List<ASTNode>> addedStatementSearcher;
+	
 	
 	@Inject
 	public InlineMethodDetector(
@@ -61,7 +63,7 @@ public class InlineMethodDetector extends AbstractRefactoringDetector{
 	}
 	
 	@Override
-	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
+	public List<IDetectedRefactoring> f(ISourceChange change) {
 		List<List<ASTNode>> removedMethods = this.removedMethodSearcher.f(change).
 			group(rootRefEq);
 		List<List<ASTNode>> addedStatements = this.addedStatementSearcher.f(change).
@@ -77,7 +79,7 @@ public class InlineMethodDetector extends AbstractRefactoringDetector{
 			List<List<ASTNode>> statementGroups = groupStatements(pair._2());
 			allRefactorings.append(methods.bind(statementGroups, FJUtils.
 				pairFunction((ASTNode) null, (List<ASTNode>)null)).filter(this.
-					areStatementsExtractedFromMethod.tuple()).map(createRefactoring.
+					areStatementsExtractedFromMethod.tuple()).map(createInlineRefactoring.
 						tuple()));
 		}
 		return allRefactorings.toList();
@@ -123,7 +125,7 @@ public class InlineMethodDetector extends AbstractRefactoringDetector{
 	}}; 
 	
 	private final F2<ASTNode, List<ASTNode>, IDetectedRefactoring> 
-		createRefactoring = new F2<ASTNode, List<ASTNode>, IDetectedRefactoring>() {	
+		createInlineRefactoring = new F2<ASTNode, List<ASTNode>, IDetectedRefactoring>() {	
 		@Override
 		public IDetectedRefactoring f(ASTNode method, List<ASTNode> statements) {
 			F<ASTNode, Boolean> filter = methodBindingEq.eq().f(method);

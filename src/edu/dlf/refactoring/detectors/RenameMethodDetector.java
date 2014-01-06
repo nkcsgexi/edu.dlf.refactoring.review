@@ -50,7 +50,7 @@ public class RenameMethodDetector extends AbstractRefactoringDetector{
 	}
 
 	@Override
-	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
+	public List<IDetectedRefactoring> f(ISourceChange change) {
 		List<IChangeSearchResult> decChanges = this.declarationChangeCriteira.search(change);
 		List<IChangeSearchResult> invChanges = this.invocationChangeCriteira.search(change);
 		if(decChanges.isEmpty() && invChanges.isEmpty())

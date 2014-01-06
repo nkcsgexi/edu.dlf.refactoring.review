@@ -63,7 +63,7 @@ public class RenameLocalVariableDetector extends AbstractRefactoringDetector{
 	}};
 	
 	@Override
-	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
+	public List<IDetectedRefactoring> f(ISourceChange change) {
 		List<IChangeSearchResult> results = this.searchCriteria.search(change);
 		List<ASTNode> namesBefore = results.map(ChangeSearchUtils.
 			getLeafSourceChangeFunc()).map(ChangeSearchUtils.getNodeBeforeFunc);

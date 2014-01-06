@@ -130,7 +130,7 @@ public class MoveRefactoringDetector extends AbstractRefactoringDetector{
 				astNodeToStringFunc);
 	
 	@Override
-	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
+	public List<IDetectedRefactoring> f(ISourceChange change) {
 		final List<ISourceChange> cuChanges = SourceChangeUtils.getSelfAndDescendent
 			(change).filter(new F<ISourceChange, Boolean>() {
 			@Override

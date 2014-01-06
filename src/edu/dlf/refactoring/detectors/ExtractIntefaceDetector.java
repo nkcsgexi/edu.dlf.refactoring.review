@@ -83,7 +83,7 @@ public class ExtractIntefaceDetector extends AbstractRefactoringDetector{
 	}
 	
 	@Override
-	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {		
+	public List<IDetectedRefactoring> f(ISourceChange change) {		
 		List<ASTNode> addedTypeDeclarations = addTypeCriteria.search(change).map(
 			SourceChangeUtils.getLeafSourceChangeFunc()).map(SourceChangeUtils.
 				getNodeAfterFunc()).append(addCUCriteria.search(change).map(

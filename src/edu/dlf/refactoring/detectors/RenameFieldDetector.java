@@ -91,7 +91,7 @@ public class RenameFieldDetector extends AbstractRefactoringDetector{
 	}};
 	
 	@Override
-	public List<IDetectedRefactoring> detectRefactoring(final ISourceChange change) {
+	public List<IDetectedRefactoring> f(final ISourceChange change) {
 		List<ISourceChange> nameChanges = ChangeSearchUtils.searchFunc.f(change).andThen(
 			ChangeSearchUtils.getLeafSourceChangeFunc().mapList()).f(criteria);
 		logger.debug("Number of field name changes: " + nameChanges.length());

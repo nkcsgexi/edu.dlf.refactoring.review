@@ -45,7 +45,7 @@ public class RenameTypeDetector extends AbstractRefactoringDetector{
 	}
 	
 	@Override
-	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
+	public List<IDetectedRefactoring> f(ISourceChange change) {
 		List<ISourceChange> decChanges = this.typeDeclarationCriteria.
 			search(change).map(SourceChangeUtils.getLeafSourceChangeFunc());
 		List<ISourceChange> refChanges = this.typeReferenceCriteria.

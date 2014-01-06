@@ -4,7 +4,7 @@ import edu.dlf.refactoring.design.IRefactoringDetector;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
 import edu.dlf.refactoring.detectors.SourceChangeSearcher.IChangeSearchCriteria;
 
-public abstract class AbstractRefactoringDetector implements IRefactoringDetector{
+public abstract class AbstractRefactoringDetector extends IRefactoringDetector{
 
 	
 	protected AbstractRefactoringDetector()

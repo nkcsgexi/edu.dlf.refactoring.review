@@ -116,7 +116,7 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 	}};
 		
 	@Override
-	public List<IDetectedRefactoring> detectRefactoring(ISourceChange change) {
+	public List<IDetectedRefactoring> f(ISourceChange change) {
 		List<IChangeSearchResult> staChanges = this.statementSearchCriteria.search(change);
 		List<IChangeSearchResult> mdChanges = this.methodSearchCriteria.search(change);
 		final List<P2<IChangeSearchResult, IChangeSearchResult>> multiplied = 
