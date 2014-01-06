@@ -7,6 +7,7 @@ public enum RefactoringType {
 		RenameLocalVariable,
 		RenameField,
 		Move, 
-		ExtractSuperType
+		ExtractSuperType,
+		InlineMethod
 }
 	

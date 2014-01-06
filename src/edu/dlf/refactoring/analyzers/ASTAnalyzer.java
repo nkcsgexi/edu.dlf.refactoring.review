@@ -206,7 +206,6 @@ public class ASTAnalyzer {
 	}
 	
 	public static boolean areASTNodesSame(ASTNode before, ASTNode after) {
-		
 		if(before == null && after == null)
 			return true;
 		if(before == null || after == null)

@@ -2,22 +2,26 @@ package edu.dlf.refactoring.detectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Statement;
 
 import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2ASTNodeUtils;
+import edu.dlf.refactoring.analyzers.ASTNode2Boolean;
+import edu.dlf.refactoring.analyzers.ASTNode2IntegerUtils;
 import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
 import edu.dlf.refactoring.analyzers.FJUtils;
-import edu.dlf.refactoring.change.ChangeComponentInjector.CompilationUnitAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.MethodDeclarationAnnotation;
 import edu.dlf.refactoring.change.ChangeComponentInjector.StatementAnnotation;
 import edu.dlf.refactoring.design.IDetectedRefactoring;
 import edu.dlf.refactoring.design.ISourceChange;
 import edu.dlf.refactoring.design.ISourceChange.SourceChangeType;
+import edu.dlf.refactoring.refactorings.DetectedInlineMethodRefactoring;
 import fj.Equal;
 import fj.F;
 import fj.F2;
+import fj.Ord;
 import fj.P2;
 import fj.data.List;
 import fj.data.List.Buffer;
@@ -25,11 +29,12 @@ import fj.data.List.Buffer;
 public class InlineMethodDetector extends AbstractRefactoringDetector{
 
 	private final Logger logger;
-	private final String compilationUnitLV;
 	private final F<ISourceChange, List<ASTNode>> removedMethodSearcher;
 	private final F<ISourceChange, List<ASTNode>> addedStatementSearcher;
-	private final F<ASTNode, List<ASTNode>> getMethodInvocations = ASTAnalyzer.
+	private final F<ASTNode, List<ASTNode>> getDownMethodInvocations = ASTAnalyzer.
 		getDecendantFunc().f(ASTNode.METHOD_INVOCATION);
+	private final F<ASTNode, List<ASTNode>> getUpMethodDeclaration = ASTAnalyzer.
+		getAncestorsFunc.f(ASTNode.METHOD_DECLARATION);
 	private final Equal<ASTNode> methodBindingEq = Equal.stringEqual.comap
 		(ASTNode2StringUtils.resolveBindingKey);
 	private final Equal<ASTNode> rootRefEq = FJUtils.getReferenceEq
@@ -37,15 +42,14 @@ public class InlineMethodDetector extends AbstractRefactoringDetector{
 	private final Equal<ASTNode> rootNameEq = Equal.stringEqual.comap(
 		ASTNode2ASTNodeUtils.getRootFunc.andThen(ASTNode2StringUtils.
 			getCompilationUnitName));
+	private final static double threshold = 0.7;
 	
 	@Inject
 	public InlineMethodDetector(
 			Logger logger, 
-			@CompilationUnitAnnotation String compilationUnitLV,
 			@MethodDeclarationAnnotation String methodDeclarationLV,
 			@StatementAnnotation String statementLV) {
 		this.logger = logger;
-		this.compilationUnitLV = compilationUnitLV;
 		this.removedMethodSearcher = ChangeSearchUtils.searchFunc.flip().f(this.
 			getBasicSearchCriteria(methodDeclarationLV, SourceChangeType.REMOVE)).
 				andThen(ChangeSearchUtils.getLeafSourceChangeFunc().mapList()).
@@ -80,15 +84,22 @@ public class InlineMethodDetector extends AbstractRefactoringDetector{
 	}
 	
 	private List<List<ASTNode>> groupStatements(List<ASTNode> statements) {
+		statements = statements.sort(Ord.intOrd.comap(ASTNode2IntegerUtils.
+			getStart));
 		List<List<ASTNode>> results = List.nil();
-		for(int i = 0; i < statements.length() - 1; i ++) {
-			ASTNode st1 = statements.index(i);
-			ASTNode st2 = statements.index(i + 1);
-			
+		Buffer<ASTNode> currentBuffer = Buffer.empty();
+		currentBuffer.snoc(statements.head());
+		for(int i = 1; i < statements.length(); i ++) {
+			ASTNode st1 = statements.index(i - 1);
+			ASTNode st2 = statements.index(i);
+			if(ASTNode2Boolean.areASTNodesNeighbors.f(st1, st2)){
+				currentBuffer.snoc(st2);
+			} else {
+				results = results.snoc(currentBuffer.toList());
+				currentBuffer = Buffer.empty();
+				currentBuffer.snoc(st2);
+			}
 		}
-		
-		
-		
 		return results;
 	}
 	
@@ -96,15 +107,27 @@ public class InlineMethodDetector extends AbstractRefactoringDetector{
 		new F2<ASTNode, List<ASTNode>, Boolean>() {
 		@Override
 		public Boolean f(ASTNode method, List<ASTNode> statements) {
-			return null;
+			List<ASTNode> methodStatements = ASTAnalyzer.getAllDecendantsFunc.
+				f(method).filter(new F<ASTNode, Boolean>() {
+				@Override
+				public Boolean f(ASTNode node) {
+					return node instanceof Statement;
+			}});
+			List<P2<ASTNode, ASTNode>> sameStatementPairs = FJUtils.getSamePairs
+				(methodStatements, statements, Equal.equal(ASTAnalyzer.
+					getASTNodeSameFunc().curry()));
+			double perc = (double)sameStatementPairs.length()/(double)statements.
+				length();
+			return perc >= threshold;
 	}}; 
 	
 	private final F2<ASTNode, List<ASTNode>, IDetectedRefactoring> 
 		createRefactoring = new F2<ASTNode, List<ASTNode>, IDetectedRefactoring>() {	
 		@Override
 		public IDetectedRefactoring f(ASTNode method, List<ASTNode> statements) {
-			return null;
+			F<ASTNode, Boolean> filter = methodBindingEq.eq().f(method);
+			List<ASTNode> invocations = getDownMethodInvocations.f(
+				getUpMethodDeclaration.f(statements.head()).head()).filter(filter); 
+			return new DetectedInlineMethodRefactoring(method, invocations);
 	}};
-
-
 }
