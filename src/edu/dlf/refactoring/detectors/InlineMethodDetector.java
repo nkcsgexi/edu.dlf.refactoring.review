@@ -87,19 +87,21 @@ public class InlineMethodDetector extends AbstractRefactoringDetector{
 		statements = statements.sort(Ord.intOrd.comap(ASTNode2IntegerUtils.
 			getStart));
 		List<List<ASTNode>> results = List.nil();
+		if(statements.isEmpty()) return results;
 		Buffer<ASTNode> currentBuffer = Buffer.empty();
 		currentBuffer.snoc(statements.head());
 		for(int i = 1; i < statements.length(); i ++) {
-			ASTNode st1 = statements.index(i - 1);
-			ASTNode st2 = statements.index(i);
-			if(ASTNode2Boolean.areASTNodesNeighbors.f(st1, st2)){
-				currentBuffer.snoc(st2);
+			ASTNode sta1 = statements.index(i - 1);
+			ASTNode sta2 = statements.index(i);
+			if(ASTNode2Boolean.areASTNodesNeighbors.f(sta1, sta2)) {
+				currentBuffer.snoc(sta2);
 			} else {
 				results = results.snoc(currentBuffer.toList());
 				currentBuffer = Buffer.empty();
-				currentBuffer.snoc(st2);
+				currentBuffer.snoc(sta2);
 			}
 		}
+		results = results.snoc(currentBuffer.toList());
 		return results;
 	}
 	

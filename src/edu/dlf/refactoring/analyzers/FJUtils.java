@@ -3,6 +3,7 @@ package edu.dlf.refactoring.analyzers;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 import com.google.common.collect.Lists;
 
@@ -459,6 +460,14 @@ public class FJUtils {
 			@Override
 			public T f(Option<T> op) {
 				return op.some();
+		}};
+	}
+
+	public static <T> F<Buffer<T>, List<T>> getBuffer2ListFunc(T t) {
+		return new F<List.Buffer<T>, List<T>>() {
+			@Override
+			public List<T> f(Buffer<T> buffer) {
+				return buffer.toList();
 		}};
 	}
 }
