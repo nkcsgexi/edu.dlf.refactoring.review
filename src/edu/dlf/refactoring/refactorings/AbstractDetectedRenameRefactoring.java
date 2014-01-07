@@ -7,13 +7,13 @@ import edu.dlf.refactoring.design.RefactoringType;
 import fj.F;
 
 public abstract class AbstractDetectedRenameRefactoring extends AbstractRefactoring{
-
 	
 	private final F<ASTNode, Boolean> isSimpleName;
 
 	protected AbstractDetectedRenameRefactoring(RefactoringType refactoringType) {
 		super(refactoringType);
-		this.isSimpleName = ASTNode2Boolean.isASTNodeTypeRight.flip().f(ASTNode.SIMPLE_NAME);
+		this.isSimpleName = ASTNode2Boolean.isASTNodeTypeRight.flip().f(ASTNode.
+			SIMPLE_NAME);
 	}
 	
 	public String getNameBefore() {

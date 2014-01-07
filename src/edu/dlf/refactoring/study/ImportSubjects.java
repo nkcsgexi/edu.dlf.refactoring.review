@@ -1,6 +1,7 @@
 package edu.dlf.refactoring.study;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
@@ -11,9 +12,11 @@ import edu.dlf.refactoring.analyzers.DlfFileUtils;
 import edu.dlf.refactoring.design.IFactorComponent;
 import edu.dlf.refactoring.design.ServiceLocator.ChangeCompAnnotation;
 import edu.dlf.refactoring.utils.EclipseUtils;
+import fj.Effect;
 import fj.F;
 import fj.F2;
-import fj.Ord;
+import fj.P;
+import fj.P2;
 import fj.data.List;
 
 public class ImportSubjects extends AbstractStudy {
@@ -25,6 +28,9 @@ public class ImportSubjects extends AbstractStudy {
 	private static final int index = 0;
 	private static final String[] projectNames = {"junit"};
 	private static final String[] studyFolders = {"junit-study/"};
+	
+	private static final Pattern projectNamePattern = Pattern.
+		compile(projectNames[index] + "[0-9]+");
 	
 	@Inject
 	public ImportSubjects(
@@ -54,18 +60,30 @@ public class ImportSubjects extends AbstractStudy {
 				@Override
 				public String f(String oldName) {
 					return oldName + count;
-				}})).foreach(EclipseUtils.directlyRenameProject.tuple());
+			}})).foreach(EclipseUtils.directlyRenameProject.tuple());
 			return importedProjects;
 	}}; 
 	
+	private final F<String, P2<String, Integer>> appendProjectNumber = 
+		new F<String, P2<String,Integer>>() {
+		@Override
+		public P2<String, Integer> f(String path) {
+			return P.p(path, getContainedInteger(path));
+	}};
+	
 	@Override
 	protected void study() {
-		List<String> folders = DlfFileUtils.getSubDirectories.f(root).filter
+		List<P2<String, Integer>> folders = DlfFileUtils.getSubDirectories.f(root).filter
 			(new F<String, Boolean>(){
 			@Override
 			public Boolean f(String path) {
-				return path.contains(projectNames[index]);
-		}}).sort(Ord.stringOrd);
-		folders.zipIndex().bind(importAllProjects.tuple());
+				return getContainedInteger(path) != null;
+		}}).map(appendProjectNumber);
+		folders.foreach(new Effect<P2<String, Integer>>() {
+			@Override
+			public void e(P2<String, Integer> p) {
+				logger.info(p._1() + ":" + p._2());
+		}});
+		folders.bind(importAllProjects.tuple());
 	}
 }

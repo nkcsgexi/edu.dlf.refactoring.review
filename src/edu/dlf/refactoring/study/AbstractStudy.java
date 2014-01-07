@@ -1,5 +1,8 @@
 package edu.dlf.refactoring.study;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 
@@ -11,6 +14,8 @@ import fj.Effect;
 import fj.data.List;
 
 public abstract class AbstractStudy extends WorkQueueItem {
+
+	private static final Pattern integerPattern = Pattern.compile("[0-9]+");
 
 	abstract protected void study();
 	
@@ -26,6 +31,15 @@ public abstract class AbstractStudy extends WorkQueueItem {
 		logger.info("Study starts.");
 		study();
 		logger.info("Study ends.");
+	}
+	
+	protected Integer getContainedInteger(String path) {
+		Matcher matcher = integerPattern.matcher(path);
+		if(matcher.find()) {
+			String text = matcher.group(0);
+			return Integer.parseInt(text);
+		}
+		return null;
 	}
 
 	protected void clearWorkspace() {

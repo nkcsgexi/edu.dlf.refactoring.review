@@ -17,16 +17,12 @@ public class DetectedRenameMethodRefactoring extends AbstractDetectedRenameRefac
 	public static NodeListDescriptor SimpleNamesAfter = new NodeListDescriptor(){};
 	private final Logger logger = ServiceLocator.ResolveType(Logger.class);
 	
-	public DetectedRenameMethodRefactoring(List<ASTNode> namesBefore, List<ASTNode> namesAfter) {
+	public DetectedRenameMethodRefactoring(List<ASTNode> namesBefore, 
+			List<ASTNode> namesAfter) {
 		super(RefactoringType.RenameMethod);
 		this.addNodeList(SimpleNamesBefore, namesBefore);
 		this.addNodeList(SimpleNamesAfter, namesAfter);
 		this.logger.info("Rename method created."); ;
-	}
-	
-	public String toString()
-	{
-		return "";
 	}
 
 	@Override

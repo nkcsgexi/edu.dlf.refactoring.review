@@ -47,7 +47,7 @@ public class DlfFileUtils {
 			public List<File> f(String directory, F<File, Boolean> filter) {
 				IOFileFilter trueFilter = FileFilterUtils.trueFileFilter();
 				return FJUtils.createListFromCollection(org.apache.commons.io.FileUtils.
-					listFilesAndDirs(new File(directory), trueFilter , trueFilter)).
+					listFilesAndDirs(new File(directory), trueFilter, trueFilter)).
 						filter(filter);
 	}};
 	
