@@ -57,7 +57,7 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 	}};
 	
 	@Override
-	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
+	public ISourceChange calculate(JavaElementPair pair) {
 		logger.debug("Compare packages: " + pair.getElementBefore().
 			getElementName() + ":" + pair.getElementAfter().getElementName());
 		final SubChangeContainer change = new SubChangeContainer(this.paLevel, pair);
@@ -65,12 +65,12 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 				new Effect<P2<IJavaElement, IJavaElement>>() {
 				@Override
 				public void e(P2<IJavaElement, IJavaElement> p) {
-					change.addSubChange(cuCalculator.CalculateJavaModelChange(
+					change.addSubChange(cuCalculator.calculate(
 						new JavaElementPair(p._1(), p._2())));
 		}};
-		List<IJavaElement> unitsAfter = JavaModelAnalyzer.getICompilationUnit
+		List<IJavaElement> unitsAfter = JavaModelAnalyzer.getICompilationUnitFunc.f
 			(pair.getElementBefore()); 
-		List<IJavaElement> unitsBefore = JavaModelAnalyzer.getICompilationUnit
+		List<IJavaElement> unitsBefore = JavaModelAnalyzer.getICompilationUnitFunc.f
 			(pair.getElementAfter());
 		F2<List<IJavaElement>, List<IJavaElement>, List<P2<IJavaElement, 
 			IJavaElement>>> mapper = FJUtils.getSimilarityMapper(20, 

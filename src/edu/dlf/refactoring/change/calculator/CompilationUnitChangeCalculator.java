@@ -41,8 +41,8 @@ import fj.data.List;
 import fj.data.Option;
 
 
-public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculator, 
-	IASTNodeChangeCalculator{
+public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculator
+	, IASTNodeChangeCalculator{
 
 	private final Logger logger;
 	
@@ -107,7 +107,7 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	}}};
 			
 	@Override
-	public ISourceChange CalculateJavaModelChange(JavaElementPair pair) {
+	public ISourceChange calculate(JavaElementPair pair) {
 		logger.debug("Calculate change: " + JavaModelAnalyzer.getElementNameFunc.
 			f(pair.getElementBefore()) + "->" + JavaModelAnalyzer.getElementNameFunc.
 				f(pair.getElementAfter()) );

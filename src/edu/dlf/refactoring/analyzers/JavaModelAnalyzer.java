@@ -7,7 +7,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.ISourceRange;
@@ -20,9 +19,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import edu.dlf.refactoring.design.ServiceLocator;
 import fj.Equal;
 import fj.F;
-import fj.F2;
 import fj.Ord;
-import fj.P2;
 import fj.data.List;
 import fj.data.List.Buffer;
 
@@ -107,20 +104,24 @@ public class JavaModelAnalyzer {
 		}
 	}
 	
-	public static List<IJavaElement> getICompilationUnit(IJavaElement pack)
-	{
-		try{
-			List<IJavaElement> list = List.nil();
-			for (ICompilationUnit unit : ((IPackageFragment)pack).
-				getCompilationUnits()) {
-					list = list.snoc(unit);	
+	
+	
+	public static F<IJavaElement, List<IJavaElement>> getICompilationUnitFunc = 
+		new F<IJavaElement, List<IJavaElement>>(){
+		@Override
+		public List<IJavaElement> f(IJavaElement pack) {
+			try{
+				List<IJavaElement> list = List.nil();
+				for (ICompilationUnit unit : ((IPackageFragment)pack).
+					getCompilationUnits()) {
+						list = list.snoc(unit);	
+				}
+				return list;
+			}catch(Exception e) {
+				logger.fatal(e);
+				return List.nil();
 			}
-			return list;
-		}catch(Exception e) {
-			logger.fatal(e);
-			return List.nil();
-		}
-	}
+	}};
 	
 	public static IJavaElement getAssociatedICompilationUnit(ASTNode node)
 	{

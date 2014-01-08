@@ -3,7 +3,6 @@ package edu.dlf.refactoring.analyzers;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jdt.core.dom.ASTNode;
 
 import com.google.common.collect.Lists;
 
