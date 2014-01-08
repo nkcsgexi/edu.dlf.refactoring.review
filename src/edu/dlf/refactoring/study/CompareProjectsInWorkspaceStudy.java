@@ -70,6 +70,13 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 	private final Ord<IJavaElement> projectOrd = Ord.stringOrd.comap
 		(getOriginalName);
 
+	private final Ord<IJavaElement> projectNumberOrd = Ord.intOrd.comap(
+		new F<IJavaElement, Integer>() {
+			@Override
+			public Integer f(IJavaElement project) {
+				return getContainedInteger(project.getElementName());
+	}});
+	
 	private final Effect<P2<IJavaElement, IJavaElement>> printProjectPair =
 		new Effect<P2<IJavaElement,IJavaElement>>() {
 			@Override
@@ -99,16 +106,13 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 			((DlfExecutorService)queue).restart();
 	}};
 	
-	private final Ord<IJavaElement> timeOrd = Ord.stringOrd.comap(JavaModelAnalyzer.
-			getElementNameFunc);
-	
 	private final F<List<IJavaElement>, List<P2<IJavaElement, IJavaElement>>> 
 		pairProjects = new F<List<IJavaElement>, List<P2<IJavaElement, 
 			IJavaElement>>>() {
 		@Override
 		public List<P2<IJavaElement, IJavaElement>> f(List<IJavaElement> 
 				projects) {
-			projects = projects.sort(timeOrd);
+			projects = projects.sort(projectNumberOrd).reverse();
 			F<Object, Unit> feeder = DesignUtils.feedComponent.flip().
 				f(changeComp);
 			F<JavaElementPair, Object> converter = FJUtils.getTypeConverter
@@ -122,14 +126,15 @@ public class CompareProjectsInWorkspaceStudy extends AbstractStudy{
 	protected void study() {
 		final List<IJavaElement> projects = JavaModelAnalyzer.
 			getJavaProjectsInWorkSpace();
-		final List<List<IJavaElement>> groups = projects.sort(projectOrd).
-			group(projectEq);
+		final List<List<IJavaElement>> groups = projects.group(projectEq);
 		final List<P2<IJavaElement, IJavaElement>> allPairs = groups.bind
 			(pairProjects);
+		allPairs.foreach(handlePair);
+		return;/*
 		int start = this.pairStarts.index(index);
 		int end = this.pairStarts.index(index + 1) - 1;
 		index += 1;
-		FJUtils.getSubList(allPairs, start, end).foreach(handlePair);
+		FJUtils.getSubList(allPairs, start, end).foreach(handlePair);*/
 	}
 
 }
