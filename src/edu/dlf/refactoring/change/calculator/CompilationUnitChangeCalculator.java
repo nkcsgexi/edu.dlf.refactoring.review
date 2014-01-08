@@ -146,7 +146,7 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 					group(nodeTypeEq), Equal.intEqual.comap(FJUtils.getHeadFunc
 						((ASTNode)null).andThen(ASTNode2IntegerUtils.getKind)));		
 			F<P2<List<ASTNode>, List<ASTNode>>, List<ASTNodePair>> mapper = 
-				ASTNodeMapperUtils.getASTNodeMapper(50, ASTNodeMapperUtils.
+				ASTNodeMapperUtils.getASTNodeMapper(20, ASTNodeMapperUtils.
 				getCommonWordsASTNodeSimilarityScoreFunc(100, new F<ASTNode, String>() {
 				@Override
 				public String f(ASTNode node) {
@@ -203,7 +203,7 @@ public class CompilationUnitChangeCalculator implements IJavaModelChangeCalculat
 	private Collection<ISourceChange> calculateImportDeclarationsChange(List<ASTNode> 
 		importsBefore, List<ASTNode> importsAfter) {
 		F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> mapper = 
-			ASTNodeMapperUtils.getASTNodeMapper(70, ASTNodeMapperUtils.
+			ASTNodeMapperUtils.getASTNodeMapper(20, ASTNodeMapperUtils.
 			getASTNodeSimilarityFunc(100, new F<ASTNode, String>() {
 				@Override
 				public String f(ASTNode importDec) {

@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import edu.dlf.refactoring.analyzers.DlfFileUtils;
 import edu.dlf.refactoring.design.IFactorComponent;
@@ -19,6 +20,7 @@ import fj.P;
 import fj.P2;
 import fj.data.List;
 
+@Singleton
 public class ImportSubjects extends AbstractStudy {
 
 	private final Logger logger;

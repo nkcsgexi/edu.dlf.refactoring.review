@@ -68,8 +68,10 @@ public class StudyUtils {
 			@Override
 			public void e(IDetectedRefactoring refactoring) {
 				if(DetectedRefactoringUtils.isRenameRefactoring(refactoring)) {
-					writeStudylog(DetectedRefactoringUtils.getOldName(refactoring)
-						+ "->" + DetectedRefactoringUtils.getNewName(refactoring));
+					writeStudylog(DetectedRefactoringUtils.getRenamedEntityType
+						(refactoring) + ":"+ DetectedRefactoringUtils.getOldName
+							(refactoring) + "->" + DetectedRefactoringUtils.
+								getNewName(refactoring));
 				}
 				if(refactoring.getRefactoringType() == RefactoringType.Move) {
 					String beforeName = ((DetectedMoveRefactoring)refactoring).
@@ -77,6 +79,14 @@ public class StudyUtils {
 					String afterName = ((DetectedMoveRefactoring)refactoring).
 						getAfterLocation().getElementName();
 					writeStudylog("Move from " + beforeName + " to " + afterName);
+				}
+				
+				if(refactoring.getRefactoringType() == RefactoringType.InlineMethod) {
+					writeStudylog("Inline method");
+				}
+				
+				if(refactoring.getRefactoringType() == RefactoringType.ExtractMethod) {
+					writeStudylog("Extract method");
 				}
 				List<P2<TYPE, Integer>> summary = refactoring.getDeltaSummary();
 				summary.map(getHeader).foreach(new Effect<String>() {

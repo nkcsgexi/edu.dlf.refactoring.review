@@ -73,7 +73,7 @@ public class SourcePackageChangeCalculator implements IJavaModelChangeCalculator
 		List<IJavaElement> unitsBefore = JavaModelAnalyzer.getICompilationUnit
 			(pair.getElementAfter());
 		F2<List<IJavaElement>, List<IJavaElement>, List<P2<IJavaElement, 
-			IJavaElement>>> mapper = FJUtils.getSimilarityMapper(40, 
+			IJavaElement>>> mapper = FJUtils.getSimilarityMapper(20, 
 				refinedSimilarityFunc);
 		mapper.f(unitsBefore, unitsAfter).foreach(calculateSubchange);
 		return change;

@@ -108,8 +108,8 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 		final F<P2<ASTNode, ASTNode>, ISourceChange> calculateChange = 
 			SourceChangeUtils.getChangeCalculationFunc(typeCalculator).tuple();
 		final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> 
-			superTypeMapper = ASTNodeMapperUtils.getASTNodeMapper(4, ASTNodeMapperUtils.
-				getASTNodeSimilarityFunc(10));
+			superTypeMapper = ASTNodeMapperUtils.getASTNodeMapper(20, ASTNodeMapperUtils.
+				getASTNodeSimilarityFunc(100));
 		return superTypeMapper.f(getSuperTypes.f(typeB), getSuperTypes.f(typeA)).map
 			(calculateChange).toCollection();
 	}
@@ -133,7 +133,7 @@ public class TypeDeclarationChangeCalculator implements IASTNodeChangeCalculator
 	}
 	
 	private final F2<List<ASTNode>, List<ASTNode>, List<P2<ASTNode, ASTNode>>> 
-		methodNameCamelCaseMapper = ASTNodeMapperUtils.getASTNodeMapper(70,
+		methodNameCamelCaseMapper = ASTNodeMapperUtils.getASTNodeMapper(20,
 			ASTNodeMapperUtils.getCommonWordsASTNodeSimilarityScoreFunc(100, 
 				ASTNode2StringUtils.getMethodNameFunc));	
 				
