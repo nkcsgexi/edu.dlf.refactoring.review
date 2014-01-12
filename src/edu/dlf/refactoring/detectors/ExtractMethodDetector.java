@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 
 import edu.dlf.refactoring.analyzers.ASTAnalyzer;
 import edu.dlf.refactoring.analyzers.ASTNode2Boolean;
+import edu.dlf.refactoring.analyzers.ASTNode2IntegerUtils;
 import edu.dlf.refactoring.analyzers.ASTNode2StringUtils;
 import edu.dlf.refactoring.analyzers.ASTNodeEq;
 import edu.dlf.refactoring.analyzers.FJUtils;
@@ -35,6 +36,7 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 		ASTAnalyzer.getAncestorsFunc.f(ASTNode.TYPE_DECLARATION).andThen(
 			getASTNodeListHead).andThen(ASTNode2StringUtils.
 				getTypeDeclarationNameFunc));
+	
 	private final static double threshold = 0.5;
 	
 	@Inject
@@ -72,13 +74,14 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 				List<ASTNode> extractedStatements = FJUtils.getSamePairs(statements, 
 					statementsInMethod, ASTNodeEq.astNodeContentEq).map(FJUtils.
 						getFirstElementInPFunc((ASTNode)null, (ASTNode)null));
-				int sameStatementsCount = extractedStatements.length();
-				if((double)sameStatementsCount/(double)statementsInMethod.length() 
-						>= threshold) {
+				double extractedLength = ASTNode2IntegerUtils.getAstNodesLength.f
+					(extractedStatements);
+				double totalLength = ASTNode2IntegerUtils.getAstNodesLength.f
+					(statementsInMethod);
+				if(extractedLength/totalLength >= threshold) {
 					detectedRefactorings.snoc(new DetectedExtractMethodRefactoring
 						(extractedStatements, method));
-			}}
-		}		
+		}}}		
 		return detectedRefactorings.toList();
 	}
 	

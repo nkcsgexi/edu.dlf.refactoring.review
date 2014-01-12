@@ -5,14 +5,21 @@ import java.awt.geom.Line2D;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import fj.F;
+import fj.Ord;
+import fj.data.List;
 
 public class ASTNode2IntegerUtils {
 	
-	private ASTNode2IntegerUtils() throws Exception
-	{
+	private ASTNode2IntegerUtils() throws Exception {
 		throw new Exception();
 	}
 	
+	public static final Ord<ASTNode> astNodeStartOrd = Ord.intOrd.comap(
+		ASTNode2IntegerUtils.getStart);
+
+	public static final Ord<ASTNode> astNodeEndOrd = Ord.intOrd.comap(
+		ASTNode2IntegerUtils.getEnd);
+		
 	public static F<ASTNode, Integer> getStart = new F<ASTNode, Integer>() {
 		@Override
 		public Integer f(ASTNode node) {
@@ -68,4 +75,12 @@ public class ASTNode2IntegerUtils {
 			return new Line2D.Double(getStart.f(node), 0, getEnd.f(node), 0);
 	}}; 
 	
+	public static F<List<ASTNode>, Integer> getAstNodesLength = 
+		new F<List<ASTNode>, Integer>() {
+		@Override
+		public Integer f(List<ASTNode> nodes) {
+			int end = getEnd.f(nodes.sort(astNodeEndOrd).last());
+			int start = getStart.f(nodes.sort(astNodeStartOrd).head());
+			return end - start + 1;
+	}};
 }
