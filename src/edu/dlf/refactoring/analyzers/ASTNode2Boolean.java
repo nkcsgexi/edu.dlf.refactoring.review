@@ -3,6 +3,7 @@ package edu.dlf.refactoring.analyzers;
 import java.awt.geom.Line2D;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Statement;
 
 import fj.F;
 import fj.F2;
@@ -56,4 +57,11 @@ public class ASTNode2Boolean {
 				return l0.intersectsLine(l1);
 	}};
 	
+	
+	public static final F<ASTNode, Boolean> isStatement = 
+		new F<ASTNode, Boolean>() {
+		@Override
+		public Boolean f(ASTNode node) {
+			return node instanceof Statement;
+	}};
 }

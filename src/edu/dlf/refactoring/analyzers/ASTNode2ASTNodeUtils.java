@@ -20,13 +20,9 @@ public class ASTNode2ASTNodeUtils {
 	{
 		throw new Exception();
 	}
-	
+
 	public static F<ASTNode, List<ASTNode>> getAncestorStatement = 
-		ASTAnalyzer.getAncestorsConditionalFunc.f(new F<ASTNode, Boolean>() {
-			@Override
-			public Boolean f(ASTNode node) {
-				return ASTAnalyzer.isStatement(node);
-	}});
+		ASTAnalyzer.getAncestorsConditionalFunc.f(ASTNode2Boolean.isStatement);
 	
 	public static F<ASTNode, List<ASTNode>> getMethodStatements = 
 		new F<ASTNode, List<ASTNode>>() {

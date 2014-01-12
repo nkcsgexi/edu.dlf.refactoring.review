@@ -17,7 +17,6 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
@@ -210,9 +209,7 @@ public class ASTAnalyzer {
 			return true;
 		if(before == null || after == null)
 			return false;
-		String bs = DlfStringUtils.RemoveWhiteSpace(before.toString());
-		String as = DlfStringUtils.RemoveWhiteSpace(after.toString());
-		return as.equals(bs);
+		return before.subtreeMatch(new ASTMatcher(), after);
 	}
 	
 	
@@ -221,7 +218,7 @@ public class ASTAnalyzer {
 		return new F2<ASTNode, ASTNode, Boolean>() {
 			@Override
 			public Boolean f(ASTNode n1, ASTNode n2) {
-				return areASTNodeSame(n1, n2);
+				return areASTNodesSame(n1, n2);
 			}
 		};
 	}
@@ -301,12 +298,7 @@ public class ASTAnalyzer {
 			return FJUtils.createListFromCollection(getChildren(arg0));
 		}};
 	
-	public static boolean areASTNodeSame (ASTNode node1, ASTNode node2)
-	{
-		return node1.subtreeMatch(new ASTMatcher(), node2);
-	}
 
-	
 	
 	public static IEqualityComparer<ASTNode> getASTEqualityComparer()
 	{
@@ -334,10 +326,7 @@ public class ASTAnalyzer {
 			}
 		};
 	}
-	
-	public static boolean isStatement(ASTNode node) {
-		return node instanceof Statement;
-	}
+
 	
 	public static F<ASTNode, String> getContainingCompilationUnitName()
 	{

@@ -5,6 +5,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import fj.Equal;
 import fj.F;
+import fj.F2;
 
 public class ASTNodeEq {
 	private ASTNodeEq() throws Exception
@@ -49,4 +50,11 @@ public class ASTNodeEq {
 						return ASTAnalyzer.getMethodDeclarationNamesEqualFunc().
 							f(node1, node2);
 	}};}});
+	
+	public static final Equal<ASTNode> astNodeContentEq = Equal.equal((
+		new F2<ASTNode, ASTNode, Boolean>(){
+		@Override
+		public Boolean f(ASTNode n0, ASTNode n1) {
+			return ASTAnalyzer.areASTNodesSame(n0, n1);
+	}}).curry());
 }
