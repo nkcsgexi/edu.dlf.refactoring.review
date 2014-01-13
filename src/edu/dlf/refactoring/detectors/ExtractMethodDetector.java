@@ -84,6 +84,4 @@ public class ExtractMethodDetector extends AbstractRefactoringDetector {
 		}}}		
 		return detectedRefactorings.toList();
 	}
-	
-
 }

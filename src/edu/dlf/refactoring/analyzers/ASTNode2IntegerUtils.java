@@ -14,37 +14,31 @@ public class ASTNode2IntegerUtils {
 		throw new Exception();
 	}
 	
-	public static final Ord<ASTNode> astNodeStartOrd = Ord.intOrd.comap(
-		ASTNode2IntegerUtils.getStart);
-
-	public static final Ord<ASTNode> astNodeEndOrd = Ord.intOrd.comap(
-		ASTNode2IntegerUtils.getEnd);
-		
-	public static F<ASTNode, Integer> getStart = new F<ASTNode, Integer>() {
+	public static final F<ASTNode, Integer> getStart = new F<ASTNode, Integer>() {
 		@Override
 		public Integer f(ASTNode node) {
 			return node.getStartPosition();
 	}};
 	
-	public static F<ASTNode, Integer> getEnd = new F<ASTNode, Integer>() {
+	public static final F<ASTNode, Integer> getEnd = new F<ASTNode, Integer>() {
 		@Override
 		public Integer f(ASTNode node) {
 			return node.getStartPosition() + node.getLength() - 1;
 	}};
 	
-	public static F<ASTNode, Integer> getLength = new F<ASTNode, Integer>() {
+	public static final F<ASTNode, Integer> getLength = new F<ASTNode, Integer>() {
 		@Override
 		public Integer f(ASTNode node) {
 			return node.getLength();
 	}};
 	
-	public static F<ASTNode, Integer> getKind = new F<ASTNode, Integer>() {
+	public static final F<ASTNode, Integer> getKind = new F<ASTNode, Integer>() {
 		@Override
 		public Integer f(ASTNode node) {
 			return node.getNodeType();
 	}};
 	
-	public static F<ASTNode, Integer> getStartLineNumber = 
+	public static final F<ASTNode, Integer> getStartLineNumber = 
 		new F<ASTNode, Integer>() {
 		@Override
 		public Integer f(ASTNode node) {
@@ -53,14 +47,14 @@ public class ASTNode2IntegerUtils {
 					node.getStartPosition() + 1));
 	}};
 
-	public static F<ASTNode, Integer> getLinesSpan = new F<ASTNode, Integer>() {
+	public static final F<ASTNode, Integer> getLinesSpan = new F<ASTNode, Integer>() {
 		@Override
 		public Integer f(ASTNode node) {
 			return DlfStringUtils.getLinesCount.f(ASTNode2StringUtils.
 				getCorrespondingSource.f(node));
 	}};
 	
-	public static F<ASTNode, Integer> getEndLineNumber = 
+	public static final F<ASTNode, Integer> getEndLineNumber = 
 		new F<ASTNode, Integer>() {
 		@Override
 		public Integer f(ASTNode node) {
@@ -69,16 +63,18 @@ public class ASTNode2IntegerUtils {
 			return span + start - 1;
 	}};
 	
-	public static F<ASTNode, Line2D> convertNode2Line = new F<ASTNode, Line2D>() {
+	public static final F<ASTNode, Line2D> convertNode2Line = new F<ASTNode, Line2D>() {
 		@Override
 		public Line2D f(ASTNode node) {
 			return new Line2D.Double(getStart.f(node), 0, getEnd.f(node), 0);
 	}}; 
 	
-	public static F<List<ASTNode>, Integer> getAstNodesLength = 
+	public static final F<List<ASTNode>, Integer> getAstNodesLength = 
 		new F<List<ASTNode>, Integer>() {
 		@Override
 		public Integer f(List<ASTNode> nodes) {
+			Ord<ASTNode> astNodeStartOrd = Ord.intOrd.comap(getStart);
+			Ord<ASTNode> astNodeEndOrd = Ord.intOrd.comap(getEnd);
 			int end = getEnd.f(nodes.sort(astNodeEndOrd).last());
 			int start = getStart.f(nodes.sort(astNodeStartOrd).head());
 			return end - start + 1;
